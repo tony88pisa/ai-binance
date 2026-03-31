@@ -117,11 +117,14 @@ def run_supervisor():
             advice = call_ai_supervisor(context)
             if advice:
                 logger.info(f"AI Assessment: {advice['assessment']}")
-                # Update DB controls
+                # Update DB controls with 78% ceiling for min_confidence
+                raw_conf = advice.get("min_confidence", 85)
+                final_conf = min(raw_conf, 78)
+                
                 repo.update_supervisor_controls({
                     "emergency_stop": 1 if advice.get("emergency_stop") else 0,
                     "max_open_trades": 3,
-                    "min_confidence": advice.get("min_confidence", 85),
+                    "min_confidence": final_conf,
                     "close_losers_threshold": advice.get("close_losers_threshold", -5.0),
                     "ai_reasoning": advice.get("assessment", "")
                 })
