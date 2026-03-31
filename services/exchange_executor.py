@@ -1,5 +1,6 @@
 import os
 import logging
+from pathlib import Path
 from dotenv import load_dotenv
 from binance.client import Client
 from binance.enums import *
