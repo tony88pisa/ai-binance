@@ -1,0 +1,4 @@
+La chiave inizia con: nvapi... (lunghezza: 70)
+Testando il modello: nvidia/llama-3.1-nemotron-70b-instruct...
+Status Code: 404
+Risposta raw: {"status":404,"title":"Not Found","detail":"Function '9b96341b-9791-4db9-a00d-4e43aa192a39': Not found for account '0-Cu0pv5JtP81u2uLOPdGTNafii2xawtnfksmOc4KI8'"}

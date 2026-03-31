@@ -16,7 +16,7 @@ class NvidiaClient:
         # Configurazione da Env (Phase 2 spec)
         self.api_key = os.getenv("NVIDIA_API_KEY")
         self.base_url = os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
-        self.model = os.getenv("NVIDIA_MODEL", "nvidia/llama-3.1-nemotron-70b-instruct")
+        self.model = os.getenv("NVIDIA_MODEL", "meta/llama-3.1-70b-instruct")
         self.enabled = os.getenv("NVIDIA_ENABLED", "true").lower() == "true"
         
         # Policy & Budget (Phase 8 spec)

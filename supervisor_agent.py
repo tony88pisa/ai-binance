@@ -52,7 +52,7 @@ def get_market_context(repo: Repository):
 
 def call_ai_supervisor(context: dict):
     api_key = os.getenv("NVIDIA_API_KEY")
-    model = os.getenv("NVIDIA_MODEL", "nvidia/llama-3.1-nemotron-70b-instruct")
+    model = os.getenv("NVIDIA_MODEL", "meta/llama-3.1-70b-instruct")
     # Standard NVIDIA NIM endpoint
     url = "https://integrate.api.nvidia.com/v1/chat/completions"
     
