@@ -29,16 +29,19 @@ async function refresh() {
       if (document.getElementById('sys-mode')) document.getElementById('sys-mode').textContent = state.mode || '---';
       const wInit = parseFloat(state.wallet_initial || 0);
       const wNow = parseFloat(state.wallet_current || 0);
-      const pEur = parseFloat(state.pnl_eur || 0);
+      const pVal = parseFloat(state.pnl_eur || 0);
       const pPct = parseFloat(state.pnl_pct || 0);
       const exMode = state.exchange_mode || 'SIMULATION';
-      const currency = exMode === 'TESTNET' ? '$' : '€';
+      const currency = state.currency || '€';
       
       // Update Mode Badge
       if (document.getElementById('exchange-mode-badge')) {
           const emb = document.getElementById('exchange-mode-badge');
           emb.textContent = exMode;
-          emb.className = 'badge ' + (exMode === 'TESTNET' ? 'badge-green' : 'badge-amber');
+          let badgeCls = 'badge-gray';
+          if (exMode === 'TESTNET') badgeCls = 'badge-amber';
+          if (exMode === 'LIVE') badgeCls = 'badge-red';
+          emb.className = 'badge ' + badgeCls;
       }
 
       // Update Init Wallet
@@ -49,7 +52,7 @@ async function refresh() {
       // Update Current Wallet
       if (document.getElementById('wallet-now')) {
           document.getElementById('wallet-now').textContent = currency + ' ' + wNow.toLocaleString();
-          document.getElementById('wallet-now').className = 'stat-value ' + colorPnl(pEur);
+          document.getElementById('wallet-now').className = 'stat-value ' + colorPnl(pVal);
       }
 
       // Update Testnet Box
@@ -63,12 +66,12 @@ async function refresh() {
       }
 
       if (document.getElementById('pnl-eur')) {
-          document.getElementById('pnl-eur').textContent = (pEur >= 0 ? '+' : '') + currency + ' ' + pEur.toFixed(2);
-          document.getElementById('pnl-eur').className = 'stat-value ' + colorPnl(pEur);
+          document.getElementById('pnl-eur').textContent = (pVal >= 0 ? '+' : '') + currency + ' ' + pVal.toFixed(2);
+          document.getElementById('pnl-eur').className = 'stat-value ' + colorPnl(pVal);
       }
       if (document.getElementById('pnl-pct')) {
           document.getElementById('pnl-pct').textContent = (pPct >= 0 ? '+' : '') + pPct.toFixed(2) + '%';
-          document.getElementById('pnl-pct').className = 'stat-value ' + colorPnl(pPct);
+          document.getElementById('pnl-pct').className = 'stat-value ' + colorPnl(pVal);
       }
       if (document.getElementById('open-cnt')) document.getElementById('open-cnt').textContent = (positions && !posErr) ? positions.length : 0;
       if (document.getElementById('closed-cnt')) document.getElementById('closed-cnt').textContent = state.closed_trades || 0;
@@ -131,11 +134,10 @@ async function refresh() {
           const cls = p.direction === 'up' ? 'c-green' : 'c-red';
           return `<tr>
             <td><strong>${p.asset || 'N/A'}</strong></td>
-            <td>$${parseFloat(p.entry_price || 0).toFixed(2)}</td>
-            <td>$${parseFloat(p.current_price || 0).toFixed(2)}</td>
-            <td>${((p.size_pct || 0) * 100).toFixed(1)}%</td>
-            <td class="${cls}">${p.pnl_pct >= 0 ? '+' : ''}${parseFloat(p.pnl_pct || 0).toFixed(2)}%</td>
-            <td class="${cls}">${arrow}</td>
+            <td>${state.currency === 'USDT' ? '$' : '€'} ${parseFloat(p.entry_price || 0).toFixed(2)}</td>
+            <td>${state.currency === 'USDT' ? '$' : '€'} ${parseFloat(p.current_price || 0).toFixed(2)}</td>
+            <td class="${cls}">${p.pnl_pct >= 0 ? '+' : ''}${parseFloat(p.pnl_pct || 0).toFixed(2)}% ${arrow}</td>
+            <td class="c-muted">${p.exchange_order_id || 'LOCAL'}</td>
             <td>${formatTime(p.opened_at)}</td>
           </tr>`;
         }).join('');

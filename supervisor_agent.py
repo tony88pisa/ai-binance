@@ -7,8 +7,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Path setup
-PROJECT_ROOT = Path(__file__).resolve().parent
+# Configuration setup
+from config.settings import get_settings
+settings = get_settings()
+PROJECT_ROOT = settings.paths.project_root
 load_dotenv(PROJECT_ROOT / ".env")
 
 # Logging setup
@@ -30,7 +32,8 @@ def get_market_context(repo: Repository):
     try: sj = json.loads(state.get("state_json", "{}"))
     except: sj = {}
     
-    initial_budget = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
+    initial_budget = settings.trading.wallet_size
+    currency = settings.trading.stake_currency
     wallet = sj.get("wallet_eur", initial_budget)
     open_trades = repo.get_open_decisions()
     history = repo.get_history() # I need to check if get_history exists or just query
@@ -43,7 +46,8 @@ def get_market_context(repo: Repository):
         winrate = (wins / len(outcomes) * 100) if outcomes else 0
         
     return {
-        "wallet_eur": wallet,
+        "wallet": wallet,
+        "currency": currency,
         "pnl_pct": ((wallet - initial_budget) / initial_budget) * 100,
         "open_count": len(open_trades),
         "winrate_recent": winrate,
@@ -62,11 +66,11 @@ def call_ai_supervisor(context: dict):
     Current State:
     {json.dumps(context, indent=2)}
     
-    Mission: Protect CAPITAL. The bot's budget is 50.00 EUR.
+    Mission: Protect CAPITAL. The bot's initial budget is {context['wallet']} {context['currency']}.
     
     Rules for output:
-    1. emergency_stop: SET TO 1 ONLY if the wallet is below 46.00 EUR. 
-       If the wallet is >= 46.00 EUR, ALWAYS set emergency_stop to 0 (resume), even in TREND_DOWN.
+    1. emergency_stop: SET TO 1 ONLY if the wallet is below {context['wallet'] * 0.90} {context['currency']} (10% loss). 
+       If the wallet is above this threshold, ALWAYS set emergency_stop to 0 (resume).
     2. min_confidence: Regulate between 72 and 78.
     3. Return ONLY a JSON object.
     
@@ -120,9 +124,10 @@ def run_supervisor():
             if advice:
                 logger.info(f"AI Assessment: {advice['assessment']}")
                 
-                initial_budget = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
-                emergency_limit = initial_budget * 0.92
-                wallet = context.get('wallet_eur', initial_budget)
+                initial_budget = settings.trading.wallet_size
+                emergency_limit = initial_budget * 0.90
+                wallet = context.get('wallet', initial_budget)
+                currency = context.get('currency', 'USDT')
                 
                 # Rule: emergency_stop=1 ONLY if wallet < emergency_limit
                 e_stop = 1 if (advice.get("emergency_stop") and wallet < emergency_limit) else 0
@@ -140,7 +145,7 @@ def run_supervisor():
                 })
                 # Log to DB
                 repo.add_supervisor_log(
-                    wallet_state=f"{wallet:.2f} EUR",
+                    wallet_state=f"{wallet:.2f} {currency}",
                     assessment=advice.get("assessment", ""),
                     actions=f"Update: stop={e_stop}, conf={final_conf}"
                 )

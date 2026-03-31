@@ -7,10 +7,13 @@ import os
 import json
 from pathlib import Path
 from dotenv import load_dotenv
-from fastapi import APIRouter
+from config.settings import get_settings
 from storage.repository import Repository
 from scheduler.session_manager import current_mode
 from services.exchange_executor import ExchangeExecutor
+
+# Global config
+settings = get_settings()
 
 # Load .env
 load_dotenv()
@@ -18,7 +21,6 @@ load_dotenv()
 router = APIRouter(prefix="/api")
 
 LOGS_DIR = Path(__file__).resolve().parent.parent / "logs"
-DEFAULT_BUDGET = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
 
 
 @router.get("/state")
@@ -31,40 +33,26 @@ def get_state():
     except Exception:
         sj = {}
 
-    # --- Wallet & PnL Logic ---
-    mode = os.getenv("EXCHANGE_MODE", "testnet").upper()
-    # Testnet default is often 10k USDT
-    initial_budget = 10000.0 if mode == "TESTNET" else DEFAULT_BUDGET
-    
-    # Try real exchange balance
     executor = ExchangeExecutor()
-    testnet_balance = 0.0
-    exchange_active = False
     
-    if executor.enabled:
-        try:
-            testnet_balance = round(executor.get_balance("USDT"), 2)
-            wallet = testnet_balance
-            exchange_active = True
-        except Exception:
-            wallet = sj.get("wallet_eur", initial_budget)
-    else:
-        wallet = sj.get("wallet_eur", initial_budget)
-
-    pnl_eur = round(wallet - initial_budget, 2)
-    pnl_pct = round((pnl_eur / initial_budget) * 100, 2) if initial_budget else 0
+    # --- Wallet & PnL Logic ---
+    currency = settings.trading.stake_currency
+    initial_budget = settings.trading.wallet_size
+    
+    # Real-time balance from executor
+    wallet = executor.get_balance(currency)
+    
+    pnl_val = round(wallet - initial_budget, 2)
+    pnl_pct = round((pnl_val / initial_budget) * 100, 2) if initial_budget else 0
 
     # Counts
     with repo._conn() as conn:
-        open_cnt = conn.execute(
-            "SELECT COUNT(*) FROM decisions WHERE status='OPEN'"
-        ).fetchone()[0]
-        closed_cnt = conn.execute(
-            "SELECT COUNT(*) FROM trade_outcomes"
-        ).fetchone()[0]
-        total_decisions = conn.execute(
-            "SELECT COUNT(*) FROM decisions"
-        ).fetchone()[0]
+        open_cnt = conn.execute("SELECT COUNT(*) FROM decisions WHERE status='OPEN'").fetchone()[0]
+        closed_cnt = conn.execute("SELECT COUNT(*) FROM trade_outcomes").fetchone()[0]
+        total_decisions = conn.execute("SELECT COUNT(*) FROM decisions").fetchone()[0]
+
+    # Open orders from exchange
+    ex_orders = executor.get_open_orders()
 
     return {
         "mode": sj.get("mode", current_mode()),
@@ -72,13 +60,14 @@ def get_state():
         "status": "ONLINE" if state.get("last_heartbeat", "N/A") != "N/A" else "OFFLINE",
         "wallet_initial": initial_budget,
         "wallet_current": round(wallet, 2),
-        "pnl_eur": pnl_eur,
+        "pnl_eur": pnl_val,
         "pnl_pct": pnl_pct,
+        "currency": currency,
+        "exchange_mode": executor.mode.upper(),
         "open_trades": open_cnt,
         "closed_trades": closed_cnt,
         "total_decisions": total_decisions,
-        "testnet_balance_usdt": testnet_balance if exchange_active else None,
-        "exchange_mode": mode if exchange_active else "SIMULATION"
+        "open_orders_exchange": ex_orders
     }
 
 
@@ -132,6 +121,7 @@ def get_positions():
             "pnl_pct": pnl_pct,
             "direction": "up" if pnl_pct >= 0 else "down",
             "opened_at": t.get("timestamp", "N/A"),
+            "exchange_order_id": t.get("exchange_order_id")
         })
     return out
 

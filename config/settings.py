@@ -41,10 +41,13 @@ _load_dotenv()
 
 @dataclass(frozen=True)
 class ExchangeSettings:
-    name: str = "bitget"
+    name: str = "binance"
+    mode: str = "simulation"  # simulation | testnet | live
     key: str = ""
     secret: str = ""
     password: str = ""
+    testnet_key: str = ""
+    testnet_secret: str = ""
 
 
 @dataclass(frozen=True)
@@ -91,8 +94,8 @@ class RiskSettings:
 @dataclass(frozen=True)
 class TradingSettings:
     dry_run: bool = True
-    wallet_size: float = 50.0
-    stake_currency: str = "USDC"
+    wallet_size: float = 10000.0
+    stake_currency: str = "USDT"
     timeframe: str = "5m"
     informative_timeframe: str = "1h"
     pairs: list[str] = field(default_factory=lambda: ["BTC/USDC", "ETH/USDC", "SOL/USDC"])
@@ -138,10 +141,13 @@ def load_settings() -> Settings:
     """Build settings from environment variables and defaults."""
     return Settings(
         exchange=ExchangeSettings(
-            name=os.getenv("EXCHANGE_NAME", "bitget"),
+            name=os.getenv("EXCHANGE_NAME", "binance"),
+            mode=os.getenv("EXCHANGE_MODE", "simulation").lower(),
             key=os.getenv("EXCHANGE_KEY", ""),
             secret=os.getenv("EXCHANGE_SECRET", ""),
             password=os.getenv("EXCHANGE_PASSWORD", ""),
+            testnet_key=os.getenv("BINANCE_TESTNET_API_KEY", ""),
+            testnet_secret=os.getenv("BINANCE_TESTNET_SECRET", ""),
         ),
         telegram=TelegramSettings(
             token=os.getenv("TELEGRAM_TOKEN", ""),
@@ -160,7 +166,8 @@ def load_settings() -> Settings:
         risk=RiskSettings(),
         trading=TradingSettings(
             dry_run=os.getenv("DRY_RUN", "true").lower() == "true",
-            wallet_size=float(os.getenv("WALLET_SIZE", "50")),
+            wallet_size=float(os.getenv("INITIAL_CAPITAL", "10000.0")),
+            stake_currency=os.getenv("CAPITAL_CURRENCY", "USDT"),
         ),
         news=NewsSettings(),
         paths=PathSettings(),

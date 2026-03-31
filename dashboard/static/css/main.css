@@ -130,6 +130,7 @@ tr:hover td { background: var(--bg-2); }
 .badge-red { background: rgba(245,54,92,0.15); color: var(--red); }
 .badge-amber { background: rgba(240,180,41,0.15); color: var(--amber); }
 .badge-blue { background: rgba(94,114,228,0.15); color: var(--blue); }
+.badge-gray { background: rgba(136,136,160,0.15); color: var(--text-secondary); }
 .badge-muted { background: var(--bg-3); color: var(--text-muted); }
 
 /* === KPI BOX === */

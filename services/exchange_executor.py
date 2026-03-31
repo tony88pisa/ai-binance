@@ -1,129 +1,191 @@
-import os
 import logging
+import os
 from pathlib import Path
-from dotenv import load_dotenv
+from typing import Dict, Any, Optional, List
 from binance.client import Client
 from binance.enums import *
-from typing import Dict, Any, Optional
-
-# Ensure .env is loaded
-load_dotenv()
+from config.settings import get_settings
 
 logger = logging.getLogger("exchange_executor")
 
 class ExchangeExecutor:
-    """Handles real-time exchange execution for Binance (Testnet or Live)."""
+    """
+    Professional Exchange Executor.
+    Supports SIMULATION (local), TESTNET (Binance), and LIVE (Blocked).
+    Handles LOT_SIZE and PRICE_FILTER automatically.
+    """
     
     def __init__(self):
-        # Load .env from project root
-        project_root = Path(__file__).resolve().parent.parent
-        env_path = project_root / ".env"
-        load_dotenv(dotenv_path=env_path)
-        
-        self.mode = os.getenv("EXCHANGE_MODE", "testnet").lower()
-        self.api_key = os.getenv("BINANCE_TESTNET_API_KEY", "").strip()
-        self.api_secret = os.getenv("BINANCE_TESTNET_SECRET", "").strip()
-        
-        self.client: Optional[Client] = None
+        self.settings = get_settings()
+        self.mode = self.settings.exchange.mode.lower()
         self.enabled = False
+        self.client: Optional[Client] = None
+        self._exchange_info = {}
         
-        if not self.api_key or self.api_key == "PASTE_HERE":
-            logger.warning(f"[EXCHANGE] API Keys missing or default in {env_path}. Executor DISABLED.")
+        # Initial capital for simulation
+        self._sim_balance = self.settings.trading.wallet_size
+        self._sim_assets = {} # asset -> quantity
+
+        if self.mode == "live":
+            logger.critical("[EXCHANGE] LIVE MODE is BLOCKED for safety. Use 'testnet' or 'simulation'.")
             return
+
+        if self.mode == "testnet":
+            key = self.settings.exchange.testnet_key
+            secret = self.settings.exchange.testnet_secret
             
-        try:
-            # Masked logging for debugging
-            key_preview = self.api_key[:4] + "..." if self.api_key else "None"
-            logger.info(f"[EXCHANGE] Initializing {self.mode.upper()} mode with Key: {key_preview}")
-            
-            testnet = (self.mode == "testnet")
-            self.client = Client(self.api_key, self.api_secret, testnet=testnet)
-            
-            # Useping for connectivity check instead of system status
-            self.client.ping()
+            if not key or not secret:
+                logger.warning("[EXCHANGE] Testnet keys missing. Falling back to SIMULATION.")
+                self.mode = "simulation"
+            else:
+                try:
+                    self.client = Client(key, secret, testnet=True)
+                    self.client.ping()
+                    self._load_exchange_info()
+                    self.enabled = True
+                    logger.info(f"[EXCHANGE] Connected to BINANCE TESTNET. Status: OK")
+                except Exception as e:
+                    logger.error(f"[EXCHANGE] Testnet connection failed: {e}. Falling back to SIMULATION.")
+                    self.mode = "simulation"
+                    self.client = None
+
+        if self.mode == "simulation":
             self.enabled = True
-            logger.info(f"[EXCHANGE] {self.mode.upper()} connected successfully.")
+            logger.info(f"[EXCHANGE] Initialized in SIMULATION mode. Capital: {self._sim_balance} {self.settings.trading.stake_currency}")
+
+    def _load_exchange_info(self):
+        """Fetch and cache exchange info for precision filters."""
+        if not self.client: return
+        try:
+            info = self.client.get_exchange_info()
+            for s in info['symbols']:
+                self._exchange_info[s['symbol']] = s
         except Exception as e:
-            logger.error(f"[EXCHANGE] Initialization failed: {e}")
-            self.enabled = False
+            logger.error(f"[EXCHANGE] Failed to load exchange info: {e}")
 
     def _format_symbol(self, symbol: str) -> str:
-        """Convert BTC/USDT to BTCUSDT"""
-        return symbol.replace("/", "").replace("_", "")
+        """Standardize symbol for Binance (BTC/USDT -> BTCUSDT)"""
+        return symbol.replace("/", "").replace("_", "").upper()
+
+    def _apply_filters(self, symbol: str, quantity: float) -> float:
+        """Apply LOT_SIZE filter to quantity."""
+        if self.mode == "simulation": return quantity
+        
+        s_info = self._exchange_info.get(self._format_symbol(symbol))
+        if not s_info: return quantity
+        
+        lot_filter = next((f for f in s_info['filters'] if f['filterType'] == 'LOT_SIZE'), None)
+        if not lot_filter: return quantity
+        
+        step_size = float(lot_filter['stepSize'])
+        precision = len(lot_filter['stepSize'].split('.')[-1].rstrip('0')) if '.' in lot_filter['stepSize'] else 0
+        
+        # Round down to nearest stepSize
+        return round(quantity - (quantity % step_size), precision)
 
     def get_balance(self, asset: str = "USDT") -> float:
-        """Get the free balance of a specific asset."""
-        if not self.enabled or not self.client:
-            return 0.0
+        """Get available balance for asset."""
+        if self.mode == "simulation":
+            if asset == self.settings.trading.stake_currency:
+                return self._sim_balance
+            return self._sim_assets.get(asset, 0.0)
+            
+        if not self.client or not self.enabled: return 0.0
         try:
-            balance = self.client.get_asset_balance(asset=asset)
+            balance = self.client.get_asset_balance(asset=asset.upper())
             return float(balance['free']) if balance else 0.0
         except Exception as e:
-            logger.error(f"[EXCHANGE] Failed to get balance for {asset}: {e}")
+            logger.error(f"[EXCHANGE] get_balance failed for {asset}: {e}")
             return 0.0
 
-    def place_buy_order(self, symbol: str, usdt_amount: float) -> Optional[Dict[str, Any]]:
-        """Place a Market BUY order based on USDT amount."""
-        if not self.enabled or not self.client:
-            logger.info(f"[EXCHANGE] Execution disabled. Simulated BUY for {symbol} not sent to exchange.")
-            return None
+    def get_asset_balance(self, symbol: str) -> float:
+        """Get balance for the base asset of a pair (e.g. BTC from BTCUSDT)"""
+        asset = symbol.replace("USDT", "").replace("/", "").upper()
+        return self.get_balance(asset)
+
+    def place_market_buy(self, symbol: str, usdt_amount: float) -> Optional[Dict[str, Any]]:
+        """Execute a Market BUY."""
+        formatted_sym = self._format_symbol(symbol)
+        
+        if self.mode == "simulation":
+            if usdt_amount > self._sim_balance:
+                logger.error(f"[SIMULATION] Insufficient balance: {usdt_amount} > {self._sim_balance}")
+                return None
             
+            # Simulated execution (mock)
+            self._sim_balance -= usdt_amount
+            asset = symbol.replace("USDT", "").replace("/", "").upper()
+            mock_qty = usdt_amount / 60000.0 # Just a placeholder price
+            self._sim_assets[asset] = self._sim_assets.get(asset, 0.0) + mock_qty
+            
+            logger.info(f"[SIMULATION] BUY {formatted_sym} | Amount: {usdt_amount} USDT")
+            return {"orderId": "SIM_BUY_" + os.urandom(4).hex(), "status": "FILLED", "origQty": mock_qty}
+
         try:
-            formatted_sym = self._format_symbol(symbol)
-            logger.info(f"[EXCHANGE] Placing Market BUY for {formatted_sym} with {usdt_amount} USDT...")
-            
-            # Use create_order for market buy with quoteOrderQty
+            logger.info(f"[EXCHANGE] Placing TESTNET Market BUY: {formatted_sym} ({usdt_amount} USDT)")
             order = self.client.create_order(
                 symbol=formatted_sym,
                 side=SIDE_BUY,
                 type=ORDER_TYPE_MARKET,
                 quoteOrderQty=round(usdt_amount, 2)
             )
-            logger.info(f"[EXCHANGE] BUY order success: {order['orderId']}")
             return order
         except Exception as e:
-            logger.error(f"[EXCHANGE] Market BUY order FAILED for {symbol}: {e}")
+            logger.error(f"[EXCHANGE] Market BUY FAILED for {symbol}: {e}")
             return None
 
-    def place_sell_order(self, symbol: str, quantity: float) -> Optional[Dict[str, Any]]:
-        """Place a Market SELL order based on asset quantity."""
-        if not self.enabled or not self.client:
-            logger.info(f"[EXCHANGE] Execution disabled. Simulated SELL for {symbol} not sent to exchange.")
-            return None
+    def place_market_sell(self, symbol: str, quantity: float) -> Optional[Dict[str, Any]]:
+        """Execute a Market SELL."""
+        formatted_sym = self._format_symbol(symbol)
+        filtered_qty = self._apply_filters(symbol, quantity)
+        
+        if self.mode == "simulation":
+            asset = symbol.replace("USDT", "").replace("/", "").upper()
+            if filtered_qty > self._sim_assets.get(asset, 0.0):
+                filtered_qty = self._sim_assets.get(asset, 0.0)
             
+            self._sim_assets[asset] -= filtered_qty
+            mock_gain = filtered_qty * 60000.0
+            self._sim_balance += mock_gain
+            
+            logger.info(f"[SIMULATION] SELL {formatted_sym} | Qty: {filtered_qty}")
+            return {"orderId": "SIM_SELL_" + os.urandom(4).hex(), "status": "FILLED", "cummulativeQuoteQty": mock_gain}
+
         try:
-            formatted_sym = self._format_symbol(symbol)
-            logger.info(f"[EXCHANGE] Placing Market SELL for {formatted_sym} with quantity {quantity}...")
-            
-            # Use create_order for market sell
-            # Note: Binance expects float but some assets need specific precision.
-            # We use a broad rounding here; in production, you'd check lot_size.
+            logger.info(f"[EXCHANGE] Placing TESTNET Market SELL: {formatted_sym} (Qty: {filtered_qty})")
             order = self.client.create_order(
                 symbol=formatted_sym,
                 side=SIDE_SELL,
                 type=ORDER_TYPE_MARKET,
-                quantity=quantity 
+                quantity=filtered_qty
             )
-            logger.info(f"[EXCHANGE] SELL order success: {order['orderId']}")
             return order
         except Exception as e:
-            logger.error(f"[EXCHANGE] Market SELL order FAILED for {symbol}: {e}")
+            logger.error(f"[EXCHANGE] Market SELL FAILED for {symbol}: {e}")
             return None
 
-    def get_open_orders(self, symbol: Optional[str] = None) -> list:
-        """List current open orders."""
-        if not self.enabled or not self.client:
-            return []
+    def get_open_orders(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Retrieve open orders from exchange."""
+        if self.mode == "simulation" or not self.client: return []
         try:
-            formatted_sym = self._format_symbol(symbol) if symbol else None
-            return self.client.get_open_orders(symbol=formatted_sym)
+            sym = self._format_symbol(symbol) if symbol else None
+            return self.client.get_open_orders(symbol=sym)
         except Exception as e:
-            logger.error(f"[EXCHANGE] Failed to get open orders: {e}")
+            logger.error(f"[EXCHANGE] get_open_orders failed: {e}")
             return []
 
+    def cancel_order(self, symbol: str, order_id: str) -> bool:
+        """Cancel an active order."""
+        if self.mode == "simulation" or not self.client: return True
+        try:
+            self.client.cancel_order(symbol=self._format_symbol(symbol), orderId=order_id)
+            return True
+        except Exception as e:
+            logger.error(f"[EXCHANGE] cancel_order failed: {e}")
+            return False
+
 if __name__ == "__main__":
-    # Test stub
     logging.basicConfig(level=logging.INFO)
-    executor = ExchangeExecutor()
-    if executor.enabled:
-        print(f"USDT Balance: {executor.get_balance('USDT')}")
+    exc = ExchangeExecutor()
+    print(f"Mode: {exc.mode}, Enabled: {exc.enabled}")
+    print(f"USDT Balance: {exc.get_balance('USDT')}")

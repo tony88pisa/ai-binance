@@ -40,6 +40,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("daemon")
 
+from config.settings import get_settings
 from storage.repository import Repository
 from scheduler.session_manager import should_run_lab_cycle, should_run_live_cycle
 from ai.live_brain import LiveBrain, MarketIntelligence
@@ -49,6 +50,9 @@ from ai.skill_validator import SkillValidator
 from ai.skill_validator import SkillValidator
 from ai.promotion_gate import PromotionGate
 from services.exchange_executor import ExchangeExecutor
+
+# Global config
+settings = get_settings()
 
 SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"]
 
@@ -86,44 +90,29 @@ def compute_rsi(closes: list, period: int = 14) -> float:
     if al == 0: return 100.0
     return round(100.0 - (100.0 / (1.0 + (ag / al))), 2)
 
-def compute_macd(closes: list) -> float:
-    if len(closes) < 26: return 0.0
-    arr = np.array(closes, dtype=float)
-    return round(float(ema(arr, 12)[-1] - ema(arr, 26)[-1]), 6)
-
 def run_daemon():
     repo = Repository()
     brain = LiveBrain()
     executor = ExchangeExecutor()
     lab_run_today = False
     
-    # Inizializza Wallet Progressivo (Testnet Locale)
-    DEFAULT_BUDGET = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
-    MAX_OPEN_TRADES = 3
+    # Configuration from settings
+    INITIAL_BUDGET = settings.trading.wallet_size
+    MAX_OPEN_TRADES = settings.risk.max_open_trades
+    CURRENCY = settings.trading.stake_currency
     
     while True:
         try:
-            # Recupera stato precedente per wallet
-            state = repo.get_service_state("daemon")
-            state_data = {}
-            if state and state.get("state_json"):
-                try: state_data = json.loads(state["state_json"])
-                except: pass
-            
-            wallet_eur = state_data.get("wallet_eur", DEFAULT_BUDGET)
-            
-            # If exchange is enabled, sync wallet with real USDT balance
-            if executor.enabled:
-                real_balance = executor.get_balance("USDT")
-                if real_balance > 0:
-                    wallet_eur = real_balance
-                    state_data["wallet_eur"] = round(wallet_eur, 2)
+            # Sync balance with Exchange (or Simulation)
+            wallet_current = executor.get_balance(CURRENCY)
+            if wallet_current <= 0:
+                wallet_current = INITIAL_BUDGET
             
             # --- SUPERVISOR OVERRIDES ---
             controls = repo.get_supervisor_controls()
             emergency_stop = controls.get("emergency_stop", 0)
             max_trades = controls.get("max_open_trades", MAX_OPEN_TRADES)
-            min_conf = controls.get("min_confidence", 70)
+            min_conf = controls.get("min_confidence", settings.risk.min_confidence_buy)
             
             is_live = should_run_live_cycle()
             is_lab = should_run_lab_cycle()
@@ -132,7 +121,9 @@ def run_daemon():
             # Update heartbeat con wallet corrente e stato supervisor
             repo.update_service_heartbeat("daemon", json.dumps({
                 "mode": mode_str, 
-                "wallet_eur": round(wallet_eur, 2),
+                "wallet_eur": round(wallet_current, 2), # Keeping DB column name for now
+                "currency": CURRENCY,
+                "exchange_mode": executor.mode.upper(),
                 "supervisor_active": not emergency_stop,
                 "max_trades": max_trades
             }))
@@ -228,33 +219,38 @@ def run_daemon():
                         # Soglia Minima Confidence (Supervisor)
                         if decision["confidence"] < min_conf:
                             continue
-
-                        # --- EMERGENCY WALLET STOP ---
-                        if wallet_eur < 35.0:
-                            logger.warning(f"[RISK] Wallet below safety threshold 35.0 (Current: {wallet_eur:.2f}). Blocking BUY on {asset}.")
+                        # --- EMERGENCY WALLET STOP (10% Drawdown) ---
+                        if wallet_current < (INITIAL_BUDGET * 0.90):
+                            logger.warning(f"[RISK] Wallet deep drawdown alert ({wallet_current:.2f}). Blocking BUY on {asset}.")
                             continue
                         
                         # --- EXCHANGE EXECUTION ---
-                        pos_value_eur = wallet_eur * size_pct
-                        ex_order = executor.place_buy_order(asset, pos_value_eur)
-                        ex_order_id = ex_order["orderId"] if ex_order else None
+                        size_pct = decision.get("position_size_pct", 0.1)
+                        pos_value_fiat = wallet_current * size_pct
                         
-                        repo.save_trade_decision({
-                            "id": f"DEC-{uuid.uuid4().hex[:8]}",
-                            "asset": asset,
-                            "action": decision["decision"],
-                            "confidence": decision["confidence"],
-                            "size_pct": size_pct,
-                            "thesis": decision["thesis"] + f" | Wallet Context: {wallet_eur:.2f} EUR",
-                            "regime": decision["regime"],
-                            "entry_price": price,
-                            "atr_stop_distance": decision["atr_stop_distance"],
-                            "status": "OPEN",
-                            "exchange_order_id": ex_order_id
-                        })
-                        logger.info(f"[LIVE] BUY entry on {asset} @ {price}. Pos Size: {pos_value_eur:.2f} EUR (ExID: {ex_order_id})")
-
-                logger.info(f"[LIVE] Cycle complete. Wallet: {wallet_eur:.2f} EUR. Synced {len(SYMBOLS)} assets.")
+                        logger.info(f"[{executor.mode.upper()}] PLACING BUY ORDER: {asset} for {pos_value_fiat:.2f} {CURRENCY}")
+                        ex_order = executor.place_market_buy(asset, pos_value_fiat)
+                        
+                        if ex_order:
+                            ex_order_id = ex_order.get("orderId")
+                            repo.save_trade_decision({
+                                "id": f"DEC-{uuid.uuid4().hex[:8]}",
+                                "asset": asset,
+                                "action": decision["decision"],
+                                "confidence": decision["confidence"],
+                                "size_pct": size_pct,
+                                "thesis": decision["thesis"] + f" | Mode: {executor.mode.upper()}",
+                                "regime": decision["regime"],
+                                "entry_price": price,
+                                "atr_stop_distance": decision["atr_stop_distance"],
+                                "status": "OPEN",
+                                "exchange_order_id": ex_order_id
+                            })
+                            logger.info(f"[{executor.mode.upper()}] BUY ORDER SUCCESS: {asset} @ {price}. ID: {ex_order_id}")
+                        else:
+                            logger.error(f"[{executor.mode.upper()}] BUY ORDER FAILED for {asset}")
+                            
+                logger.info(f"[LIVE] Cycle complete. Balance: {wallet_current:.2f} {CURRENCY}. Mode: {executor.mode.upper()}")
 
                 # Risoluzione Outcome (chiude ordini maturi o stoppati in modo atomico)
                 open_trades = repo.get_open_decisions()
@@ -287,34 +283,36 @@ def run_daemon():
                     elif c_regime in ["TREND_DOWN", "HIGH_VOL_CHAOS"]:
                         close_trade = True
                         reason = f"Defensive Exit ({c_regime})"
-
                     if close_trade:
                         pnl_pct = (c_price - e_price) / e_price
                         
-                        # Calcolo impatto sul wallet (progressivo)
-                        trade_profit_eur = wallet_eur * t_size_pct * pnl_pct
-                        wallet_eur += trade_profit_eur
-                        
                         # --- EXCHANGE EXIT ---
-                        # We need the quantity bought. If we don't have it in DB, we estimate based on entry price.
-                        # In a real system, we'd store the executed quantity in the decision record.
-                        quantity = (wallet_eur * t_size_pct) / e_price
-                        executor.place_sell_order(asset, quantity)
+                        asset_qty = executor.get_asset_balance(asset)
+                        if asset_qty <= 0:
+                            # Fallback to estimation if real balance is 0 (testnet quirk or simulation)
+                            size_pct = float(trade.get("size_pct", 0.0))
+                            asset_qty = (wallet_current * size_pct) / e_price
+                        
+                        logger.info(f"[{executor.mode.upper()}] CLOSING {asset} due to {reason}. Qty: {asset_qty}")
+                        ex_sell = executor.place_market_sell(asset, asset_qty)
+                        
+                        ex_sell_id = ex_sell.get("orderId") if ex_sell else None
                         
                         outcome = {
                             "id": f"OUT-{uuid.uuid4().hex[:8]}",
                             "decision_id": trade["id"],
                             "realized_pnl_pct": round(pnl_pct, 4),
-                            "was_profitable": pnl_pct > 0
+                            "was_profitable": pnl_pct > 0,
+                            "closed_at": datetime.now(timezone.utc).isoformat(),
+                            "exchange_order_id": ex_sell_id
                         }
                         
-                        # Aggiornamento wallet in state_json per persistenza
-                        state_data["wallet_eur"] = round(wallet_eur, 2)
-                        repo.update_service_heartbeat("daemon", json.dumps(state_data))
-
-                        # Riferimento alla repository per atomicità outcome-chiusura in mutua elusione db duplication
                         repo.close_trade_with_outcome(outcome)
-                        logger.info(f"[OUTCOME] Closed {asset} due to {reason}. PnL: {pnl_pct*100:.2f}%. Wallet now: {wallet_eur:.2f} EUR")
+                        
+                        # Refresh wallet after sell
+                        wallet_current = executor.get_balance(CURRENCY)
+                        
+                        logger.info(f"[{executor.mode.upper()}] SELL SUCCESS: {asset}. ID: {ex_sell_id}. PnL: {pnl_pct*100:.2f}%")
 
             elif is_lab and not lab_run_today:
                 logger.info("[LAB] Starting lab cycle")
