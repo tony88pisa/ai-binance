@@ -2,6 +2,8 @@
 V9.0 — Unified Dashboard API
 All endpoints the frontend needs, in one file.
 """
+import sys
+import os
 import json
 from pathlib import Path
 from fastapi import APIRouter
@@ -25,9 +27,28 @@ def get_state():
     except Exception:
         sj = {}
 
-    wallet = sj.get("wallet_eur", DEFAULT_BUDGET)
-    pnl_eur = round(wallet - DEFAULT_BUDGET, 2)
-    pnl_pct = round((pnl_eur / DEFAULT_BUDGET) * 100, 2) if DEFAULT_BUDGET else 0
+    # --- Wallet & PnL Logic ---
+    mode = os.getenv("EXCHANGE_MODE", "testnet").upper()
+    # Testnet default is often 10k USDT
+    initial_budget = 10000.0 if mode == "TESTNET" else DEFAULT_BUDGET
+    
+    # Try real exchange balance
+    executor = ExchangeExecutor()
+    testnet_balance = 0.0
+    exchange_active = False
+    
+    if executor.enabled:
+        try:
+            testnet_balance = round(executor.get_balance("USDT"), 2)
+            wallet = testnet_balance
+            exchange_active = True
+        except Exception:
+            wallet = sj.get("wallet_eur", initial_budget)
+    else:
+        wallet = sj.get("wallet_eur", initial_budget)
+
+    pnl_eur = round(wallet - initial_budget, 2)
+    pnl_pct = round((pnl_eur / initial_budget) * 100, 2) if initial_budget else 0
 
     # Counts
     with repo._conn() as conn:
@@ -41,22 +62,19 @@ def get_state():
             "SELECT COUNT(*) FROM decisions"
         ).fetchone()[0]
 
-    # Real-time exchange balance
-    executor = ExchangeExecutor()
-    testnet_balance = round(executor.get_balance("USDT"), 2) if executor.enabled else 0.0
-
     return {
         "mode": sj.get("mode", current_mode()),
         "hb": state.get("last_heartbeat", "N/A"),
         "status": "ONLINE" if state.get("last_heartbeat", "N/A") != "N/A" else "OFFLINE",
-        "wallet_initial": DEFAULT_BUDGET,
+        "wallet_initial": initial_budget,
         "wallet_current": round(wallet, 2),
         "pnl_eur": pnl_eur,
         "pnl_pct": pnl_pct,
         "open_trades": open_cnt,
         "closed_trades": closed_cnt,
         "total_decisions": total_decisions,
-        "testnet_balance": testnet_balance,
+        "testnet_balance_usdt": testnet_balance if exchange_active else None,
+        "exchange_mode": mode if exchange_active else "SIMULATION"
     }
 
 
