@@ -137,8 +137,8 @@ def run_supervisor():
                 repo.update_supervisor_controls({
                     "emergency_stop": current_controls.get("emergency_stop", 0),
                     "max_open_trades": current_controls.get("max_open_trades", 3),
-                    "min_confidence": current_controls.get("min_confidence", 85),
-                    "ai_reasoning": "AI NVIDIA unavailable - current state maintained"
+                    "min_confidence": min(current_controls.get("min_confidence", 75), 75),
+                    "ai_reasoning": "AI NVIDIA unavailable - fallback activated. Lowering min_confidence to 75% max."
                 })
                 
         except Exception as e:
