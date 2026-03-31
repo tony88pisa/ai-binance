@@ -1,0 +1,10 @@
+<service>
+  <id>V8-LiveGuard</id>
+  <name>V8.1 AI Live Guard</name>
+  <description>Production Safety Layer and Manual Promotion Gate (H:\ai binance)</description>
+  <executable>python</executable>
+  <arguments>services/live_guard.py</arguments>
+  <log mode="roll"></log>
+  <workingdirectory>H:\ai binance</workingdirectory>
+  <startmode>Automatic</startmode>
+</service>

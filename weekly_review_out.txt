@@ -1,0 +1,27 @@
+
+
+============================================================
+   V6.0 BOT VALIDATION REPORT: [MOCK] MODE
+============================================================
+
+[GLOBAL METRICS]
+Total Decisions Made:     0
+Total Trades Executed:    0
+Risk Gate Block Rate:     0.0%
+Win Rate:                 0.0% (0W / 0L)
+Realized Average PnL:     +0.00%
+Average Hold Time:        0.0 m
+
+[CONFIDENCE CALIBRATION]
+Avg Confidence (Winners): 0.0%
+Avg Confidence (Losers):  0.0%
+Calibration State:        INSUFFICIENT_DATA
+
+[ASSET BREAKDOWN]
+
+[REGIME BREAKDOWN]
+------------------------------------------------------------
+
+* All metrics derived strictly from OutcomeRecords linked to generated DecisionRecords.
+* Validated offline via local inference/mock/cache. Not financial advice.
+

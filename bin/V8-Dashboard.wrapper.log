@@ -1,0 +1,181 @@
+2026-03-29 18:40:17,691 DEBUG - Starting WinSW in console mode
+2026-03-29 18:40:18,420 DEBUG - Starting WinSW in console mode
+2026-03-29 18:40:18,460 INFO  - Installing service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-29 18:40:18,505 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' was installed successfully.
+2026-03-29 18:42:01,812 DEBUG - Starting WinSW in console mode
+2026-03-29 18:42:02,473 DEBUG - Starting WinSW in console mode
+2026-03-29 18:42:02,510 INFO  - Installing service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-29 18:42:02,516 ERROR - A service with ID 'V8-Dashboard' already exists.
+2026-03-29 18:42:02,518 FATAL - Failed to install the service. Servizio specificato già esistente.
+2026-03-29 19:18:47,231 DEBUG - Starting WinSW in service mode
+2026-03-29 19:18:47,424 INFO  - Starting uvicorn dashboard.app:app --host 0.0.0.0 --port 8080
+2026-03-29 19:18:47,536 INFO  - Started process 24988
+2026-03-29 19:18:47,555 DEBUG - Forwarding logs of the process System.Diagnostics.Process (uvicorn) to WinSW.RollingLogAppender
+2026-03-29 19:19:20,221 DEBUG - Starting WinSW in console mode
+2026-03-29 19:19:20,946 DEBUG - Starting WinSW in console mode
+2026-03-29 19:19:20,992 INFO  - Installing service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-29 19:19:20,998 ERROR - A service with ID 'V8-Dashboard' already exists.
+2026-03-29 19:19:21,000 FATAL - Failed to install the service. Servizio specificato già esistente.
+2026-03-29 21:18:11,799 DEBUG - Starting WinSW in console mode
+2026-03-29 21:18:12,477 DEBUG - Starting WinSW in console mode
+2026-03-29 21:18:12,515 INFO  - Installing service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-29 21:18:12,520 ERROR - A service with ID 'V8-Dashboard' already exists.
+2026-03-29 21:18:12,522 FATAL - Failed to install the service. Servizio specificato già esistente.
+2026-03-30 00:01:26,019 DEBUG - Starting WinSW in console mode
+2026-03-30 00:01:26,896 DEBUG - Starting WinSW in console mode
+2026-03-30 00:01:26,959 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:01:26,991 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 00:01:27,011 INFO  - Stopping V8-Dashboard
+2026-03-30 00:01:27,015 DEBUG - ProcessKill 24988
+2026-03-30 00:01:27,028 DEBUG - Stopping process 24988...
+2026-03-30 00:01:27,589 DEBUG - Process 24988 canceled with code 0.
+2026-03-30 00:01:27,600 INFO  - Finished V8-Dashboard
+2026-03-30 00:02:11,790 DEBUG - Starting WinSW in console mode
+2026-03-30 00:02:12,668 DEBUG - Starting WinSW in console mode
+2026-03-30 00:02:12,724 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:02:13,195 DEBUG - Starting WinSW in service mode
+2026-03-30 00:02:13,239 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 00:02:13,401 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 00:02:13,443 INFO  - Started process 29248
+2026-03-30 00:02:13,471 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 00:15:21,394 DEBUG - Starting WinSW in console mode
+2026-03-30 00:15:22,100 DEBUG - Starting WinSW in console mode
+2026-03-30 00:15:22,145 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:15:22,154 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 00:15:22,155 INFO  - Stopping V8-Dashboard
+2026-03-30 00:15:22,155 DEBUG - ProcessKill 29248
+2026-03-30 00:15:22,158 DEBUG - Stopping process 29248...
+2026-03-30 00:15:22,444 DEBUG - Process 29248 canceled with code 0.
+2026-03-30 00:15:22,447 INFO  - Finished V8-Dashboard
+2026-03-30 00:15:22,631 DEBUG - Starting WinSW in console mode
+2026-03-30 00:15:23,285 DEBUG - Starting WinSW in console mode
+2026-03-30 00:15:23,334 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:15:23,722 DEBUG - Starting WinSW in service mode
+2026-03-30 00:15:23,761 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 00:15:23,891 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 00:15:23,920 INFO  - Started process 20312
+2026-03-30 00:15:23,936 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 00:25:55,327 DEBUG - Starting WinSW in console mode
+2026-03-30 00:25:55,973 DEBUG - Starting WinSW in console mode
+2026-03-30 00:25:56,016 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:25:56,023 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 00:25:56,025 INFO  - Stopping V8-Dashboard
+2026-03-30 00:25:56,025 DEBUG - ProcessKill 20312
+2026-03-30 00:25:56,028 DEBUG - Stopping process 20312...
+2026-03-30 00:25:56,297 DEBUG - Process 20312 canceled with code 0.
+2026-03-30 00:25:56,302 INFO  - Finished V8-Dashboard
+2026-03-30 00:25:56,495 DEBUG - Starting WinSW in console mode
+2026-03-30 00:25:57,131 DEBUG - Starting WinSW in console mode
+2026-03-30 00:25:57,174 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:25:57,556 DEBUG - Starting WinSW in service mode
+2026-03-30 00:25:57,590 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 00:25:57,718 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 00:25:57,747 INFO  - Started process 4520
+2026-03-30 00:25:57,764 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 00:32:14,530 DEBUG - Starting WinSW in console mode
+2026-03-30 00:32:15,129 DEBUG - Starting WinSW in console mode
+2026-03-30 00:32:15,170 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:32:15,177 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 00:32:15,178 INFO  - Stopping V8-Dashboard
+2026-03-30 00:32:15,179 DEBUG - ProcessKill 4520
+2026-03-30 00:32:15,181 DEBUG - Stopping process 4520...
+2026-03-30 00:32:15,395 DEBUG - Process 4520 canceled with code 0.
+2026-03-30 00:32:15,399 INFO  - Finished V8-Dashboard
+2026-03-30 00:32:15,593 DEBUG - Starting WinSW in console mode
+2026-03-30 00:32:16,242 DEBUG - Starting WinSW in console mode
+2026-03-30 00:32:16,284 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:32:16,632 DEBUG - Starting WinSW in service mode
+2026-03-30 00:32:16,664 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 00:32:16,782 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 00:32:16,809 INFO  - Started process 29480
+2026-03-30 00:32:16,822 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 00:40:13,847 DEBUG - Starting WinSW in console mode
+2026-03-30 00:40:14,451 DEBUG - Starting WinSW in console mode
+2026-03-30 00:40:14,496 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:40:14,503 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 00:40:14,503 INFO  - Stopping V8-Dashboard
+2026-03-30 00:40:14,504 DEBUG - ProcessKill 29480
+2026-03-30 00:40:14,506 DEBUG - Stopping process 29480...
+2026-03-30 00:40:14,702 DEBUG - Process 29480 canceled with code 0.
+2026-03-30 00:40:14,705 INFO  - Finished V8-Dashboard
+2026-03-30 00:40:14,902 DEBUG - Starting WinSW in console mode
+2026-03-30 00:40:15,497 DEBUG - Starting WinSW in console mode
+2026-03-30 00:40:15,540 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:40:15,899 DEBUG - Starting WinSW in service mode
+2026-03-30 00:40:15,931 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 00:40:16,052 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 00:40:16,079 INFO  - Started process 23668
+2026-03-30 00:40:16,094 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 00:42:04,582 DEBUG - Starting WinSW in console mode
+2026-03-30 00:42:05,201 DEBUG - Starting WinSW in console mode
+2026-03-30 00:42:05,244 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:42:05,251 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 00:42:05,252 INFO  - Stopping V8-Dashboard
+2026-03-30 00:42:05,252 DEBUG - ProcessKill 23668
+2026-03-30 00:42:05,256 DEBUG - Stopping process 23668...
+2026-03-30 00:42:05,472 DEBUG - Process 23668 canceled with code 0.
+2026-03-30 00:42:05,476 INFO  - Finished V8-Dashboard
+2026-03-30 00:42:05,658 DEBUG - Starting WinSW in console mode
+2026-03-30 00:42:06,256 DEBUG - Starting WinSW in console mode
+2026-03-30 00:42:06,298 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:42:06,664 DEBUG - Starting WinSW in service mode
+2026-03-30 00:42:06,697 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 00:42:06,819 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 00:42:06,847 INFO  - Started process 1888
+2026-03-30 00:42:06,862 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 00:55:59,695 DEBUG - Starting WinSW in console mode
+2026-03-30 00:56:00,331 DEBUG - Starting WinSW in console mode
+2026-03-30 00:56:00,375 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:56:00,382 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 00:56:00,384 INFO  - Stopping V8-Dashboard
+2026-03-30 00:56:00,384 DEBUG - ProcessKill 1888
+2026-03-30 00:56:00,386 DEBUG - Stopping process 1888...
+2026-03-30 00:56:00,647 DEBUG - Process 1888 canceled with code 0.
+2026-03-30 00:56:00,651 INFO  - Finished V8-Dashboard
+2026-03-30 00:56:00,795 DEBUG - Starting WinSW in console mode
+2026-03-30 00:56:01,418 DEBUG - Starting WinSW in console mode
+2026-03-30 00:56:01,459 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 00:56:01,819 DEBUG - Starting WinSW in service mode
+2026-03-30 00:56:01,852 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 00:56:01,984 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 00:56:02,017 INFO  - Started process 28048
+2026-03-30 00:56:02,035 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 01:03:20,727 DEBUG - Starting WinSW in console mode
+2026-03-30 01:03:21,382 DEBUG - Starting WinSW in console mode
+2026-03-30 01:03:21,425 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 01:03:21,433 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' stopped successfully.
+2026-03-30 01:03:21,434 INFO  - Stopping V8-Dashboard
+2026-03-30 01:03:21,435 DEBUG - ProcessKill 28048
+2026-03-30 01:03:21,438 DEBUG - Stopping process 28048...
+2026-03-30 01:03:21,657 DEBUG - Process 28048 canceled with code 0.
+2026-03-30 01:03:21,660 INFO  - Finished V8-Dashboard
+2026-03-30 01:03:21,866 DEBUG - Starting WinSW in console mode
+2026-03-30 01:03:22,537 DEBUG - Starting WinSW in console mode
+2026-03-30 01:03:22,584 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 01:03:22,988 DEBUG - Starting WinSW in service mode
+2026-03-30 01:03:23,027 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' started successfully.
+2026-03-30 01:03:23,180 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 01:03:23,213 INFO  - Started process 23692
+2026-03-30 01:03:23,230 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 03:26:38,254 DEBUG - Starting WinSW in console mode
+2026-03-30 03:26:38,949 DEBUG - Starting WinSW in console mode
+2026-03-30 03:26:38,998 INFO  - Stopping service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 03:26:39,014 INFO  - Stopping V8-Dashboard
+2026-03-30 03:26:39,016 DEBUG - ProcessKill 23692
+2026-03-30 03:26:39,020 DEBUG - Stopping process 23692...
+2026-03-30 03:26:39,353 DEBUG - Process 23692 canceled with code 0.
+2026-03-30 03:26:39,358 INFO  - Finished V8-Dashboard
+2026-03-30 03:26:39,539 INFO  - Starting service 'V8.1 AI Dashboard Terminal (V8-Dashboard)'...
+2026-03-30 03:26:39,923 DEBUG - Starting WinSW in service mode
+2026-03-30 03:26:40,077 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 03:26:40,104 INFO  - Started process 7748
+2026-03-30 03:26:40,118 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 03:26:40,222 INFO  - Service 'V8.1 AI Dashboard Terminal (V8-Dashboard)' restarted successfully.
+2026-03-30 22:53:07,345 DEBUG - Starting WinSW in service mode
+2026-03-30 22:53:07,624 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-30 22:53:07,661 INFO  - Started process 9540
+2026-03-30 22:53:07,687 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-31 19:43:23,148 DEBUG - Starting WinSW in service mode
+2026-03-31 19:43:23,360 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086
+2026-03-31 19:43:23,402 INFO  - Started process 8916
+2026-03-31 19:43:23,419 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender

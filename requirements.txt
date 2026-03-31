@@ -1,0 +1,10 @@
+# AI Quantitative Trader — Core Dependencies
+# Install: pip install -r requirements.txt
+freqtrade==2026.2
+requests==2.33.0
+feedparser==6.0.12
+beautifulsoup4==4.14.3
+TA-Lib==0.6.8
+pandas==2.3.3
+ccxt==4.5.45
+python-telegram-bot==22.7

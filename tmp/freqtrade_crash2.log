@@ -1,0 +1,131 @@
+2026-03-30 03:35:20,121 - freqtrade - INFO - freqtrade 2026.2
+2026-03-30 03:35:22,516 - freqtrade.worker - INFO - Starting worker 2026.2
+2026-03-30 03:35:22,516 - freqtrade.configuration.load_config - INFO - Using config: .\config.json ...
+2026-03-30 03:35:22,518 - freqtrade.loggers - INFO - Enabling colorized output.
+2026-03-30 03:35:22,519 - freqtrade.loggers - INFO - Logfile configured
+2026-03-30 03:35:22,519 - freqtrade.loggers - INFO - Verbosity set to 0
+2026-03-30 03:35:22,520 - freqtrade.configuration.configuration - INFO - Runmode set to dry_run.
+2026-03-30 03:35:22,520 - freqtrade.configuration.configuration - INFO - Dry run is enabled
+2026-03-30 03:35:22,520 - freqtrade.configuration.configuration - INFO - Using DB: "sqlite:///tradesv3.dryrun.sqlite"
+2026-03-30 03:35:22,520 - freqtrade.configuration.configuration - INFO - Using max_open_trades: 3 ...
+2026-03-30 03:35:22,521 - freqtrade.configuration.configuration - INFO - Using user-data directory: H:\ai binance\user_data ...
+2026-03-30 03:35:22,522 - freqtrade.configuration.configuration - INFO - Using data directory: H:\ai binance\user_data\data\bitget ...
+2026-03-30 03:35:22,523 - freqtrade.exchange.check_exchange - INFO - Checking exchange...
+2026-03-30 03:35:22,530 - freqtrade.exchange.check_exchange - INFO - Exchange "bitget" is officially supported by the Freqtrade development team.
+2026-03-30 03:35:22,530 - freqtrade.configuration.configuration - INFO - Using pairlist from configuration.
+2026-03-30 03:35:22,532 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2026-03-30 03:35:22,533 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.45
+2026-03-30 03:35:22,545 - freqtrade.exchange.exchange - INFO - Using Exchange "Bitget"
+2026-03-30 03:35:22,810 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: bitget GET 
+https://api.bitget.com/api/v2/spot/public/coins". Retrying still for 3 times.
+2026-03-30 03:35:23,159 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: bitget GET 
+https://api.bitget.com/api/v2/spot/public/coins". Retrying still for 2 times.
+2026-03-30 03:35:23,483 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: bitget GET 
+https://api.bitget.com/api/v2/spot/public/coins". Retrying still for 1 times.
+2026-03-30 03:35:23,828 - freqtrade.exchange.common - WARNING - _load_async_markets() returned exception: "Error in reload_markets due to ExchangeNotAvailable. Message: bitget GET 
+https://api.bitget.com/api/v2/spot/public/coins". Giving up.
+2026-03-30 03:35:23,829 - freqtrade.exchange.exchange - ERROR - Could not load markets.
+Traceback (most recent call last):
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\resolver.py", line 117, in resolve
+    resp = await self._resolver.getaddrinfo(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+aiodns.error.DNSError: (11, 'Could not contact DNS servers')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\connector.py", line 1562, in _create_direct_connection
+    hosts = await self._resolve_host(host, port, traces=traces)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\connector.py", line 1178, in _resolve_host
+    return await asyncio.shield(resolved_host_task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\connector.py", line 1209, in _resolve_host_with_throttle
+    addrs = await self._resolver.resolve(host, port, family=self._family)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\resolver.py", line 126, in resolve
+    raise OSError(None, msg) from exc
+OSError: [Errno None] Could not contact DNS servers
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 241, in fetch
+    async with session_method(yarl.URL(url, encoded=True),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\client.py", line 1510, in __aenter__
+    self._resp: _RetType = await self._coro
+                           ^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\client.py", line 779, in _request
+    resp = await handler(req)
+           ^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\client.py", line 734, in _connect_and_send_request
+    conn = await self._connector.connect(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\connector.py", line 672, in connect
+    proto = await self._create_connection(req, traces, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\connector.py", line 1239, in _create_connection
+    _, proto = await self._create_direct_connection(req, traces, timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\aiohttp\connector.py", line 1568, in _create_direct_connection
+    raise ClientConnectorDNSError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorDNSError: Cannot connect to host api.bitget.com:443 ssl:default [Could not contact DNS servers]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 680, in _api_reload_markets
+    await self._api_async.load_markets(reload=reload, params={})
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 365, in load_markets
+    raise e
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 357, in load_markets
+    result = await self.markets_loading
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 322, in load_markets_helper
+    currencies = await self.fetch_currencies()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\bitget.py", line 2461, in fetch_currencies
+    response = await self.publicSpotGetV2SpotPublicCoins(params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 1028, in request
+    return await self.fetch2(path, api, method, params, headers, body, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 1022, in fetch2
+    raise e
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 1012, in fetch2
+    return await self.fetch(request['url'], request['method'], request['headers'], request['body'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\ccxt\async_support\base\exchange.py", line 281, in fetch
+    raise ExchangeNotAvailable(details) from e
+ccxt.base.errors.ExchangeNotAvailable: bitget GET https://api.bitget.com/api/v2/spot/public/coins
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 720, in reload_markets
+    retrier(self._load_async_markets, retries=retries)(reload=True)
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 191, in wrapper
+    return wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 191, in wrapper
+    return wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 191, in wrapper
+    return wrapper(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 194, in wrapper
+    raise ex
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\common.py", line 179, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 693, in _load_async_markets
+    markets = self.loop.run_until_complete(self._api_reload_markets(reload=reload))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\tony1\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "H:\ai binance\.venv\Lib\site-packages\freqtrade\exchange\exchange.py", line 684, in _api_reload_markets
+    raise TemporaryError(
+freqtrade.exceptions.TemporaryError: Error in reload_markets due to ExchangeNotAvailable. Message: bitget GET https://api.bitget.com/api/v2/spot/public/coins
+2026-03-30 03:35:23,839 - freqtrade - ERROR - Could not load markets, therefore cannot start. Please investigate the above error for more details.

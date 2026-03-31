@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logs & AI | Antigravity</title>
+  <link rel="stylesheet" href="/static/css/main.css?v=9.4">
+</head>
+<body>
+  <nav class="nav">
+    <span class="nav-brand">ANTIGRAVITY</span>
+    <div class="nav-links">
+      <a href="/trading" class="nav-link">Trading</a>
+      <a href="/logs" class="nav-link active">Logs</a>
+      <a href="/learning" class="nav-link">Learning</a>
+      <a href="/system" class="nav-link">System</a>
+    </div>
+    <div class="nav-right">
+      <span class="pulse"></span>
+      <span id="sys-status" class="badge badge-green">ONLINE</span>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Live System Logs</span>
+        <div class="log-controls">
+          <select id="log-source">
+            <option value="daemon">Daemon (Bot)</option>
+            <option value="error">Errori</option>
+            <option value="evolution">AI NVIDIA</option>
+            <option value="evolution_error">AI Errors</option>
+            <option value="dashboard">Dashboard</option>
+            <option value="cloudflare">Cloudflare</option>
+            <option value="supervisor">AI Supervisor</option>
+          </select>
+          <button id="btn-pause">⏸ Pausa</button>
+          <button id="btn-copy">📋 Copia</button>
+          <button id="btn-clear">🗑 Pulisci</button>
+        </div>
+      </div>
+      <div class="terminal" id="log-terminal">Connecting to log stream...</div>
+    </div>
+  </div>
+
+  <script src="/static/js/logs.js?v=9.4"></script>
+</body>
+</html>
+
+
+

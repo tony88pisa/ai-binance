@@ -1,0 +1,16 @@
+# TestLab Configuration - V8.1 Serious
+enabled: true
+max_bots: 5
+refresh_interval_seconds: 3600
+market_research_enabled: true
+strategy_families:
+  - mean_reversion_bot
+  - breakout_bot
+  - trend_follow_bot
+  - range_scalp_bot
+  - defensive_regime_bot
+persistence:
+  db_path: "storage/v8_platform.sqlite"
+  snapshot_dir: "storage/snapshots"
+kill_switch: false # Persisted to file
+pause_bots: []     # Persisted bot IDs

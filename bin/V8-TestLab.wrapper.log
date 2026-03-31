@@ -1,0 +1,35 @@
+2026-03-29 18:40:19,715 DEBUG - Starting WinSW in console mode
+2026-03-29 18:40:20,334 DEBUG - Starting WinSW in console mode
+2026-03-29 18:40:20,377 INFO  - Installing service 'V8.1 AI TestLab Loop (V8-TestLab)'...
+2026-03-29 18:40:20,424 INFO  - Service 'V8.1 AI TestLab Loop (V8-TestLab)' was installed successfully.
+2026-03-29 18:42:03,853 DEBUG - Starting WinSW in console mode
+2026-03-29 18:42:04,505 DEBUG - Starting WinSW in console mode
+2026-03-29 18:42:04,542 INFO  - Installing service 'V8.1 AI TestLab Loop (V8-TestLab)'...
+2026-03-29 18:42:04,547 ERROR - A service with ID 'V8-TestLab' already exists.
+2026-03-29 18:42:04,549 FATAL - Failed to install the service. Servizio specificato già esistente.
+2026-03-29 19:18:48,265 DEBUG - Starting WinSW in service mode
+2026-03-29 19:18:48,487 INFO  - Starting python services/testlab_runner.py
+2026-03-29 19:18:48,524 INFO  - Started process 21700
+2026-03-29 19:18:48,552 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-29 19:19:22,281 DEBUG - Starting WinSW in console mode
+2026-03-29 19:19:23,037 DEBUG - Starting WinSW in console mode
+2026-03-29 19:19:23,078 INFO  - Installing service 'V8.1 AI TestLab Loop (V8-TestLab)'...
+2026-03-29 19:19:23,083 ERROR - A service with ID 'V8-TestLab' already exists.
+2026-03-29 19:19:23,085 FATAL - Failed to install the service. Servizio specificato già esistente.
+2026-03-29 21:18:14,007 DEBUG - Starting WinSW in console mode
+2026-03-29 21:18:14,650 DEBUG - Starting WinSW in console mode
+2026-03-29 21:18:14,686 INFO  - Installing service 'V8.1 AI TestLab Loop (V8-TestLab)'...
+2026-03-29 21:18:14,692 ERROR - A service with ID 'V8-TestLab' already exists.
+2026-03-29 21:18:14,693 FATAL - Failed to install the service. Servizio specificato già esistente.
+2026-03-29 23:49:03,992 DEBUG - Starting WinSW in service mode
+2026-03-29 23:49:04,194 INFO  - Starting python services/testlab_runner.py
+2026-03-29 23:49:04,246 INFO  - Started process 11844
+2026-03-29 23:49:04,275 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-30 22:53:07,329 DEBUG - Starting WinSW in service mode
+2026-03-30 22:53:07,579 INFO  - Starting python services/testlab_runner.py
+2026-03-30 22:53:07,625 INFO  - Started process 9392
+2026-03-30 22:53:07,641 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-31 19:43:23,152 DEBUG - Starting WinSW in service mode
+2026-03-31 19:43:23,359 INFO  - Starting python services/testlab_runner.py
+2026-03-31 19:43:23,393 INFO  - Started process 8156
+2026-03-31 19:43:23,412 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender

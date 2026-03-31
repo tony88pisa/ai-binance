@@ -1,0 +1,8 @@
+2026-03-30 12:21:50,565 - storage.repository - INFO - V8.1.1 Database initialized at H:\ai binance\storage\v8_platform.sqlite
+2026-03-30 12:21:50,565 - EVOLUTION_LOOP - INFO - --- Evolution Loop Heartbeat ---
+2026-03-30 12:21:50,575 - EVOLUTION_LOOP - ERROR - Sync error: no such column: profit_ratio
+2026-03-30 12:21:50,576 - EVOLUTION_LOOP - INFO - Soglia evoluzione raggiunta. Avvio analisi pattern...
+2026-03-30 12:21:50,578 - ai.dataset.build_training_sets - INFO - Dataset V8.1.1 generated with 2 entries at H:\ai binance\ai\ai\dataset\V811_1774866110.jsonl
+2026-03-30 12:21:50,582 - EVOLUTION_LOOP - INFO - Fase 2: Avvio Review NVIDIA Teacher Batch...
+2026-03-30 12:21:50,582 - ai.nvidia_client - INFO - Chiamata NVIDIA Teacher (Modello: nvidia/nemotron-3-super-120b-a12b). Tokens stimati: 1198
+2026-03-30 12:22:51,094 - ai.nvidia_client - ERROR - Eccezione durante chiamata NVIDIA: HTTPSConnectionPool(host='integrate.api.nvidia.com', port=443): Read timed out. (read timeout=60)

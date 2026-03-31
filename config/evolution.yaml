@@ -1,0 +1,6 @@
+enabled: true
+evolution_interval: weekly
+target_winrate: 55.0
+max_training_time_hours: 2
+vram_limit_gb: 12
+active_model_alias: "qwen-trading"

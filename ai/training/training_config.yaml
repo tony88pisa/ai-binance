@@ -1,0 +1,22 @@
+# Training Configuration V8.1.1 - RTX 5080 Optimized (YAML)
+base_model: "unsloth/Qwen2.5-1.5B-Instruct-bnb-4bit"
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj"]
+training:
+  learning_rate: 2e-4
+  batch_size: 4
+  accumulation_steps: 4
+  max_steps: 120
+  optim: "adamw_8bit"
+  weight_decay: 0.01
+dataset:
+  train_split: 0.8
+  val_split: 0.1
+  holdout_split: 0.1
+export:
+  format: "gguf"
+  quantization: "q4_k_m"
+  ollama_template: "qwen-v811"

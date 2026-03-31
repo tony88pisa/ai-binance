@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning | Antigravity</title>
+  <link rel="stylesheet" href="/static/css/main.css?v=9.4">
+</head>
+<body>
+  <nav class="nav">
+    <span class="nav-brand">ANTIGRAVITY</span>
+    <div class="nav-links">
+      <a href="/trading" class="nav-link">Trading</a>
+      <a href="/logs" class="nav-link">Logs</a>
+      <a href="/learning" class="nav-link active">Learning</a>
+      <a href="/system" class="nav-link">System</a>
+    </div>
+    <div class="nav-right">
+      <span id="lab-badge" class="badge badge-amber">LAB ISOLATED</span>
+    </div>
+  </nav>
+
+  <div class="main">
+    <!-- KPI Summary -->
+    <div class="grid-4" id="kpi-grid">
+      <div class="kpi-box"><div class="kpi-value" id="kpi-outcomes">—</div><div class="kpi-label">Outcomes Totali</div></div>
+      <div class="kpi-box"><div class="kpi-value" id="kpi-winrate">—</div><div class="kpi-label">Winrate %</div></div>
+      <div class="kpi-box"><div class="kpi-value" id="kpi-pnl">—</div><div class="kpi-label">PnL Totale %</div></div>
+      <div class="kpi-box"><div class="kpi-value" id="kpi-skills">—</div><div class="kpi-label">Skill Candidates</div></div>
+    </div>
+
+    <!-- Separation Notice -->
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header">
+        <span class="card-title">Separazione LIVE / LAB</span>
+        <span class="badge badge-green">Confermata</span>
+      </div>
+      <div class="card-body">
+        <p style="color:var(--text-secondary);font-size:13px;">
+          Il Laboratorio è <strong style="color:var(--green)">completamente isolato</strong> dal trading live.
+          Le strategie candidate vengono generate e validate in ambiente separato.
+          La promozione a LIVE è <strong style="color:var(--amber)">solo manuale</strong>.
+          Nessuna strategia viene promossa automaticamente.
+        </p>
+      </div>
+    </div>
+
+    <!-- Asset Performance -->
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header">
+        <span class="card-title">Performance per Asset</span>
+      </div>
+      <div class="card-body table-wrap">
+        <table>
+          <thead><tr><th>Asset</th><th>Trades</th><th>Wins</th><th>PnL Totale %</th></tr></thead>
+          <tbody id="asset-perf-body">
+            <tr class="empty-row"><td colspan="4">Caricamento...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Skill Candidates -->
+    <div class="card" style="margin-top:20px;">
+      <div class="card-header">
+        <span class="card-title">Skill Candidates</span>
+        <span class="badge badge-amber">Promozione Manuale</span>
+      </div>
+      <div class="card-body table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Nome</th><th>Stato</th></tr></thead>
+          <tbody id="skills-body">
+            <tr class="empty-row"><td colspan="3">Nessun candidato generato.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/learning.js?v=9.4"></script>
+</body>
+</html>
+
+
+

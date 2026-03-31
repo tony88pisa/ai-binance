@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trading Live | Antigravity</title>
+  <link rel="stylesheet" href="/static/css/main.css?v=9.4">
+</head>
+<body>
+  <nav class="nav">
+    <span class="nav-brand">ANTIGRAVITY</span>
+    <div class="nav-links">
+      <a href="/trading" class="nav-link active">Trading</a>
+      <a href="/logs" class="nav-link">Logs</a>
+      <a href="/learning" class="nav-link">Learning</a>
+      <a href="/system" class="nav-link">System</a>
+    </div>
+    <div class="nav-right">
+      <span class="pulse"></span>
+      <span id="sys-status" class="badge badge-green">ONLINE</span>
+      <span id="sys-mode" class="badge badge-blue">BOOT</span>
+    </div>
+  </nav>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-label">Wallet Iniziale</span>
+      <span class="stat-value c-muted" id="wallet-init">€ 50.00</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Wallet Attuale</span>
+      <span class="stat-value" id="wallet-now">€ ...</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">PnL €</span>
+      <span class="stat-value" id="pnl-eur">...</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">PnL %</span>
+      <span class="stat-value" id="pnl-pct">...</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Trades Aperti</span>
+      <span class="stat-value c-blue" id="open-cnt">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Trades Chiusi</span>
+      <span class="stat-value" id="closed-cnt">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Heartbeat</span>
+      <span class="stat-value c-muted" id="hb-val">---</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- AI Decision Engine -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">AI Decision Engine</span>
+        <span class="badge badge-green">Real-time</span>
+      </div>
+      <div class="card-body">
+        <div class="grid-4" id="asset-grid">
+          <div class="asset-card"><span class="c-muted">Loading assets...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Open Positions -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Posizioni Aperte</span>
+        <span class="badge badge-blue" id="pos-badge">0 attive</span>
+      </div>
+      <div class="card-body table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Entry</th>
+              <th>Corrente</th>
+              <th>Size %</th>
+              <th>PnL %</th>
+              <th>Trend</th>
+              <th>Aperto</th>
+            </tr>
+          </thead>
+          <tbody id="positions-body">
+            <tr class="empty-row"><td colspan="7">Nessuna posizione aperta.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI Supervisor Status -->
+    <div class="card" style="margin-top:20px; border-left: 4px solid var(--amber);" id="supervisor-card">
+      <div class="card-header">
+        <span class="card-title">🛡️ AI SUPERVISOR STATUS</span>
+        <span id="sup-last-check" class="badge">Checking...</span>
+      </div>
+      <div class="card-body">
+        <div class="grid-4">
+          <div class="kpi-box">
+            <div class="kpi-label">Override Stop</div>
+            <div class="badge" id="sup-stop">---</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Max Trades</div>
+            <div class="stat-value" id="sup-max-trades">---</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Min Confidence</div>
+            <div class="stat-value" id="sup-min-conf">---</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">Close Losers</div>
+            <div class="stat-value" id="sup-close-threshold">---</div>
+          </div>
+        </div>
+        <div id="sup-reasoning" style="margin-top:15px; font-size:13px; color:var(--text-secondary); line-height:1.4; padding:10px; background:rgba(0,0,0,0.2); border-radius:4px;">
+          "In attesa del primo ciclo di supervisione..."
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent History -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Ultimi Trade Chiusi</span>
+      </div>
+      <div class="card-body table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Asset</th>
+              <th>Entry</th>
+              <th>PnL %</th>
+              <th>Esito</th>
+              <th>Chiuso</th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <tr class="empty-row"><td colspan="5">Nessun trade concluso.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/trading.js?v=9.4"></script>
+</body>
+</html>
+
+
+

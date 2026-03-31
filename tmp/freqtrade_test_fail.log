@@ -1,0 +1,92 @@
+2026-03-30 03:39:32,774 - freqtrade - INFO - freqtrade 2026.2
+2026-03-30 03:39:35,217 - freqtrade.worker - INFO - Starting worker 2026.2
+2026-03-30 03:39:35,217 - freqtrade.configuration.load_config - INFO - Using config: .\config.json ...
+2026-03-30 03:39:35,218 - freqtrade.configuration.environment_vars - INFO - Loading variable 'FREQTRADE__API_SERVER__JWT_SECRET_KEY'
+2026-03-30 03:39:35,218 - freqtrade.configuration.environment_vars - INFO - Key parts: ['API_SERVER', 'JWT_SECRET_KEY']
+2026-03-30 03:39:35,218 - freqtrade.configuration.environment_vars - INFO - Loading variable 'FREQTRADE__API_SERVER__PASSWORD'
+2026-03-30 03:39:35,218 - freqtrade.configuration.environment_vars - INFO - Key parts: ['API_SERVER', 'PASSWORD']
+2026-03-30 03:39:35,220 - freqtrade.configuration.environment_vars - INFO - Loading variable 'FREQTRADE__API_SERVER__USERNAME'
+2026-03-30 03:39:35,220 - freqtrade.configuration.environment_vars - INFO - Key parts: ['API_SERVER', 'USERNAME']
+2026-03-30 03:39:35,220 - freqtrade.configuration.environment_vars - INFO - Loading variable 'FREQTRADE__TELEGRAM__TOKEN'
+2026-03-30 03:39:35,221 - freqtrade.configuration.environment_vars - INFO - Key parts: ['TELEGRAM', 'TOKEN']
+2026-03-30 03:39:35,223 - freqtrade.loggers - INFO - Enabling colorized output.
+2026-03-30 03:39:35,223 - freqtrade.loggers - INFO - Logfile configured
+2026-03-30 03:39:35,223 - freqtrade.loggers - INFO - Verbosity set to 0
+2026-03-30 03:39:35,224 - freqtrade.configuration.configuration - INFO - Runmode set to dry_run.
+2026-03-30 03:39:35,224 - freqtrade.configuration.configuration - INFO - Dry run is enabled
+2026-03-30 03:39:35,226 - freqtrade.configuration.configuration - INFO - Using DB: "sqlite:///tradesv3.dryrun.sqlite"
+2026-03-30 03:39:35,226 - freqtrade.configuration.configuration - INFO - Using max_open_trades: 3 ...
+2026-03-30 03:39:35,227 - freqtrade.configuration.configuration - INFO - Using user-data directory: H:\ai binance\user_data ...
+2026-03-30 03:39:35,228 - freqtrade.configuration.configuration - INFO - Using data directory: H:\ai binance\user_data\data\bitget ...
+2026-03-30 03:39:35,229 - freqtrade.exchange.check_exchange - INFO - Checking exchange...
+2026-03-30 03:39:35,236 - freqtrade.exchange.check_exchange - INFO - Exchange "bitget" is officially supported by the Freqtrade development team.
+2026-03-30 03:39:35,237 - freqtrade.configuration.configuration - INFO - Using pairlist from configuration.
+2026-03-30 03:39:35,238 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2026-03-30 03:39:35,238 - freqtrade.exchange.exchange - INFO - Using CCXT 4.5.45
+2026-03-30 03:39:35,252 - freqtrade.exchange.exchange - INFO - Using Exchange "Bitget"
+2026-03-30 03:39:37,057 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Bitget'...
+2026-03-30 03:39:37,061 - freqtrade.resolvers.iresolver - INFO - Using resolved strategy OllamaHybridStrategy from 'H:\ai binance\user_data\strategies\OllamaHybridStrategy.py'...
+2026-03-30 03:39:37,062 - freqtrade.strategy.hyper - INFO - Found no parameter file.
+2026-03-30 03:39:37,062 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_currency' with value from the configuration: USDC.
+2026-03-30 03:39:37,063 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'stake_amount' with value from the configuration: 15.
+2026-03-30 03:39:37,063 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'unfilledtimeout' with value from the configuration: {'entry': 10, 'exit': 30}.
+2026-03-30 03:39:37,063 - freqtrade.resolvers.strategy_resolver - INFO - Override strategy 'max_open_trades' with value from the configuration: 3.
+2026-03-30 03:39:37,064 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using minimal_roi: {'0': 0.05}
+2026-03-30 03:39:37,064 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using timeframe: 5m
+2026-03-30 03:39:37,065 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stoploss: -0.1
+2026-03-30 03:39:37,065 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop: False
+2026-03-30 03:39:37,066 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_stop_positive_offset: 0.0
+2026-03-30 03:39:37,066 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using trailing_only_offset_is_reached: False
+2026-03-30 03:39:37,066 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_custom_stoploss: False
+2026-03-30 03:39:37,067 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using process_only_new_candles: True
+2026-03-30 03:39:37,067 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_types: {'entry': 'limit', 'exit': 'limit', 'stoploss': 'limit', 'stoploss_on_exchange': False, 
+'stoploss_on_exchange_interval': 60}
+2026-03-30 03:39:37,068 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using order_time_in_force: {'entry': 'GTC', 'exit': 'GTC'}
+2026-03-30 03:39:37,068 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_currency: USDC
+2026-03-30 03:39:37,068 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using stake_amount: 15
+2026-03-30 03:39:37,069 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using startup_candle_count: 20
+2026-03-30 03:39:37,069 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using unfilledtimeout: {'entry': 10, 'exit': 30}
+2026-03-30 03:39:37,070 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using use_exit_signal: True
+2026-03-30 03:39:37,070 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_only: False
+2026-03-30 03:39:37,070 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_roi_if_entry_signal: False
+2026-03-30 03:39:37,071 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using exit_profit_offset: 0.0
+2026-03-30 03:39:37,071 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using disable_dataframe_checks: False
+2026-03-30 03:39:37,072 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using ignore_buying_expired_candle_after: 0
+2026-03-30 03:39:37,072 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using position_adjustment_enable: False
+2026-03-30 03:39:37,073 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_entry_position_adjustment: -1
+2026-03-30 03:39:37,073 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_open_trades: 3
+2026-03-30 03:39:37,073 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2026-03-30 03:39:37,122 - freqtrade.wallets - INFO - Wallets synced.
+2026-03-30 03:39:37,587 - freqtrade.rpc.rpc_manager - INFO - Enabling rpc.telegram ...
+2026-03-30 03:39:37,830 - freqtrade.rpc.rpc_manager - INFO - Enabling rpc.api_server
+2026-03-30 03:39:38,098 - freqtrade.rpc.api_server.webserver - INFO - Starting HTTP Server at 127.0.0.1:8080
+2026-03-30 03:39:38,099 - freqtrade.rpc.api_server.webserver - INFO - Starting Local Rest Server.
+2026-03-30 03:39:38,120 - uvicorn.error - INFO - Started server process [18236]
+2026-03-30 03:39:38,122 - uvicorn.error - INFO - Waiting for application startup.
+2026-03-30 03:39:38,122 - uvicorn.error - INFO - Application startup complete.
+2026-03-30 03:39:38,123 - uvicorn.error - INFO - Uvicorn running on http://127.0.0.1:8080 (Press CTRL+C to quit)
+2026-03-30 03:39:38,134 - freqtrade.resolvers.iresolver - INFO - Using resolved pairlist StaticPairList from 'H:\ai binance\.venv\Lib\site-packages\freqtrade\plugins\pairlist\StaticPairList.py'...
+2026-03-30 03:39:38,135 - freqtrade.freqtradebot - INFO - Starting initial pairlist refresh
+2026-03-30 03:39:38,139 - freqtrade.plugins.pairlistmanager - INFO - Whitelist with 3 pairs: ['BTC/USDC', 'ETH/USDC', 'SOL/USDC']
+2026-03-30 03:39:38,139 - freqtrade.freqtradebot - INFO - Initial Pairlist refresh took 0.00s
+2026-03-30 03:39:38,140 - freqtrade.plugins.protectionmanager - INFO - No protection Handlers defined.
+2026-03-30 03:39:38,140 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': status, 'status': 'running'}
+2026-03-30 03:39:38,141 - freqtrade.worker - INFO - Changing state to: RUNNING
+2026-03-30 03:39:38,145 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': warning, 'status': 'Dry run is enabled. All trades are simulated.'}
+2026-03-30 03:39:38,147 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': startup, 'status': "*Exchange:* `bitget`\n*Stake per trade:* `15 USDC`\n*Minimum ROI:* `{'0': 
+0.05}`\n*Stoploss:* `-0.1`\n*Position adjustment:* `Off`\n*Timeframe:* `5m`\n*Strategy:* `OllamaHybridStrategy`"}
+2026-03-30 03:39:38,147 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': startup, 'status': "Searching for USDC pairs to buy and sell based on [{'StaticPairList': 
+'StaticPairList'}]"}
+2026-03-30 03:39:38,681 - freqtrade.rpc.telegram - INFO - rpc.telegram is listening for following commands: [['status'], ['profit'], ['balance'], ['start'], ['stop'], ['forceexit', 'forcesell', 'fx'],
+['forcebuy', 'forcelong'], ['forceshort'], ['reload_trade'], ['trades'], ['delete'], ['cancel_open_order', 'coo'], ['performance'], ['buys', 'entries'], ['exits', 'sells'], ['mix_tags'], ['stats'], 
+['daily'], ['weekly'], ['monthly'], ['count'], ['locks'], ['delete_locks', 'unlock'], ['reload_conf', 'reload_config'], ['show_conf', 'show_config'], ['pause', 'stopbuy', 'stopentry'], ['whitelist'], 
+['blacklist'], ['bl_delete', 'blacklist_delete'], ['logs'], ['health'], ['help'], ['version'], ['marketdir'], ['order'], ['list_custom_data'], ['tg_info'], ['profit_long'], ['profit_short']]
+2026-03-30 03:39:38,792 - OllamaHybridStrategy - WARNING - Research layer irraggiungibile per BTC/USDC: name 'read_state' is not defined
+2026-03-30 03:39:38,844 - telegram.ext.Application - INFO - Application started
+2026-03-30 03:39:42,058 - OllamaHybridStrategy - INFO - OLLAMA EXPLAIN [BTC/USDC] -> WAIT 50% | Tech: N/D | Macro: N/D
+2026-03-30 03:39:42,064 - OllamaHybridStrategy - WARNING - Research layer irraggiungibile per ETH/USDC: name 'read_state' is not defined
+2026-03-30 03:39:45,341 - OllamaHybridStrategy - INFO - OLLAMA EXPLAIN [ETH/USDC] -> WAIT 50% | Tech: N/D | Macro: N/D
+2026-03-30 03:39:45,345 - OllamaHybridStrategy - WARNING - Research layer irraggiungibile per SOL/USDC: name 'read_state' is not defined
+2026-03-30 03:39:48,614 - OllamaHybridStrategy - INFO - OLLAMA EXPLAIN [SOL/USDC] -> WAIT 50% | Tech: N/D | Macro: N/D
+2026-03-30 03:39:48,624 - freqtrade.worker - INFO - Bot heartbeat. PID=18236, version='2026.2', state='RUNNING'
+2026-03-30 03:40:51,008 - freqtrade.worker - INFO - Bot heartbeat. PID=18236, version='2026.2', state='RUNNING'

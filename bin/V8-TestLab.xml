@@ -1,0 +1,10 @@
+<service>
+  <id>V8-TestLab</id>
+  <name>V8.1 AI TestLab Loop</name>
+  <description>Continuous Strategy Discovery and Pattern Learning (H:\ai binance)</description>
+  <executable>python</executable>
+  <arguments>services/testlab_runner.py</arguments>
+  <log mode="roll"></log>
+  <workingdirectory>H:\ai binance</workingdirectory>
+  <startmode>Automatic</startmode>
+</service>

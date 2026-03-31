@@ -1,0 +1,301 @@
+REAL DB FILE (B): storage/v8_platform.sqlite
+TABLES FOUND: ['bot_sessions', 'model_versions', 'strategy_versions', 'live_deployments', 'sqlite_sequence', 'strategy_patterns', 'learned_changes', 'decisions', 'trade_outcomes', 'service_state', 'training_runs', 'validation_runs']
+
+--- PRAGMA table_info(decisions) ---
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "timestamp_utc",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "bot_session_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "strategy_tag",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "model_tag",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "asset",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "action",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "confidence",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 8,
+    "name": "thesis",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 9,
+    "name": "rsi_5m",
+    "type": "REAL",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 10,
+    "name": "macd_5m",
+    "type": "REAL",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 11,
+    "name": "market_regime",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 12,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'pending'",
+    "pk": 0
+  }
+]
+
+--- PRAGMA table_info(trade_outcomes) ---
+[
+  {
+    "cid": 0,
+    "name": "id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "decision_id",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "asset",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "open_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "closed_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "realized_pnl_pct",
+    "type": "REAL",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 6,
+    "name": "realized_pnl_abs",
+    "type": "REAL",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 7,
+    "name": "was_profitable",
+    "type": "BOOLEAN",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+
+--- PRAGMA table_info(service_state) ---
+[
+  {
+    "cid": 0,
+    "name": "service_name",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "last_heartbeat",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "pid",
+    "type": "INTEGER",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "config_json",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  }
+]
+
+--- PRAGMA table_info(strategy_versions) ---
+[
+  {
+    "cid": 0,
+    "name": "version_tag",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 1
+  },
+  {
+    "cid": 1,
+    "name": "parent_tag",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 2,
+    "name": "family",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 3,
+    "name": "rules_json",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 4,
+    "name": "created_at",
+    "type": "TEXT",
+    "notnull": 1,
+    "dflt_value": null,
+    "pk": 0
+  },
+  {
+    "cid": 5,
+    "name": "status",
+    "type": "TEXT",
+    "notnull": 0,
+    "dflt_value": "'candidate'",
+    "pk": 0
+  }
+]
+
+--- REAL ROW EVIDENCE (C) ---
+service_state: {
+  "service_name": "evolution_loop",
+  "status": "raccolta_dati",
+  "last_heartbeat": "2026-03-29T23:20:17.829139+00:00",
+  "pid": 27500,
+  "config_json": "{\"phase\": \"Raccolta Dati in Corso\", \"trades\": 2, \"threshold\": 15, \"message\": \"Attendere accumulo prove per estrarre pattern validi.\"}"
+}
+trade_outcomes: {
+  "id": "TEST-OUT",
+  "decision_id": "TEST-DEC",
+  "asset": "BTC/USDC",
+  "open_at": "18:30",
+  "closed_at": "19:00",
+  "realized_pnl_pct": 2.5,
+  "realized_pnl_abs": 12.0,
+  "was_profitable": 1
+}
+strategy_versions: {
+  "version_tag": "STRAT-TEST_FAMILY-1774803405",
+  "parent_tag": "",
+  "family": "TEST_FAMILY",
+  "rules_json": "{\"filter\": \"rsi > 30\"}",
+  "created_at": "2026-03-29T16:56:45.275122+00:00",
+  "status": "live"
+}

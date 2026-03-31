@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "H:\ai binance\scripts\evolution_loop.py", line 26, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'

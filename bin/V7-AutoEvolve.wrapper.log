@@ -1,0 +1,12 @@
+2026-03-29 18:02:56,928 DEBUG - Starting WinSW in console mode
+2026-03-29 18:02:57,766 DEBUG - Starting WinSW in console mode
+2026-03-29 18:02:57,807 INFO  - Installing service 'AI Bot V7.0 - AutoEvolve Orchestrator (V7-AutoEvolve)'...
+2026-03-29 18:02:57,868 INFO  - Service 'AI Bot V7.0 - AutoEvolve Orchestrator (V7-AutoEvolve)' was installed successfully.
+2026-03-30 22:53:07,335 DEBUG - Starting WinSW in service mode
+2026-03-30 22:53:07,599 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m services.autoevolve
+2026-03-30 22:53:07,652 INFO  - Started process 9472
+2026-03-30 22:53:07,669 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender
+2026-03-31 19:43:23,149 DEBUG - Starting WinSW in service mode
+2026-03-31 19:43:23,371 INFO  - Starting H:\ai binance\.venv\Scripts\python.exe -m services.autoevolve
+2026-03-31 19:43:23,407 INFO  - Started process 9208
+2026-03-31 19:43:23,424 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.RollingLogAppender

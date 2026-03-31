@@ -1,0 +1,426 @@
+{
+  "count": 60,
+  "trades": [
+    {
+      "id": "DEC-935114fa",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:17:34.247598+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-15b55b89",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:18:08.877553+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-178a8a01",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:18:43.280985+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-d8e83473",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:19:17.479812+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-a33f3693",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:19:51.783743+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-a593d28d",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:20:26.255985+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-1e2859b2",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:21:00.560585+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-0c97b6c3",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:21:34.834903+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-eb25aca4",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:22:09.087661+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-dba517bb",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:22:43.327633+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-3c0eea58",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:23:17.564994+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-65a527a5",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:23:52.339216+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-97e6b280",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:24:26.526784+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-aa84ab6a",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:25:00.754119+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-934e8c41",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:25:34.990486+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-3d1e318d",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:26:09.197648+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-1de6de1e",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:26:43.451988+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-64ee6fdd",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:27:17.686045+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-b0d1d02a",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:27:51.866703+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-d2d74e63",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:28:26.098741+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-9a0d3c80",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:29:00.338111+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-d3b3f439",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:29:34.562807+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-d5cb2f19",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:30:08.757383+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-c439674b",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:30:42.973767+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-cf783714",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:31:17.195259+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-d6251bf0",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:31:51.400006+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-1e3d9d71",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:32:25.607280+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-75802f88",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:32:59.819943+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-ccc2a31e",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:33:34.684917+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-6a78e48b",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:34:08.996287+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-69aac8ec",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:34:43.273322+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-686eef46",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:35:17.596394+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-f8fd2485",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:35:52.293777+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-f381b39d",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:36:26.594309+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-70a7c0ef",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:37:00.822936+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-eed6a9dc",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:37:35.046283+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-58d9a86a",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:38:09.253270+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-de140599",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:38:43.476978+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-a97929e1",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:39:17.669375+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-832cd8c3",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:39:51.894002+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-ebd7f28c",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:40:26.272825+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-0bffe81b",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:41:00.617802+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-2b942d79",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:41:34.836869+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-5649ea2b",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:42:09.093864+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-50fdd7d9",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:42:43.270576+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-bc0d6f0a",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:43:17.509239+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-2002553f",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:43:51.741059+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-0200b6db",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:44:25.948255+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-a5e6318b",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:45:00.385635+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-8709af66",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:45:34.613302+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-9e9ab647",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:46:08.803312+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-ba5b370a",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:46:43.021486+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-ad3ccf86",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:47:17.254007+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-a05f88cd",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:47:51.455484+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-67c97ba6",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:48:25.675141+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-1c6cd31c",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:48:59.878579+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-1ef7cb32",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:49:34.104018+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-fd66be62",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:50:08.380044+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-1d749339",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:50:42.652262+00:00",
+      "status": "OPEN"
+    },
+    {
+      "id": "DEC-2ae5b7d1",
+      "asset": "ETH/USDT",
+      "action": "buy",
+      "timestamp": "2026-03-31T09:51:16.933078+00:00",
+      "status": "OPEN"
+    }
+  ],
+  "sql_proposal": "DELETE FROM decisions WHERE status='OPEN' AND timestamp < datetime('now', '-30 minutes')"
+}

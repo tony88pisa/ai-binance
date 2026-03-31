@@ -1,0 +1,60 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.7, pytest-9.0.2, pluggy-1.6.0 -- H:\ai binance\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: H:\ai binance
+plugins: anyio-4.13.0
+collecting ... collected 25 items
+
+tests/test_core.py::TestAgentMessage::test_create_message PASSED         [  4%]
+tests/test_core.py::TestAgentMessage::test_serialize_roundtrip PASSED    [  8%]
+tests/test_core.py::TestAgentMessage::test_to_json PASSED                [ 12%]
+tests/test_core.py::TestMarketIntelligence::test_defaults PASSED         [ 16%]
+tests/test_core.py::TestMarketIntelligence::test_serialize PASSED        [ 20%]
+tests/test_core.py::TestTradeProposal::test_create PASSED                [ 24%]
+tests/test_core.py::TestRiskAssessment::test_approved PASSED             [ 28%]
+tests/test_core.py::TestSettings::test_load_settings PASSED              [ 32%]
+tests/test_core.py::TestSettings::test_settings_frozen PASSED            [ 36%]
+tests/test_core.py::TestConfigValidator::test_validate_current_config FAILED [ 40%]
+tests/test_core.py::TestConfigValidator::test_validate_detects_unlimited_stake PASSED [ 44%]
+tests/test_core.py::TestConfigValidator::test_validate_detects_open_binding FAILED [ 48%]
+tests/test_core.py::TestConfigValidator::test_validate_blocks_mock_mode_live FAILED [ 52%]
+tests/test_core.py::TestAIParser::test_valid_json_buy PASSED             [ 56%]
+tests/test_core.py::TestAIParser::test_valid_json_hold PASSED            [ 60%]
+tests/test_core.py::TestAIParser::test_json_with_markdown PASSED         [ 64%]
+tests/test_core.py::TestAIParser::test_thinking_block PASSED             [ 68%]
+tests/test_core.py::TestAIParser::test_legacy_format PASSED              [ 72%]
+tests/test_core.py::TestAIParser::test_confidence_clamped PASSED         [ 76%]
+tests/test_core.py::TestAIParser::test_invalid_action_defaults_hold PASSED [ 80%]
+tests/test_core.py::TestAIParser::test_garbage_input PASSED              [ 84%]
+tests/test_core.py::TestAIParser::test_empty_input PASSED                [ 88%]
+tests/test_core.py::TestSecurity::test_config_not_exposed PASSED         [ 92%]
+tests/test_core.py::TestSecurity::test_gitignore_protects_secrets PASSED [ 96%]
+tests/test_core.py::TestSecurity::test_env_example_exists PASSED         [100%]
+
+================================== FAILURES ===================================
+______________ TestConfigValidator.test_validate_current_config _______________
+tests\test_core.py:119: in test_validate_current_config
+    issues = validate_config(config_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+config\validator.py:102: in validate_config
+    validation_mode = os.getenv("VALIDATION_MODE", "real").lower()
+                      ^^
+E   NameError: name 'os' is not defined. Did you forget to import 'os'
+___________ TestConfigValidator.test_validate_detects_open_binding ____________
+tests\test_core.py:135: in test_validate_detects_open_binding
+    issues = validate_config(bad_config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+config\validator.py:102: in validate_config
+    validation_mode = os.getenv("VALIDATION_MODE", "real").lower()
+                      ^^
+E   NameError: name 'os' is not defined. Did you forget to import 'os'
+___________ TestConfigValidator.test_validate_blocks_mock_mode_live ___________
+tests\test_core.py:144: in test_validate_blocks_mock_mode_live
+    assert any("Cannot use VALIDATION_MODE=mock" in i.message for i in issues)
+E   assert False
+E    +  where False = any(<generator object TestConfigValidator.test_validate_blocks_mock_mode_live.<locals>.<genexpr> at 0x000001F4A4EB8BA0>)
+=========================== short test summary info ===========================
+FAILED tests/test_core.py::TestConfigValidator::test_validate_current_config
+FAILED tests/test_core.py::TestConfigValidator::test_validate_detects_open_binding
+FAILED tests/test_core.py::TestConfigValidator::test_validate_blocks_mock_mode_live
+======================== 3 failed, 22 passed in 0.46s =========================

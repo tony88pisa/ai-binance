@@ -1,0 +1,12 @@
+<service>
+  <id>V8-Dashboard</id>
+  <name>V8.1 AI Dashboard</name>
+  <description>V8.1.1 Unified Dashboard (NO-DOCKER)</description>
+  <executable>H:\ai binance\.venv\Scripts\python.exe</executable>
+  <arguments>-m uvicorn dashboard.app:app --host 0.0.0.0 --port 8086</arguments>
+  <workingdirectory>H:\ai binance</workingdirectory>
+  <logmode>roll</logmode>
+  <onfailure action="restart" delay="15 sec"/>
+  <stopparentprocessfirst>true</stopparentprocessfirst>
+  <startmode>Automatic</startmode>
+</service>

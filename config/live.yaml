@@ -1,0 +1,19 @@
+# Live Configuration - V8.1 Serious (Production Only)
+enabled: true
+stake_currency: "USDC"
+max_open_trades: 3
+max_stake_abs: 50.0
+max_stake_pct: 0.33
+stoploss: -0.05
+trailing_stop: true
+circuit_breaker:
+  max_consecutive_losses: 3
+  daily_loss_limit_pct: -0.10
+promotion_gate:
+  manual_approval_required: true
+  min_win_rate_validation: 0.55
+  min_trades_validation: 30
+monitoring:
+  slack_enabled: false
+  telegram_enabled: true
+# Active model is now managed by the registry, not hardcoded here.
