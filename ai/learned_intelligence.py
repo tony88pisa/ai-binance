@@ -12,17 +12,17 @@ class LearnedIntelligence:
 
     def summarize_today(self) -> Dict:
         """REAL V8.1.1 summarized insights from SQLite database."""
-        with self.repo._get_connection() as conn:
+        with self.repo._conn() as conn:
             # 1. Fetch performance by Market Regime (REAL SQL)
             regime_stats = conn.execute(
-                """SELECT market_regime, 
+                """SELECT regime as market_regime, 
                           COUNT(*) as total_trades, 
                           AVG(realized_pnl_pct) as avg_pnl, 
                           AVG(CAST(was_profitable AS FLOAT)) as win_rate
                    FROM decisions d
                    JOIN trade_outcomes o ON d.id = o.decision_id
                    WHERE o.closed_at >= date('now', 'start of day')
-                   GROUP BY market_regime
+                   GROUP BY regime
                    ORDER BY avg_pnl DESC"""
             ).fetchall()
             
@@ -50,7 +50,7 @@ class LearnedIntelligence:
 
     def list_learned_changes(self) -> List[Dict]:
         """Fetch real history of strategy evolutions."""
-        with self.repo._get_connection() as conn:
+        with self.repo._conn() as conn:
             rows = conn.execute(
                 "SELECT * FROM learned_changes ORDER BY created_at DESC LIMIT 10"
             ).fetchall()

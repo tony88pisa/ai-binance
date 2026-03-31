@@ -151,7 +151,33 @@ def run_daemon():
 
                     asset = sym.replace("USDT", "/USDT")
                     intel = MarketIntelligence(asset, price, rsi5, rsi1h, macd5, macd1h, atr5)
-                    decision = brain.evaluate(intel)
+                    
+                    # 1. Calcoli matematici e di regime da LiveBrain
+                    live_decision = brain.evaluate(intel)
+                    
+                    # 2. Informa l'AI sul regime corrente
+                    intel.market_regime = live_decision["regime"]
+                    
+                    # 3. Interroga Ollama (Decision Engine)
+                    import ai.decision_engine as decision_engine
+                    ai_decision = decision_engine.evaluate(intel, repo)
+                    
+                    # 4. Merge dei dati o Fallback
+                    if "model_unreachable" in ai_decision.risk_flags:
+                        decision = live_decision
+                    else:
+                        decision = {
+                            "decision": ai_decision.decision.value,
+                            "confidence": ai_decision.confidence,
+                            "regime": live_decision["regime"],
+                            "consensus_score": live_decision["consensus_score"],
+                            "position_size_pct": live_decision["position_size_pct"],
+                            "atr_stop_distance": live_decision["atr_stop_distance"],
+                            "thesis": ai_decision.thesis,
+                            "technical_basis": ai_decision.technical_basis,
+                            "risk_flags": ai_decision.risk_flags,
+                            "why_not_trade": ""
+                        }
                     
                     current_market_states[asset] = {"price": price, "regime": decision["regime"]}
 

@@ -13,7 +13,7 @@ if (!$ollama_proc) {
 
 # 2. Dashboard
 Write-Host "[2/6] Avvio Dashboard (Port 8087 - Modulo 11)..." -ForegroundColor Yellow
-$dashboard_proc = Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "-m uvicorn dashboard.app-11:app --host 0.0.0.0 --port 8087" -RedirectStandardOutput "logs\dashboard.log" -RedirectStandardError "logs\dashboard_error.log" -WindowStyle Hidden -PassThru
+$dashboard_proc = Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "-m uvicorn dashboard.app:app --host 0.0.0.0 --port 8087" -RedirectStandardOutput "logs\dashboard.log" -RedirectStandardError "logs\dashboard_error.log" -WindowStyle Hidden -PassThru
 
 # 2.b Market Daemon (Phase 3 Live updates)
 Write-Host "[3/6] Avvio Market Daemon (Dati in tempo reale)..." -ForegroundColor Yellow
@@ -21,7 +21,7 @@ Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "daemon_market_update.p
 
 # 4. Freqtrade (Port 8080)
 Write-Host "[4/6] Avvio Freqtrade Engine (START_FREQTRADE.ps1)..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList "-ExecutionPolicy Bypass -File START_FREQTRADE.ps1" -WindowStyle Hidden
+Start-Process pwsh -ArgumentList "-ExecutionPolicy Bypass -File START_FREQTRADE.ps1" -WindowStyle Hidden
 
 # 5. Evolution Loop
 Write-Host "[5/6] Avvio Evolution Loop (NVIDIA Teacher)..." -ForegroundColor Yellow

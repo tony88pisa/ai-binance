@@ -66,7 +66,7 @@ class EvolutionLoop:
                     dec_id = t["enter_tag"]
                     if not dec_id or not dec_id.startswith("DEC-"):
                         continue
-                    with self.repo._get_connection() as conn:
+                    with self.repo._conn() as conn:
                         if conn.execute("SELECT 1 FROM trade_outcomes WHERE decision_id = ?", (dec_id,)).fetchone():
                             continue
                     self.repo.log_outcome({
@@ -92,7 +92,7 @@ class EvolutionLoop:
         """Read latest regime from decisions table."""
         regime_label = MarketRegime.UNKNOWN
         try:
-            with self.repo._get_connection() as conn:
+            with self.repo._conn() as conn:
                 rows = conn.execute(
                     "SELECT market_regime FROM decisions WHERE market_regime IS NOT NULL "
                     "ORDER BY timestamp_utc DESC LIMIT 10"
@@ -199,7 +199,7 @@ class EvolutionLoop:
         self.run_summary["timestamp"] = datetime.now(timezone.utc).isoformat()
 
         # Count total candidates in registry
-        with self.repo._get_connection() as conn:
+        with self.repo._conn() as conn:
             row = conn.execute("SELECT COUNT(*) as c FROM strategy_versions WHERE status='candidate'").fetchone()
             total_candidates = row["c"] if row else 0
 
@@ -234,7 +234,7 @@ class EvolutionLoop:
         self.snapshot_regime()
 
         # Phase 3-5: Gather outcomes and analyze
-        with self.repo._get_connection() as conn:
+        with self.repo._conn() as conn:
             outcomes = conn.execute("SELECT * FROM trade_outcomes").fetchall()
             self.run_summary["outcomes_total"] = len(outcomes)
 

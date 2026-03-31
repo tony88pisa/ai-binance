@@ -19,6 +19,7 @@ class SkillGenerator:
                 "block_conditions": [f"regime == '{regime}' and atr_5m > avg_atr"],
                 "expected_edge": f["edge"],
                 "validation_status": "candidate",
+                "prompt_rule": f"RULE: In {regime} regime, apply strict entry: {f['edge']}",
                 "created_at": datetime.now(timezone.utc).isoformat()
             }
             candidates.append(skill)

@@ -1,4 +1,7 @@
 from typing import Dict, Any
+import logging
+
+logger = logging.getLogger("ai.promotion_gate")
 
 class PromotionGate:
     def __init__(self, repo):
@@ -14,4 +17,5 @@ class PromotionGate:
         if val_metrics.get("trade_count", 0) < 3:
             return False
 
+        logger.info(f"Skill {skill_id} passed promotion gate. Edge validated.")
         return True

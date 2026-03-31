@@ -43,7 +43,7 @@ RULES:
 - Never fabricate data. If information is missing, say so."""
 
 
-def evaluate(intelligence: MarketIntelligence) -> TradeDecision:
+def evaluate(intelligence: MarketIntelligence, repo=None) -> TradeDecision:
     """Evaluate a single asset and return a structured TradeDecision.
     Never raises. Always returns a valid TradeDecision."""
     settings = get_settings()
@@ -69,7 +69,7 @@ def evaluate(intelligence: MarketIntelligence) -> TradeDecision:
         logger.debug(f"[{intelligence.asset}] [CACHED MODE] Cache miss. Falling back to REAL inference.")
 
     # 3. REAL INFERENCE MODE (or CACHED miss)
-    user_msg = _build_user_message(intelligence)
+    user_msg = _build_user_message(intelligence, repo)
 
     # Call model
     raw_response = _call_model(
@@ -125,7 +125,7 @@ def _evaluate_mock(intel: MarketIntelligence) -> TradeDecision:
     )
 
 
-def _build_user_message(intel: MarketIntelligence) -> str:
+def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
     """Build structured, concise input for the model. No prose."""
     trend_5m = "bullish" if intel.macd_5m > 0 else "bearish"
     trend_1h = "bullish" if intel.macd_1h > 0 else "bearish"
@@ -151,6 +151,18 @@ def _build_user_message(intel: MarketIntelligence) -> str:
 
     if intel.historical_lessons:
         lines.append(f"MEMORY: {intel.historical_lessons[:200]}")
+
+    if repo:
+        try:
+            active_skills = [s for s in repo.list_skill_candidates() if s.get("status") == "approved"]
+            if active_skills:
+                lines.append("\nEVOLVED RULES (Must follow strict entry conditions):")
+                for s in active_skills:
+                    rule = s.get("prompt_rule")
+                    if rule:
+                        lines.append("- " + rule)
+        except Exception as e:
+            logger.error(f"Failed to load skills: {e}")
 
     lines.append(f"DATA_QUALITY: {intel.data_quality}")
     lines.append("Respond with JSON only.")
