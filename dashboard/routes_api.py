@@ -6,10 +6,14 @@ import sys
 import os
 import json
 from pathlib import Path
+from dotenv import load_dotenv
 from fastapi import APIRouter
 from storage.repository import Repository
 from scheduler.session_manager import current_mode
 from services.exchange_executor import ExchangeExecutor
+
+# Load .env
+load_dotenv()
 
 router = APIRouter(prefix="/api")
 

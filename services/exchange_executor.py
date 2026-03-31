@@ -1,8 +1,12 @@
 import os
 import logging
+from dotenv import load_dotenv
 from binance.client import Client
 from binance.enums import *
 from typing import Dict, Any, Optional
+
+# Ensure .env is loaded
+load_dotenv()
 
 logger = logging.getLogger("exchange_executor")
 
