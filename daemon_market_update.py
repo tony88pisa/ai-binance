@@ -155,12 +155,20 @@ def run_daemon():
                     # 1. Calcoli matematici e di regime da LiveBrain
                     live_decision = brain.evaluate(intel)
                     
-                    # 2. Informa l'AI sul regime corrente
-                    intel.market_regime = live_decision["regime"]
+                    # 3. Interroga Ollama (Decision Engine) usando il tipo corretto
+                    import ai.types as ai_types
+                    intel_types = ai_types.MarketIntelligence(
+                        asset=asset,
+                        close_price=price,
+                        rsi_5m=rsi5,
+                        rsi_1h=rsi1h,
+                        macd_5m=macd5,
+                        macd_1h=macd1h,
+                        market_regime=live_decision["regime"]
+                    )
                     
-                    # 3. Interroga Ollama (Decision Engine)
                     import ai.decision_engine as decision_engine
-                    ai_decision = decision_engine.evaluate(intel, repo)
+                    ai_decision = decision_engine.evaluate(intel_types, repo)
                     
                     # 4. Merge dei dati o Fallback
                     if "model_unreachable" in ai_decision.risk_flags:
