@@ -91,6 +91,9 @@ class Repository:
         if 'status' not in columns:
             try: conn.execute("ALTER TABLE decisions ADD COLUMN status TEXT DEFAULT 'OPEN'")
             except: pass
+        if 'exchange_order_id' not in columns:
+            try: conn.execute("ALTER TABLE decisions ADD COLUMN exchange_order_id TEXT")
+            except: pass
             
         conn.commit()
 
@@ -143,11 +146,12 @@ class Repository:
     def save_trade_decision(self, data: Dict[str, Any]):
         with self._conn() as conn:
             conn.execute("""
-                INSERT INTO decisions (id, asset, action, confidence, size_pct, thesis, regime, timestamp, entry_price, atr_stop_distance, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO decisions (id, asset, action, confidence, size_pct, thesis, regime, timestamp, entry_price, atr_stop_distance, status, exchange_order_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (data["id"], data["asset"], data["action"], data["confidence"],
                   data["size_pct"], data["thesis"], data["regime"], datetime.now(timezone.utc).isoformat(),
-                  data.get("entry_price", 0.0), data.get("atr_stop_distance", 0.0), data.get("status", "OPEN")))
+                  data.get("entry_price", 0.0), data.get("atr_stop_distance", 0.0), data.get("status", "OPEN"),
+                  data.get("exchange_order_id", None)))
             conn.commit()
 
     def get_open_decisions(self) -> List[Dict[str, Any]]:

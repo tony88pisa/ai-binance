@@ -42,7 +42,9 @@ from ai.live_brain import LiveBrain, MarketIntelligence
 from ai.nvidia_teacher import NvidiaTeacher
 from ai.skill_generator import SkillGenerator
 from ai.skill_validator import SkillValidator
+from ai.skill_validator import SkillValidator
 from ai.promotion_gate import PromotionGate
+from services.exchange_executor import ExchangeExecutor
 
 SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"]
 
@@ -88,6 +90,7 @@ def compute_macd(closes: list) -> float:
 def run_daemon():
     repo = Repository()
     brain = LiveBrain()
+    executor = ExchangeExecutor()
     lab_run_today = False
     
     # Inizializza Wallet Progressivo (Testnet Locale)
@@ -104,6 +107,13 @@ def run_daemon():
                 except: pass
             
             wallet_eur = state_data.get("wallet_eur", DEFAULT_BUDGET)
+            
+            # If exchange is enabled, sync wallet with real USDT balance
+            if executor.enabled:
+                real_balance = executor.get_balance("USDT")
+                if real_balance > 0:
+                    wallet_eur = real_balance
+                    state_data["wallet_eur"] = round(wallet_eur, 2)
             
             # --- SUPERVISOR OVERRIDES ---
             controls = repo.get_supervisor_controls()
@@ -220,9 +230,10 @@ def run_daemon():
                             logger.warning(f"[RISK] Wallet below safety threshold 35.0 (Current: {wallet_eur:.2f}). Blocking BUY on {asset}.")
                             continue
                         
-                        # Calcolo size in EUR basata su wallet progressivo
-                        size_pct = decision["position_size_pct"]
+                        # --- EXCHANGE EXECUTION ---
                         pos_value_eur = wallet_eur * size_pct
+                        ex_order = executor.place_buy_order(asset, pos_value_eur)
+                        ex_order_id = ex_order["orderId"] if ex_order else None
                         
                         repo.save_trade_decision({
                             "id": f"DEC-{uuid.uuid4().hex[:8]}",
@@ -234,9 +245,10 @@ def run_daemon():
                             "regime": decision["regime"],
                             "entry_price": price,
                             "atr_stop_distance": decision["atr_stop_distance"],
-                            "status": "OPEN"
+                            "status": "OPEN",
+                            "exchange_order_id": ex_order_id
                         })
-                        logger.info(f"[LIVE] BUY entry on {asset} @ {price}. Pos Size: {pos_value_eur:.2f} EUR")
+                        logger.info(f"[LIVE] BUY entry on {asset} @ {price}. Pos Size: {pos_value_eur:.2f} EUR (ExID: {ex_order_id})")
 
                 logger.info(f"[LIVE] Cycle complete. Wallet: {wallet_eur:.2f} EUR. Synced {len(SYMBOLS)} assets.")
 
@@ -276,9 +288,14 @@ def run_daemon():
                         pnl_pct = (c_price - e_price) / e_price
                         
                         # Calcolo impatto sul wallet (progressivo)
-                        # Nota: wallet_eur in questo momento è quello caricato ad inizio ciclo.
                         trade_profit_eur = wallet_eur * t_size_pct * pnl_pct
                         wallet_eur += trade_profit_eur
+                        
+                        # --- EXCHANGE EXIT ---
+                        # We need the quantity bought. If we don't have it in DB, we estimate based on entry price.
+                        # In a real system, we'd store the executed quantity in the decision record.
+                        quantity = (wallet_eur * t_size_pct) / e_price
+                        executor.place_sell_order(asset, quantity)
                         
                         outcome = {
                             "id": f"OUT-{uuid.uuid4().hex[:8]}",

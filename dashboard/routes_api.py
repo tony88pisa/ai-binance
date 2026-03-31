@@ -7,6 +7,7 @@ from pathlib import Path
 from fastapi import APIRouter
 from storage.repository import Repository
 from scheduler.session_manager import current_mode
+from services.exchange_executor import ExchangeExecutor
 
 router = APIRouter(prefix="/api")
 
@@ -40,6 +41,10 @@ def get_state():
             "SELECT COUNT(*) FROM decisions"
         ).fetchone()[0]
 
+    # Real-time exchange balance
+    executor = ExchangeExecutor()
+    testnet_balance = round(executor.get_balance("USDT"), 2) if executor.enabled else 0.0
+
     return {
         "mode": sj.get("mode", current_mode()),
         "hb": state.get("last_heartbeat", "N/A"),
@@ -51,6 +56,7 @@ def get_state():
         "open_trades": open_cnt,
         "closed_trades": closed_cnt,
         "total_decisions": total_decisions,
+        "testnet_balance": testnet_balance,
     }
 
 
