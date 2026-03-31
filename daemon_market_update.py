@@ -125,8 +125,14 @@ def run_daemon():
 
             if is_live:
                 lab_run_today = False
+
+                # CHECK EMERGENCY — salta tutto il ciclo live se attivo
+                if emergency_stop:
+                    logger.warning("[SUPERVISOR] EMERGENCY_STOP ACTIVE. Skipping cycle.")
+                    time.sleep(30)
+                    continue
+
                 current_market_states = {}
-                
                 for sym in SYMBOLS:
                     k5 = fetch_data(sym, "5m")
                     k1h = fetch_data(sym, "1h")
@@ -180,11 +186,6 @@ def run_daemon():
                             logger.warning(f"[RISK] Wallet below safety threshold 40.0 (Current: {wallet_eur:.2f}). Blocking BUY on {asset}.")
                             continue
                         
-                        # --- SUPERVISOR EMERGENCY STOP ---
-                        if emergency_stop:
-                            logger.warning(f"[SUPERVISOR] STOP active. Skipping BUY on {asset}.")
-                            continue
-
                         # Calcolo size in EUR basata su wallet progressivo
                         size_pct = decision["position_size_pct"]
                         pos_value_eur = wallet_eur * size_pct
@@ -280,10 +281,11 @@ def run_daemon():
                 lab_run_today = True
                 logger.info("[LAB] Lab cycle completed")
 
+            time.sleep(30)
+
         except Exception as e:
             logger.error(f"Daemon error: {e}", exc_info=True)
-
-        time.sleep(30)
+            time.sleep(30)
 
 if __name__ == "__main__":
     run_daemon()

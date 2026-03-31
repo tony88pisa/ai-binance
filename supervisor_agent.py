@@ -52,7 +52,7 @@ def get_market_context(repo: Repository):
 
 def call_ai_supervisor(context: dict):
     api_key = os.getenv("NVIDIA_API_KEY")
-    model = os.getenv("NVIDIA_MODEL", "nvidia/nemotron-3-super-120b-a12b")
+    model = os.getenv("NVIDIA_MODEL", "nvidia/llama-3.1-nemotron-70b-instruct")
     # Standard NVIDIA NIM endpoint
     url = "https://integrate.api.nvidia.com/v1/chat/completions"
     
@@ -132,12 +132,13 @@ def run_supervisor():
                     actions=advice.get("actions", "Technical Adjustment")
                 )
             else:
-                logger.warning("No advice from AI. Applying FALLBACK SAFE MODE.")
+                logger.warning("No advice from AI. Maintaining current state.")
+                current_controls = repo.get_supervisor_controls()
                 repo.update_supervisor_controls({
-                    "emergency_stop": 0,
-                    "max_open_trades": 3,
-                    "min_confidence": 85,
-                    "ai_reasoning": "AI unavailable - fallback safe mode activated"
+                    "emergency_stop": current_controls.get("emergency_stop", 0),
+                    "max_open_trades": current_controls.get("max_open_trades", 3),
+                    "min_confidence": current_controls.get("min_confidence", 85),
+                    "ai_reasoning": "AI NVIDIA unavailable - current state maintained"
                 })
                 
         except Exception as e:
