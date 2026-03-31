@@ -30,7 +30,8 @@ def get_market_context(repo: Repository):
     try: sj = json.loads(state.get("state_json", "{}"))
     except: sj = {}
     
-    wallet = sj.get("wallet_eur", 50.0)
+    initial_budget = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
+    wallet = sj.get("wallet_eur", initial_budget)
     open_trades = repo.get_open_decisions()
     history = repo.get_history() # I need to check if get_history exists or just query
     
@@ -43,7 +44,7 @@ def get_market_context(repo: Repository):
         
     return {
         "wallet_eur": wallet,
-        "pnl_pct": ((wallet - 50.0) / 50.0) * 100,
+        "pnl_pct": ((wallet - initial_budget) / initial_budget) * 100,
         "open_count": len(open_trades),
         "winrate_recent": winrate,
         "recent_outcomes": outcomes[:10],
@@ -119,9 +120,12 @@ def run_supervisor():
             if advice:
                 logger.info(f"AI Assessment: {advice['assessment']}")
                 
-                # Rule: emergency_stop=1 ONLY if wallet < 46
-                wallet = context.get('wallet_eur', 50.0)
-                e_stop = 1 if (advice.get("emergency_stop") and wallet < 46.0) else 0
+                initial_budget = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
+                emergency_limit = initial_budget * 0.92
+                wallet = context.get('wallet_eur', initial_budget)
+                
+                # Rule: emergency_stop=1 ONLY if wallet < emergency_limit
+                e_stop = 1 if (advice.get("emergency_stop") and wallet < emergency_limit) else 0
                 
                 # Rule: min_confidence 72-78
                 raw_conf = advice.get("min_confidence", 75)

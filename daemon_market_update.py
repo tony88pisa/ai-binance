@@ -98,7 +98,7 @@ def run_daemon():
     lab_run_today = False
     
     # Inizializza Wallet Progressivo (Testnet Locale)
-    DEFAULT_BUDGET = 50.0
+    DEFAULT_BUDGET = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
     MAX_OPEN_TRADES = 3
     
     while True:

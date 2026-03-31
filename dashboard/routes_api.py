@@ -18,7 +18,7 @@ load_dotenv()
 router = APIRouter(prefix="/api")
 
 LOGS_DIR = Path(__file__).resolve().parent.parent / "logs"
-DEFAULT_BUDGET = 50.0
+DEFAULT_BUDGET = float(os.getenv("INITIAL_CAPITAL", "10000.0"))
 
 
 @router.get("/state")
