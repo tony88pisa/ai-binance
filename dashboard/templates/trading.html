@@ -19,21 +19,26 @@
       <span class="pulse"></span>
       <span id="sys-status" class="badge badge-green">ONLINE</span>
       <span id="sys-mode" class="badge badge-blue">BOOT</span>
+      <span id="exchange-mode-badge" class="badge badge-amber" style="margin-left:5px;">SIMULATION</span>
     </div>
   </nav>
 
   <!-- Stats Bar -->
   <div class="stats-bar">
     <div class="stat-item">
-      <span class="stat-label">Wallet Iniziale</span>
+      <span class="stat-label">Capitale Iniziale</span>
       <span class="stat-value c-muted" id="wallet-init">€ 50.00</span>
     </div>
     <div class="stat-item">
-      <span class="stat-label">Wallet Attuale</span>
+      <span class="stat-label" id="wallet-label">Bilancio Bot</span>
       <span class="stat-value" id="wallet-now">€ ...</span>
     </div>
+    <div class="stat-item" id="testnet-balance-box" style="display:none;">
+      <span class="stat-label">Binance Testnet</span>
+      <span class="stat-value c-green" id="testnet-balance-val">0.00 USDT</span>
+    </div>
     <div class="stat-item">
-      <span class="stat-label">PnL €</span>
+      <span class="stat-label">PnL Totale</span>
       <span class="stat-value" id="pnl-eur">...</span>
     </div>
     <div class="stat-item">
@@ -47,10 +52,6 @@
     <div class="stat-item">
       <span class="stat-label">Trades Chiusi</span>
       <span class="stat-value" id="closed-cnt">0</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-label">Heartbeat</span>
-      <span class="stat-value c-muted" id="hb-val">---</span>
     </div>
   </div>
 

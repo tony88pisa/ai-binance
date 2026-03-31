@@ -31,14 +31,39 @@ async function refresh() {
       const wNow = parseFloat(state.wallet_current || 0);
       const pEur = parseFloat(state.pnl_eur || 0);
       const pPct = parseFloat(state.pnl_pct || 0);
+      const exMode = state.exchange_mode || 'SIMULATION';
+      const currency = exMode === 'TESTNET' ? '$' : '€';
       
-      if (document.getElementById('wallet-init')) document.getElementById('wallet-init').textContent = '€ ' + wInit.toFixed(2);
+      // Update Mode Badge
+      if (document.getElementById('exchange-mode-badge')) {
+          const emb = document.getElementById('exchange-mode-badge');
+          emb.textContent = exMode;
+          emb.className = 'badge ' + (exMode === 'TESTNET' ? 'badge-green' : 'badge-amber');
+      }
+
+      // Update Init Wallet
+      if (document.getElementById('wallet-init')) {
+          document.getElementById('wallet-init').textContent = currency + ' ' + wInit.toLocaleString();
+      }
+
+      // Update Current Wallet
       if (document.getElementById('wallet-now')) {
-          document.getElementById('wallet-now').textContent = '€ ' + wNow.toFixed(2);
+          document.getElementById('wallet-now').textContent = currency + ' ' + wNow.toLocaleString();
           document.getElementById('wallet-now').className = 'stat-value ' + colorPnl(pEur);
       }
+
+      // Update Testnet Box
+      if (document.getElementById('testnet-balance-box')) {
+          if (state.testnet_balance_usdt !== null && state.testnet_balance_usdt !== undefined) {
+              document.getElementById('testnet-balance-box').style.display = 'flex';
+              document.getElementById('testnet-balance-val').textContent = state.testnet_balance_usdt.toLocaleString() + ' USDT';
+          } else {
+              document.getElementById('testnet-balance-box').style.display = 'none';
+          }
+      }
+
       if (document.getElementById('pnl-eur')) {
-          document.getElementById('pnl-eur').textContent = (pEur >= 0 ? '+' : '') + '€ ' + pEur.toFixed(2);
+          document.getElementById('pnl-eur').textContent = (pEur >= 0 ? '+' : '') + currency + ' ' + pEur.toFixed(2);
           document.getElementById('pnl-eur').className = 'stat-value ' + colorPnl(pEur);
       }
       if (document.getElementById('pnl-pct')) {
@@ -47,10 +72,7 @@ async function refresh() {
       }
       if (document.getElementById('open-cnt')) document.getElementById('open-cnt').textContent = (positions && !posErr) ? positions.length : 0;
       if (document.getElementById('closed-cnt')) document.getElementById('closed-cnt').textContent = state.closed_trades || 0;
-      if (document.getElementById('hb-val')) {
-          const hbStr = (state.hb || '---').toString();
-          document.getElementById('hb-val').textContent = hbStr.includes('T') ? hbStr.split('T').pop().split('.')[0] : hbStr;
-      }
+
     } else {
       // Error state
       if (document.getElementById('sys-status')) {
