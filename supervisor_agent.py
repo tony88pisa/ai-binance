@@ -61,20 +61,21 @@ def call_ai_supervisor(context: dict):
     Current State:
     {json.dumps(context, indent=2)}
     
-    Mission: Protect capital. The bot is in a TREND_DOWN market and losing money.
-    Analyze if the strategy is failing and provide overrides.
-    
-    If internal risk controls (MAX_OPEN_TRADES=3, WALLET_STOP=40EUR) are active, evaluate if it is safe to RESUME (emergency_stop=0) or if a full pause (emergency_stop=1) should be maintained.
+    Mission: Protect CAPITAL. The bot's budget is 50.00 EUR.
     
     Rules for output:
-    1. Return ONLY a JSON object.
-    2. Fields: 
+    1. emergency_stop: SET TO 1 ONLY if the wallet is below 46.00 EUR. 
+       If the wallet is >= 46.00 EUR, ALWAYS set emergency_stop to 0 (resume), even in TREND_DOWN.
+    2. min_confidence: Regulate between 72 and 78.
+    3. Return ONLY a JSON object.
+    
+    Fields: 
        - assessment: string (narrative evaluation of current PnL vs Regime)
-       - emergency_stop: boolean (0: resume/allow buys, 1: halt buys)
+       - emergency_stop: boolean (0: resume, 1: halt)
        - max_open_trades: integer (3)
-       - min_confidence: integer (80-95)
+       - min_confidence: integer (72-78)
        - close_losers_threshold: float (-5.0 to -2.0)
-       - actions: string (brief command e.g. 'Halting buys' or 'Resuming with high confidence required')
+       - actions: string (brief command)
     """
     
     headers = {
@@ -117,12 +118,17 @@ def run_supervisor():
             advice = call_ai_supervisor(context)
             if advice:
                 logger.info(f"AI Assessment: {advice['assessment']}")
-                # Update DB controls with 78% ceiling for min_confidence
-                raw_conf = advice.get("min_confidence", 85)
-                final_conf = min(raw_conf, 78)
+                
+                # Rule: emergency_stop=1 ONLY if wallet < 46
+                wallet = context.get('wallet_eur', 50.0)
+                e_stop = 1 if (advice.get("emergency_stop") and wallet < 46.0) else 0
+                
+                # Rule: min_confidence 72-78
+                raw_conf = advice.get("min_confidence", 75)
+                final_conf = max(72, min(raw_conf, 78))
                 
                 repo.update_supervisor_controls({
-                    "emergency_stop": 1 if advice.get("emergency_stop") else 0,
+                    "emergency_stop": e_stop,
                     "max_open_trades": 3,
                     "min_confidence": final_conf,
                     "close_losers_threshold": advice.get("close_losers_threshold", -5.0),
@@ -130,9 +136,9 @@ def run_supervisor():
                 })
                 # Log to DB
                 repo.add_supervisor_log(
-                    wallet_state=f"{context['wallet_eur']:.2f} EUR",
+                    wallet_state=f"{wallet:.2f} EUR",
                     assessment=advice.get("assessment", ""),
-                    actions=advice.get("actions", "Technical Adjustment")
+                    actions=f"Update: stop={e_stop}, conf={final_conf}"
                 )
             else:
                 logger.warning("No advice from AI. Maintaining current state.")
