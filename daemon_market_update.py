@@ -216,8 +216,8 @@ def run_daemon():
                             continue
 
                         # --- EMERGENCY WALLET STOP ---
-                        if wallet_eur < 40.0:
-                            logger.warning(f"[RISK] Wallet below safety threshold 40.0 (Current: {wallet_eur:.2f}). Blocking BUY on {asset}.")
+                        if wallet_eur < 35.0:
+                            logger.warning(f"[RISK] Wallet below safety threshold 35.0 (Current: {wallet_eur:.2f}). Blocking BUY on {asset}.")
                             continue
                         
                         # Calcolo size in EUR basata su wallet progressivo
