@@ -14,31 +14,37 @@ class ExchangeExecutor:
     """Handles real-time exchange execution for Binance (Testnet or Live)."""
     
     def __init__(self):
+        # Load .env from project root
+        project_root = Path(__file__).resolve().parent.parent
+        env_path = project_root / ".env"
+        load_dotenv(dotenv_path=env_path)
+        
         self.mode = os.getenv("EXCHANGE_MODE", "testnet").lower()
-        self.api_key = os.getenv("BINANCE_TESTNET_API_KEY", "")
-        self.api_secret = os.getenv("BINANCE_TESTNET_SECRET", "")
+        self.api_key = os.getenv("BINANCE_TESTNET_API_KEY", "").strip()
+        self.api_secret = os.getenv("BINANCE_TESTNET_SECRET", "").strip()
         
         self.client: Optional[Client] = None
         self.enabled = False
         
-        if self.api_key == "PASTE_HERE" or not self.api_key:
-            logger.warning("[EXCHANGE] API Keys missing or default. Executor DISABLED (DB-only mode).")
+        if not self.api_key or self.api_key == "PASTE_HERE":
+            logger.warning(f"[EXCHANGE] API Keys missing or default in {env_path}. Executor DISABLED.")
             return
             
         try:
-            # Initialize Client
+            # Masked logging for debugging
+            key_preview = self.api_key[:4] + "..." if self.api_key else "None"
+            logger.info(f"[EXCHANGE] Initializing {self.mode.upper()} mode with Key: {key_preview}")
+            
             testnet = (self.mode == "testnet")
             self.client = Client(self.api_key, self.api_secret, testnet=testnet)
             
-            # Check connectivity
-            status = self.client.get_system_status()
-            if status.get("status") == 0:
-                self.enabled = True
-                logger.info(f"[EXCHANGE] Initialized in {self.mode.upper()} mode. Connectivity OK.")
-            else:
-                logger.error(f"[EXCHANGE] System status check failed: {status}")
+            # Useping for connectivity check instead of system status
+            self.client.ping()
+            self.enabled = True
+            logger.info(f"[EXCHANGE] {self.mode.upper()} connected successfully.")
         except Exception as e:
-            logger.error(f"[EXCHANGE] Initialization failed: {e}. Check your API keys and network.")
+            logger.error(f"[EXCHANGE] Initialization failed: {e}")
+            self.enabled = False
 
     def _format_symbol(self, symbol: str) -> str:
         """Convert BTC/USDT to BTCUSDT"""

@@ -8,6 +8,10 @@ from datetime import datetime, timezone
 import sys
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env
+load_dotenv()
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
