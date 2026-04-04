@@ -27,7 +27,7 @@ log_path = LOGS_DIR / "controller.log"
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [CONTROLLER] %(message)s",
-    handlers=[logging.FileHandler(log_path, encoding='utf-8'), logging.StreamHandler()]
+    handlers=[logging.FileHandler(log_path, encoding='utf-8', delay=True), logging.StreamHandler()]
 )
 logger = logging.getLogger("controller")
 

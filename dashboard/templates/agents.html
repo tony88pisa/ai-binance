@@ -109,7 +109,7 @@
 
     <div class="header">
         <div>
-            <h1 style="margin: 0; font-size: 1.5em; font-weight: 700;">AGENT NETWORK & MEMORY</h1>
+            <h1 style="margin: 0; font-size: 1.5em; font-weight: 700;">AGENT SWARM & CONTROL</h1>
             <div style="color: var(--text-muted); font-size: 0.9em; margin-top: 4px;">🧠 Supermemory Semantic Layer Active</div>
         </div>
         <div class="nav-links">
@@ -117,6 +117,25 @@
             <a href="/trader">Pro Trader</a>
             <a href="/agents" class="active">Agent Swarm</a>
             <a href="/memory">🧠 Memory</a>
+            <a href="/logs">🕵️ Logs</a>
+        </div>
+    </div>
+
+    <!-- Agent Heartbeat Strip -->
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8em; color: var(--text-muted);">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #00e676; box-shadow: 0 0 8px #00e676;"></div>
+            <span>₿ SQUAD CRYPTO: <b id="status-squad" style="color: white;">ACTIVE</b></span>
+        </div>
+        <div style="width: 1px; height: 15px; background: var(--border);"></div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8em; color: var(--text-muted);">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #00e676; box-shadow: 0 0 8px #00e676;"></div>
+            <span>⚡ EXECUTOR: <b id="status-executor" style="color: white;">LIVE</b></span>
+        </div>
+        <div style="width: 1px; height: 15px; background: var(--border);"></div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8em; color: var(--text-muted);">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #00e676; box-shadow: 0 0 8px #00e676;"></div>
+            <span>🛡️ RISK SUPERVISOR: <b id="status-risk" style="color: white;">MONITORING</b></span>
         </div>
     </div>
 

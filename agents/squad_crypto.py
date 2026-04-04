@@ -19,7 +19,7 @@ LOGS_DIR = PROJECT_ROOT / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [SQUAD_CRYPTO] %(message)s",
-                    handlers=[logging.FileHandler(LOGS_DIR / "squad_crypto.log", encoding='utf-8'), logging.StreamHandler()])
+                    handlers=[logging.FileHandler(LOGS_DIR / "squad_crypto.log", encoding='utf-8', delay=True), logging.StreamHandler()])
 logger = logging.getLogger("squad_crypto")
 
 try:
