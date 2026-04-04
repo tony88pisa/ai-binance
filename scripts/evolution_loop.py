@@ -141,7 +141,7 @@ class EvolutionLoop:
 
     # ========== PHASE 4: NVIDIA TEACHER REVIEW ==========
     def nvidia_review(self, outcomes):
-        """Send outcomes to NVIDIA Teacher for deep review."""
+        """Send outcomes to NVIDIA Teacher for deep review and apply strategy updates."""
         candidates = 0
         from ai.nvidia_teacher import NvidiaTeacher
         teacher = NvidiaTeacher(self.repo)
@@ -151,7 +151,9 @@ class EvolutionLoop:
             logger.info("NVIDIA Teacher returned no findings.")
             return candidates
 
-        # Register NVIDIA candidates as skills
+        applied_controls = False
+        
+        # Register NVIDIA candidates as skills and push strategy updates
         for i, finding in enumerate(analysis.get("findings", [])):
             skill_id = f"SKL-NV-{int(time.time())}-{i}"
             skill = {
@@ -160,11 +162,30 @@ class EvolutionLoop:
                 "version": "1.0.0",
                 "validation_status": "candidate",
                 "created_at": datetime.now(timezone.utc).isoformat(),
-                "logic": finding.get("edge", "Optimize RSI")
+                "logic": finding.get("edge", "NVIDIA AI Strategic Update")
             }
             self.repo.save_skill_candidate(skill)
-            logger.info(f"NVIDIA candidate registered: {skill_id}")
+            logger.info(f"NVIDIA candidate registered: {skill_id} - Logic: {skill['logic']}")
             candidates += 1
+            
+            # Applicazione automatica delle "nuove strategie" / controlli elaborati da NVIDIA
+            # come richiesto dal Comandante (Auto-evoluzione paramaterica)
+            controls = finding.get("suggested_controls")
+            ai_reasoning = finding.get("ai_assessment", "NVIDIA Strategy Updated.")
+            if controls and not applied_controls:
+                # Recuperiamo i controlli attuali per evitare di sovrascrivere tutto
+                curr = self.repo.get_supervisor_controls()
+                curr.update({
+                    "min_confidence": controls.get("min_confidence", curr.get("min_confidence")),
+                    "max_open_trades": controls.get("max_open_trades", curr.get("max_open_trades")),
+                    "close_losers_threshold": controls.get("close_losers_threshold", curr.get("close_losers_threshold")),
+                    "ai_reasoning": f"[NVIDIA-UPDATE] {ai_reasoning}"
+                })
+                self.repo.update_supervisor_controls(curr)
+                self.repo.add_supervisor_log("Active Adjust", ai_reasoning, f"Updated constraints: conf>={curr['min_confidence']} loss<={curr['close_losers_threshold']}")
+                logger.warning(f"STRATEGY AUTO-EVOLVED BY NVIDIA: Confidence={curr['min_confidence']}, MaxTrades={curr['max_open_trades']}")
+                applied_controls = True # Applichiamo i controlli solo una volta per run per evitare flip-flop
+
         return candidates
 
     # ========== PHASE 5: REGIME-AWARE CANDIDATE ==========

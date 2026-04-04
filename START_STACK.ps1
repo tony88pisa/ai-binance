@@ -27,9 +27,10 @@ Start-Process pwsh -ArgumentList "-ExecutionPolicy Bypass -File START_FREQTRADE.
 Write-Host "[5/12] Avvio Risk Controller (NVIDIA NIM)..." -ForegroundColor Yellow
 Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "agents/risk_controller.py" -WindowStyle Hidden
 
-# 6. Market Analyzer Agent
-Write-Host "[6/12] Avvio Market Analyzer (NVIDIA Decisions)..." -ForegroundColor Yellow
-Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "agents/market_analyzer.py" -WindowStyle Hidden
+# 6. Squad Crypto & Squad Equity
+Write-Host "[6/12] Avvio Squadre Operative (Crypto & Equity)..." -ForegroundColor Yellow
+Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "agents/squad_crypto.py" -WindowStyle Hidden
+Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "agents/squad_equity.py" -WindowStyle Hidden
 
 # 6b. Equity Background Daemon
 Write-Host "[6.5] Avvio Equity Daemon (Yahoo Finance)..." -ForegroundColor Yellow
@@ -102,3 +103,4 @@ Write-Host "`n[SUCCESSO] Inizializzazione completata." -ForegroundColor Green
 Write-Host "Apri il browser su: http://127.0.0.1:8088/commander" -ForegroundColor Cyan
 Write-Host "Premi un tasto per chiudere questa finestra o lasciala aperta."
 Read-Host
+

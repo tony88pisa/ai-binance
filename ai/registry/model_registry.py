@@ -23,7 +23,7 @@ class ModelRegistry:
     def get_active_model(self, env: str) -> str:
         """Resolve the current active model for the given environment."""
         model = self.repo.get_active_model_for_env(env)
-        return model if model else "qwen3:8b" # Absolute fallback
+        return model if model else "gemma4:e4b" # Absolute fallback for RTX 5080 (16GB)
 
     def mark_model_rejected(self, tag: str):
         with self.repo._get_connection() as conn:

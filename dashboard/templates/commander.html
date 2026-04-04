@@ -1,363 +1,532 @@
 <!DOCTYPE html>
-<html lang="it" class="dark">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tengu Commander | AI Trading Cockpit</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Tippy.js (Tooltips) -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'alpha-cyan': '#00f3ff',
-                        'alpha-emerald': '#10b981',
-                        'alpha-rose': '#f43f5e',
-                        'alpha-indigo': '#6366f1',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['Roboto Mono', 'monospace'],
-                    },
-                }
-            }
-        }
-    </script>
-
+    <title>Tengu Commander V10 | AI Trading HQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #06090f;
+            --bg-card: rgba(14, 20, 33, 0.85);
+            --bg-card-hover: rgba(20, 28, 45, 0.95);
+            --border: rgba(255,255,255,0.06);
+            --border-active: rgba(0, 200, 255, 0.25);
+            --cyan: #00d4ff;
+            --green: #00e676;
+            --red: #ff3d57;
+            --amber: #ffab00;
+            --purple: #a78bfa;
+            --text-primary: #e8edf5;
+            --text-secondary: #7a8ba7;
+            --text-muted: #4a5568;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: #0b0f19;
-            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
             overflow-x: hidden;
         }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: -1;
+            background: radial-gradient(ellipse at 20% 0%, rgba(0,180,255,0.04) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 100%, rgba(120,80,255,0.03) 0%, transparent 60%);
         }
-        .neon-border-cyan { box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.2); }
-        .neon-border-emerald { box-shadow: 0 0 15px rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
-        
-        .alpha-grid {
-            background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+        /* === TOP BAR === */
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 16px 24px; flex-wrap: wrap;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 800; color: #fff;
+        }
+        .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+        .brand small { font-size: 9px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+        .wallet-display { text-align: right; }
+        .wallet-balance { font-size: 28px; font-weight: 700; }
+        .wallet-pnl {
+            display: inline-block; padding: 3px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; margin-left: 8px;
+        }
+        .wallet-pnl.pos { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+        .wallet-pnl.neg { background: rgba(255,61,87,0.12); color: var(--red); border: 1px solid rgba(255,61,87,0.2); }
+        .status-dots { display: flex; gap: 16px; align-items: center; }
+        .status-dot { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.on { background: var(--green); box-shadow: 0 0 8px rgba(0,230,118,0.5); }
+        .dot.off { background: var(--red); box-shadow: 0 0 8px rgba(255,61,87,0.4); }
+        .dot.warn { background: var(--amber); }
+
+        /* === STATS ROW === */
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 16px; text-align: center;
+        }
+        .stat-card .label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 6px; }
+        .stat-card .value { font-size: 20px; font-weight: 700; }
+
+        /* === MAIN GRID === */
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+        /* === CARD === */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+            padding: 16px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .card-title {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--text-muted); font-weight: 600;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-title .badge {
+            font-size: 9px; padding: 2px 8px; border-radius: 6px;
+            background: rgba(0,212,255,0.1); color: var(--cyan); font-weight: 700;
         }
 
-        .hud-scanner {
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, #00f3ff, transparent);
-            animation: scan 4s linear infinite;
+        /* === POSITIONS TABLE === */
+        .positions-table { width: 100%; border-collapse: collapse; }
+        .positions-table th {
+            font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--text-muted); text-align: left; padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .positions-table td { padding: 10px 8px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .positions-table tr:hover { background: rgba(255,255,255,0.02); }
+        .pnl-up { color: var(--green); font-weight: 600; }
+        .pnl-down { color: var(--red); font-weight: 600; }
+        .asset-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-weight: 600; font-size: 13px;
+        }
+        .asset-icon {
+            width: 22px; height: 22px; border-radius: 6px; font-size: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,212,255,0.1); color: var(--cyan);
+        }
+        .empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-size: 12px; }
+
+        /* === ACTIVITY FEED === */
+        .feed { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .feed::-webkit-scrollbar { width: 3px; }
+        .feed::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 10px; }
+        .feed-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 8px 10px; border-radius: 8px; font-size: 11px;
+            background: rgba(255,255,255,0.015); border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .feed-item:hover { background: rgba(255,255,255,0.03); border-color: var(--border); }
+        .feed-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+        .feed-text { color: var(--text-secondary); line-height: 1.5; }
+        .feed-text strong { color: var(--text-primary); }
+        .feed-time { font-size: 9px; color: var(--text-muted); margin-left: auto; flex-shrink: 0; white-space: nowrap; }
+
+        /* === ASSET GRID === */
+        .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 8px; max-height: 400px; overflow-y: auto; }
+        .asset-grid::-webkit-scrollbar { width: 3px; }
+        .asset-grid::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 10px; }
+        .asset-chip {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            border-radius: 10px; padding: 10px; cursor: default;
+            transition: all 0.2s; position: relative; overflow: hidden;
+        }
+        .asset-chip:hover { background: var(--bg-card-hover); border-color: var(--border-active); }
+        .asset-chip .name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+        .asset-chip .price { font-size: 11px; color: var(--text-secondary); }
+        .asset-chip .decision {
+            font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            margin-top: 6px; display: flex; align-items: center; gap: 4px;
+        }
+        .decision-buy { color: var(--green); }
+        .decision-hold { color: var(--text-muted); }
+        .decision-sell { color: var(--red); }
+        .conf-bar {
+            position: absolute; bottom: 0; left: 0; height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+            transition: width 0.5s;
         }
 
-        @keyframes scan {
-            0% { top: 0; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
+        /* === AGENT STATUS === */
+        .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+        .agent-chip {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px;
         }
+        .agent-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .agent-dot.active { background: var(--green); box-shadow: 0 0 10px rgba(0,230,118,0.4); animation: pulse 2s infinite; }
+        .agent-dot.thinking { background: var(--amber); animation: pulse 1s infinite; }
+        .agent-dot.idle { background: var(--text-muted); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .agent-name { font-size: 11px; font-weight: 600; }
+        .agent-role { font-size: 9px; color: var(--text-muted); }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,243,255,0.2); border-radius: 10px; }
-
-        .tooltip-box {
-            background: #1e293b !important;
-            border: 1px solid #00f3ff44 !important;
-            color: #94a3b8 !important;
-            font-size: 11px !important;
-            border-radius: 8px !important;
-            padding: 8px !important;
+        /* === FOOTER === */
+        .footer {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; font-size: 9px; color: var(--text-muted);
+            letter-spacing: 1.5px; text-transform: uppercase; border-top: 1px solid var(--border);
         }
     </style>
 </head>
-<body class="font-sans antialiased selection:bg-alpha-cyan/30">
+<body>
+<div class="container">
 
-    <div class="fixed inset-0 alpha-grid pointer-events-none -z-10"></div>
-    <div class="fixed inset-0 bg-radial-gradient from-alpha-cyan/5 to-transparent pointer-events-none -z-10"></div>
-
-    <!-- MAIN COCKPIT -->
-    <div class="min-h-screen flex flex-col p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
-        
-        <!-- HEADER HUD -->
-        <header class="flex flex-col md:flex-row items-center justify-between gap-6 glass-panel p-6 rounded-3xl neon-border-cyan relative overflow-hidden">
-            <div class="hud-scanner"></div>
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-alpha-cyan/10 rounded-2xl">
-                    <i data-lucide="zap" class="text-alpha-cyan w-6 h-6"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-[0.4em] uppercase text-white">Tengu Commander</h1>
-                    <p class="text-[9px] uppercase tracking-widest text-slate-500 font-bold" data-tippy-content="Versione stabile del sistema con protezione AI Supervisor.">V8.1-PRO HUD (STABLE)</p>
-                </div>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="brand">
+            <div class="brand-icon">T</div>
+            <div>
+                <h1>Tengu Commander</h1>
+                <small>V10 — 34 Markets Active</small>
             </div>
-
-            <!-- THE VAULT (PROFITS) -->
-            <div class="flex items-center gap-8" data-tippy-content="Il tuo guadagno netto attuale (PnL). La linea nel grafico sotto mostra come sta crescendo il tuo portafoglio.">
-                <div class="flex flex-col items-end">
-                    <span class="text-[10px] uppercase text-slate-500 font-bold tracking-widest">Total Vault</span>
-                    <div class="text-3xl font-mono font-bold text-white flex items-baseline gap-2">
-                         <span id="currency-symbol">€</span> <span id="pnl-total">0.00</span>
-                    </div>
-                </div>
-                <div id="pnl-pct-pill" class="px-3 py-1 rounded-full bg-alpha-emerald/10 border border-alpha-emerald/20 text-[10px] font-bold text-alpha-emerald">
-                    +0.00%
-                </div>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 flex-1">
-            
-            <!-- LEFT PANEL: CRYPTO SECTOR -->
-            <div class="md:col-span-4 flex flex-col gap-6">
-                
-                <!-- CRYPTO CONFIDENCE -->
-                <div class="glass-panel p-6 rounded-3xl flex flex-col gap-4 group border-l-4 border-l-alpha-cyan" data-tippy-content="Settore Crypto: Mostra la sicurezza degli agenti Binance.">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Crypto Readiness</span>
-                        <span class="text-[9px] px-2 py-0.5 rounded bg-alpha-cyan/20 text-alpha-cyan font-bold tracking-tighter">BINANCE</span>
-                    </div>
-                    
-                    <div class="relative h-28 flex items-center justify-center">
-                        <canvas id="confidence-chart"></canvas>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center mt-4">
-                            <span id="confidence-score" class="text-xl font-mono font-bold text-white bg-black/40 px-2 rounded">0%</span>
-                        </div>
-                    </div>
-
-                    <div id="status-badge" class="text-center py-2 rounded-xl bg-slate-800/50 text-[10px] uppercase font-bold tracking-widest text-slate-500">
-                        Analyzing Crypto...
-                    </div>
-                </div>
-
-                <!-- GOLD SECTOR (TRADFI) -->
-                <div class="glass-panel p-6 rounded-3xl flex flex-col gap-4 border-l-4 border-l-alpha-amber" data-tippy-content="Settore Oro: Mostra le performance della Sandbox XAU/USD.">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Gold Sandbox</span>
-                        <span class="text-[9px] px-2 py-0.5 rounded bg-alpha-amber/20 text-alpha-amber font-bold tracking-tighter">OANDA</span>
-                    </div>
-                    
-                    <div class="h-28">
-                        <canvas id="tradfi-chart"></canvas>
-                    </div>
-
-                    <div class="flex justify-between items-center px-1">
-                        <span class="text-[9px] text-slate-500 font-bold uppercase">XAU/USD STABILITY</span>
-                        <span class="text-[10px] font-mono text-alpha-amber font-bold">STABLE</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CENTER/RIGHT PANEL: UNIVERSAL PERFORMANCE & LOGS -->
-            <div class="md:col-span-8 flex flex-col gap-6">
-                
-                <!-- UNIVERSAL PROFIT CHART -->
-                <div class="glass-panel p-6 rounded-3xl flex flex-col gap-4 h-48" data-tippy-content="Vault Performance: La linea verde è Crypto, la linea ambra è l'Oro.">
-                    <div class="flex items-center justify-between">
-                         <h3 class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Universal Performance History</h3>
-                         <div class="flex gap-4">
-                            <span class="text-[9px] text-alpha-cyan font-mono uppercase tracking-widest">● Crypto</span>
-                            <span class="text-[9px] text-alpha-amber font-mono uppercase tracking-widest">● Gold</span>
-                         </div>
-                    </div>
-                    <div class="flex-1">
-                        <canvas id="profit-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- THE MONOLOGUE & LOGS -->
-                <div class="flex-1 glass-panel p-6 rounded-3xl flex flex-col gap-4 neon-border-cyan overflow-hidden max-h-[300px]">
-                    <div class="flex items-center justify-between">
-                         <div class="flex items-center gap-3">
-                            <i data-lucide="terminal" class="text-alpha-cyan w-4 h-4"></i>
-                            <h3 class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Universal Reasoning Stream</h3>
-                         </div>
-                         <span class="text-[9px] text-alpha-cyan font-mono animate-pulse">BI-DATA_LINK</span>
-                    </div>
-
-                    <div id="log-container" class="flex-1 space-y-3 font-mono text-[10px] overflow-y-auto custom-scrollbar pr-4">
-                        <!-- Reasoning Items from Both Worlds -->
-                    </div>
-                </div>
-            </div>
-
         </div>
-
-                <!-- AGENT GRID -->
-                <div class="glass-panel p-6 rounded-3xl" data-tippy-content="Questi sono i tuoi agenti AI pronti all'azione. Ognuno ha una specializzazione diversa (Sicurezza, Analisi, Esecuzione).">
-                    <h3 class="text-[10px] uppercase text-slate-500 font-bold mb-4 tracking-widest">Active Agent Swarm</h3>
-                    <div id="agent-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <!-- Agents populated here -->
-                    </div>
-                </div>
-            </div>
-
+        <div class="status-dots">
+            <div class="status-dot"><div class="dot on" id="dot-ollama"></div>Gemma 4</div>
+            <div class="status-dot"><div class="dot on" id="dot-exchange"></div>Binance</div>
+            <div class="status-dot"><div class="dot on" id="dot-nvidia"></div>NVIDIA</div>
+            <div class="status-dot"><div class="dot" id="dot-supervisor"></div>Supervisor</div>
         </div>
-
-        <footer class="flex items-center justify-between py-4 border-t border-white/5 text-[9px] text-slate-500 font-mono tracking-widest uppercase">
-            <div class="flex items-center gap-6">
-                <div class="flex items-center gap-2">
-                    <div class="w-1.5 h-1.5 rounded-full bg-alpha-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
-                    Binance Integrity S.O.S
-                </div>
-                <span>Sync Latency: 22ms</span>
-            </div>
-            <div>Tengu OS © 2026 - Educational Commander HUD</div>
-        </footer>
-
+        <div class="wallet-display">
+            <span class="mono wallet-balance" id="wallet-bal">10,000.00 <small style="font-size:14px;color:var(--text-muted)">USDT</small></span>
+            <span class="wallet-pnl pos" id="wallet-pnl">+0.00%</span>
+        </div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script>
-        // Init Icons
-        lucide.createIcons();
+    <!-- STATS ROW -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="label">Open Trades</div>
+            <div class="value mono" id="stat-open" style="color:var(--cyan)">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Closed Trades</div>
+            <div class="value mono" id="stat-closed">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Win Rate</div>
+            <div class="value mono" id="stat-winrate" style="color:var(--green)">0%</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">AI Decisions</div>
+            <div class="value mono" id="stat-decisions">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Assets Tracked</div>
+            <div class="value mono" id="stat-assets" style="color:var(--purple)">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">AI Confidence</div>
+            <div class="value mono" id="stat-conf">0%</div>
+        </div>
+    </div>
 
-        // Init Tooltips
-        tippy('[data-tippy-content]', {
-            theme: 'alpha',
-            animation: 'shift-away',
-            placement: 'top',
-        });
+    <!-- MAIN GRID: Positions + Activity Feed -->
+    <div class="main-grid">
+        <!-- ACTIVE POSITIONS -->
+        <div class="card">
+            <div class="card-title">
+                <span>📊 Active Positions</span>
+                <span class="badge" id="pos-count">0 open</span>
+            </div>
+            <div id="positions-container" style="overflow-y:auto; max-height:300px;">
+                <div class="empty-state">Nessuna posizione aperta — gli agenti stanno analizzando...</div>
+            </div>
+        </div>
 
-        // --- CHARTS INITIALIZATION ---
-        const commonOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { display: false },
-                y: { display: false }
-            },
-            elements: {
-                point: { radius: 0 },
-                line: { tension: 0.4, borderWidth: 2 }
-            }
-        };
+        <!-- LIVE ACTIVITY FEED -->
+        <div class="card">
+            <div class="card-title">
+                <span>⚡ Live Activity</span>
+                <span class="badge" style="animation: pulse 2s infinite;">LIVE</span>
+            </div>
+            <div class="feed" id="feed-container">
+                <div class="feed-item">
+                    <span class="feed-icon">🔄</span>
+                    <span class="feed-text">Sistema in avvio... Connessione agli agenti in corso.</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        const ctxProfit = document.getElementById('profit-chart').getContext('2d');
-        const profitChart = new Chart(ctxProfit, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [
-                    { label: 'Crypto', data: [], borderColor: '#00f2ff', backgroundColor: 'transparent' },
-                    { label: 'Gold', data: [], borderColor: '#ffcc00', backgroundColor: 'transparent' }
-                ]
-            },
-            options: {
-                ...commonOptions,
-                plugins: { legend: { display: false } },
-                scales: { 
-                    x: { display: false }, 
-                    y: { 
-                        grid: { color: 'rgba(255,255,255,0.05)' }, 
-                        ticks: { color: '#64748b', font: { size: 8 } } 
-                    } 
-                }
-            }
-        });
+    <!-- ASSET GRID: All 34 Markets -->
+    <div class="card">
+        <div class="card-title">
+            <span>🌍 Markets Under Analysis</span>
+            <span class="badge" id="market-count">0 assets</span>
+        </div>
+        <div class="asset-grid" id="asset-grid">
+            <div class="empty-state" style="grid-column: 1/-1;">Caricamento mercati...</div>
+        </div>
+    </div>
 
-        const ctxConf = document.getElementById('confidence-chart').getContext('2d');
-        const confidenceChart = new Chart(ctxConf, {
-            type: 'line',
-            data: { labels: [], datasets: [{ data: [], borderColor: '#00f2ff', fill: true, backgroundColor: 'rgba(0, 242, 255, 0.1)' }] },
-            options: commonOptions
-        });
+    <!-- AGENT STATUS -->
+    <div class="card">
+        <div class="card-title">
+            <span>🤖 Agent Swarm Status</span>
+            <span class="badge" id="agent-count">15 agents</span>
+        </div>
+        <div class="agent-grid" id="agent-grid"></div>
+    </div>
 
-        const ctxTradFi = document.getElementById('tradfi-chart').getContext('2d');
-        const tradfiChart = new Chart(ctxTradFi, {
-            type: 'line',
-            data: { labels: [], datasets: [{ data: [], borderColor: '#ffcc00', fill: true, backgroundColor: 'rgba(255, 204, 0, 0.1)' }] },
-            options: commonOptions
-        });
+    <!-- SUPERVISOR PANEL -->
+    <div class="card" style="border-left: 3px solid var(--amber);">
+        <div class="card-title">
+            <span>🛡️ NVIDIA Supervisor</span>
+            <span class="badge" style="background:rgba(255,171,0,0.1);color:var(--amber);">NEMOTRON 120B</span>
+        </div>
+        <div id="supervisor-text" style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
+            Caricamento assessment...
+        </div>
+    </div>
 
-        // --- DATA POLLING ---
-        async function updateDashboard() {
-            try {
-                const response = await fetch('/api/commander/data');
-                const data = await response.json();
-                
-                // 1. Update Core Stats (Crypto Focused)
-                const pnlEl = document.getElementById('pnl-total');
-                const pnlPctEl = document.getElementById('pnl-pct-pill');
-                if (pnlEl) pnlEl.innerText = data.profit.total.toFixed(2);
-                
-                const pct = data.profit.pct;
-                if (pnlPctEl) {
-                    pnlPctEl.innerText = `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`;
-                    pnlPctEl.className = `px-3 py-1 rounded-full text-[10px] font-bold ${pct >= 0 ? 'bg-alpha-emerald/10 border border-alpha-emerald/20 text-alpha-emerald' : 'bg-alpha-rose/10 border border-alpha-rose/20 text-alpha-rose'}`;
-                }
+    <div class="footer">
+        <div>Tengu OS © 2026 — <span id="clock"></span></div>
+        <div>RTX 5080 · Gemma 4 · 34 Markets · Always On</div>
+    </div>
+</div>
 
-                document.getElementById('confidence-score').innerText = `${data.confidence.readiness_pct}%`;
-                
-                const badge = document.getElementById('status-badge');
-                badge.innerText = data.confidence.status === 'READY' ? 'MISSION READY' : 'TRAINING...';
-                badge.className = `text-center py-2 rounded-xl text-[10px] uppercase font-bold tracking-widest ${data.confidence.status === 'READY' ? 'bg-alpha-emerald/20 text-alpha-emerald' : 'bg-slate-800/50 text-slate-500'}`;
+<script>
+// === FIXED AGENT LIST ===
+const AGENTS = [
+    { name: "Squad Crypto", role: "Binance 24/7 (Gemma 4)", icon: "₿", key: "squad_crypto" },
+    { name: "Squad Equity", role: "WallStreet / Asia", icon: "📈", key: "squad_equity" },
+    { name: "News Trader", role: "Llama 3.2 Sentiment", icon: "📰", key: "news_trader" },
+    { name: "Binance Executor", role: "Ordini live + SL/TP", icon: "⚡", key: "executor" },
+    { name: "Risk Controller", role: "Guardrail NVIDIA", icon: "🛡️", key: "risk_controller" },
+    { name: "Dream Agent", role: "Consolidamento memoria", icon: "🧠", key: "dream_agent" },
+    { name: "Coordinator", role: "Oversight globale", icon: "🎯", key: "coordinator" },
+    { name: "Evolution Loop", role: "NVIDIA Auto-Evolve", icon: "🧬", key: "evolution_loop" },
+    { name: "Equity Daemon", role: "Yahoo Finance sync", icon: "🌐", key: "equity_daemon" },
+    { name: "Freqtrade Engine", role: "Backtesting core", icon: "⚙️", key: null },
+    { name: "MCP Server", role: "Model Context Protocol", icon: "🔗", key: null },
+    { name: "Cloudflare Tunnel", role: "HTTPS proxy", icon: "☁️", key: null },
+    { name: "Ollama (Gemma 4)", role: "Local AI RTX 5080", icon: "🚀", key: null },
+    { name: "NVIDIA NIM", role: "Cloud strategy", icon: "💎", key: null }
+];
 
-                // 2. Update Charts
-                // Main Profit Chart (Multi-Dataset)
-                profitChart.data.labels = data.profit.history.map(h => h.date);
-                profitChart.data.datasets[0].data = data.profit.history.map(h => h.val);
-                
-                // Update TradFi Data if available
-                if (data.tradfi && data.tradfi.history.length > 0) {
-                    profitChart.data.datasets[1].data = data.tradfi.history.map(h => h.val);
-                    
-                    tradfiChart.data.labels = data.tradfi.history.map(h => h.date);
-                    tradfiChart.data.datasets[0].data = data.tradfi.history.map(h => h.val);
-                    tradfiChart.update('none');
-                }
-                profitChart.update('none');
+// Render agent grid
+const agentGrid = document.getElementById('agent-grid');
+agentGrid.innerHTML = AGENTS.map(a => `
+    <div class="agent-chip" data-agent-key="${a.key || ''}">
+        <div class="agent-dot active"></div>
+        <div>
+            <div class="agent-name">${a.icon} ${a.name}</div>
+            <div class="agent-role">${a.role}</div>
+            <div class="agent-age" style="font-size:9px;color:var(--text-muted);margin-top:2px;"></div>
+        </div>
+    </div>
+`).join('');
 
-                confidenceChart.data.labels = data.confidence.history.map((_, i) => i);
-                confidenceChart.data.datasets[0].data = data.confidence.history.map(h => h.val);
-                confidenceChart.update('none');
+// === LIVE FEED ENGINE ===
+let feedLog = [];
+let lastActivityId = 0;
 
-                // 3. Update Universal Reasoning Stream
-                const logCont = document.getElementById('log-container');
-                if (data.reasoning.length > 0) {
-                    logCont.innerHTML = data.reasoning.map(txt => `
-                        <div class="p-3 rounded-xl bg-slate-800/30 border border-white/5 flex gap-3 transition-all hover:bg-white/5 animate-fade-in">
-                             <span class="text-alpha-cyan">▶</span>
-                             <p class="leading-relaxed text-[10px]">${txt}</p>
-                        </div>
-                    `).join('');
-                }
+function addFeedItem(icon, html, pushTop = true) {
+    const now = new Date().toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const item = { icon, html, time: now };
+    if (pushTop) feedLog.unshift(item); else feedLog.push(item);
+    if (feedLog.length > 50) feedLog.pop();
+    renderFeed();
+}
 
-                // 4. Agent Grid
-                const agentGrid = document.getElementById('agent-grid');
-                if (agentGrid) {
-                    agentGrid.innerHTML = data.agents.slice(0, 4).map(agent => `
-                        <div class="p-3 rounded-2xl bg-slate-800/40 border border-white/5 flex flex-col items-center gap-1">
-                            <div class="w-8 h-8 rounded-lg bg-alpha-cyan/10 flex items-center justify-center mb-1">
-                                <i data-lucide="shield" class="w-4 h-4 text-alpha-cyan"></i>
-                            </div>
-                            <span class="text-[8px] font-bold text-slate-400 uppercase truncate text-center w-full">${agent.name.split('-')[0]}</span>
-                            <span class="text-[10px] font-mono ${agent.pnl >= 0 ? 'text-alpha-emerald' : 'text-alpha-rose'}">${agent.pnl >= 0 ? '+' : ''}${agent.pnl}%</span>
-                        </div>
-                    `).join('');
-                    lucide.createIcons();
-                }
+function renderFeed() {
+    const el = document.getElementById('feed-container');
+    el.innerHTML = feedLog.map(f => `
+        <div class="feed-item">
+            <span class="feed-icon">${f.icon}</span>
+            <span class="feed-text">${f.html}</span>
+            <span class="feed-time mono">${f.time}</span>
+        </div>
+    `).join('');
+}
 
-            } catch (err) { console.error("Sync Error:", err); }
+// Clock
+setInterval(() => {
+    document.getElementById('clock').textContent = new Date().toLocaleString('it-IT');
+}, 1000);
+
+// === DATA POLLING ===
+async function fetchJSON(url) {
+    try { const r = await fetch(url); return await r.json(); } catch { return null; }
+}
+
+let lastPositionIds = new Set();
+let lastDecisionCount = 0;
+
+async function updateAll() {
+    // 1. STATE
+    const state = await fetchJSON('/api/state');
+    if (state) {
+        document.getElementById('wallet-bal').innerHTML =
+            `${state.wallet_current.toLocaleString('en-US', {minimumFractionDigits:2})} <small style="font-size:14px;color:var(--text-muted)">${state.currency}</small>`;
+        const pnlEl = document.getElementById('wallet-pnl');
+        pnlEl.textContent = `${state.pnl_pct >= 0 ? '+' : ''}${state.pnl_pct.toFixed(2)}%`;
+        pnlEl.className = `wallet-pnl ${state.pnl_pct >= 0 ? 'pos' : 'neg'}`;
+        document.getElementById('stat-open').textContent = state.open_trades;
+        document.getElementById('stat-closed').textContent = state.closed_trades;
+        document.getElementById('stat-decisions').textContent = state.total_decisions;
+
+        if (lastDecisionCount > 0 && state.total_decisions > lastDecisionCount) {
+            addFeedItem('🧠', `<strong>Nuova decisione AI</strong> — Totale: ${state.total_decisions}`);
         }
+        lastDecisionCount = state.total_decisions;
+    }
 
-        setInterval(updateDashboard, 5000);
-        updateDashboard();
-    </script>
-script>
+    // 2. POSITIONS
+    const positions = await fetchJSON('/api/positions');
+    if (positions) {
+        document.getElementById('pos-count').textContent = `${positions.length} open`;
+        const container = document.getElementById('positions-container');
+        if (positions.length === 0) {
+            container.innerHTML = '<div class="empty-state">Nessuna posizione aperta — gli agenti stanno analizzando...</div>';
+        } else {
+            container.innerHTML = `<table class="positions-table"><thead><tr>
+                <th>Asset</th><th>Entry</th><th>Current</th><th>PnL</th><th>Size</th><th>Opened</th>
+            </tr></thead><tbody>${positions.map(p => {
+                const cls = p.pnl_pct >= 0 ? 'pnl-up' : 'pnl-down';
+                const arrow = p.pnl_pct >= 0 ? '▲' : '▼';
+                return `<tr title="${p.inner_monologue || ''}">
+                    <td><span class="asset-tag"><span class="asset-icon">₿</span>${p.asset}</span></td>
+                    <td class="mono">${p.entry_price.toFixed(2)}</td>
+                    <td class="mono">${p.current_price.toFixed(2)}</td>
+                    <td class="mono ${cls}">${arrow} ${p.pnl_pct.toFixed(2)}%</td>
+                    <td class="mono">${(p.size_pct * 100).toFixed(0)}%</td>
+                    <td style="font-size:10px;color:var(--text-muted)">${p.opened_at.substring(0,16)}</td>
+                </tr>`;
+            }).join('')}</tbody></table>`;
 
+            const currentIds = new Set(positions.map(p => p.id));
+            for (const p of positions) {
+                if (!lastPositionIds.has(p.id)) {
+                    addFeedItem('🟢', `<strong>BUY ${p.asset}</strong> @ ${p.entry_price.toFixed(2)} | Size: ${(p.size_pct*100).toFixed(0)}%`);
+                }
+            }
+            lastPositionIds = currentIds;
+        }
+    }
+
+    // 3. ASSETS
+    const assets = await fetchJSON('/api/assets');
+    if (assets && assets.length > 0) {
+        document.getElementById('stat-assets').textContent = assets.length;
+        document.getElementById('market-count').textContent = `${assets.length} assets`;
+        const grid = document.getElementById('asset-grid');
+        grid.innerHTML = assets.map(a => {
+            const dClass = a.decision === 'buy' ? 'decision-buy' : a.decision === 'sell' ? 'decision-sell' : 'decision-hold';
+            const dIcon = a.decision === 'buy' ? '📈' : a.decision === 'sell' ? '📉' : '⏸️';
+            return `<div class="asset-chip" title="RSI: ${a.rsi_5m?.toFixed(1)} | MACD: ${a.macd_5m?.toFixed(4)} | ${a.why_not_trade || ''}">
+                <div class="name">${a.asset}</div>
+                <div class="price mono">$${a.price?.toLocaleString('en-US', {minimumFractionDigits:2}) || '—'}</div>
+                <div class="decision ${dClass}">${dIcon} ${a.decision} <span style="color:var(--text-muted);margin-left:4px">${a.confidence}%</span></div>
+                <div class="conf-bar" style="width:${a.confidence}%"></div>
+            </div>`;
+        }).join('');
+    }
+
+    // 4. LEARNING
+    const learning = await fetchJSON('/api/learning');
+    if (learning && !learning.error) {
+        document.getElementById('stat-winrate').textContent = `${learning.winrate}%`;
+    }
+
+    // 5. SUPERVISOR
+    const supervisor = await fetchJSON('/api/supervisor');
+    if (supervisor) {
+        const ctrl = supervisor.controls || {};
+        const logs = supervisor.recent_logs || [];
+        const lastLog = logs[0] || {};
+        const assessment = ctrl.ai_reasoning || lastLog.ai_assessment || 'Sistema in attesa di dati...';
+        document.getElementById('supervisor-text').innerHTML = `
+            <div style="margin-bottom:8px"><strong>Assessment:</strong> ${assessment}</div>
+            <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:11px;">
+                <span>🚨 Emergency: <strong style="color:${ctrl.emergency_stop ? 'var(--red)' : 'var(--green)'}">${ctrl.emergency_stop ? 'HALT' : 'OK'}</strong></span>
+                <span>🎯 Min Confidence: <strong>${ctrl.min_confidence || 70}%</strong></span>
+                <span>📊 Max Trades: <strong>${ctrl.max_open_trades || 3}</strong></span>
+                <span>🔻 Stop Loss: <strong>${ctrl.close_losers_threshold || -5}%</strong></span>
+            </div>
+        `;
+        document.getElementById('dot-supervisor').className = `dot ${ctrl.emergency_stop ? 'off' : 'on'}`;
+    }
+}
+
+// 6. REAL-TIME ACTIVITY FEED (pulls from /api/activity)
+async function updateActivity() {
+    const activities = await fetchJSON('/api/activity');
+    if (activities && activities.length > 0) {
+        const newItems = activities.filter(a => a.id > lastActivityId);
+        if (newItems.length > 0) {
+            lastActivityId = Math.max(...activities.map(a => a.id));
+            for (const act of newItems.reverse()) {
+                const icons = {
+                    'squad_crypto': '₿', 'squad_equity': '📈', 'news_trader': '📰',
+                    'executor': '⚡', 'risk_controller': '🛡️', 'evolution_loop': '🧬',
+                    'dream_agent': '🧠', 'coordinator': '🎯', 'nvidia': '💎'
+                };
+                const icon = icons[act.agent] || '🔵';
+                const actionColor = act.action === 'BUY' ? 'color:var(--green)' : 
+                                    act.action === 'SELL' ? 'color:var(--red)' : 
+                                    act.action === 'BLOCKED' ? 'color:var(--red)' : '';
+                addFeedItem(icon, `<strong style="${actionColor}">[${act.action}]</strong> <span style="color:var(--text-muted)">${act.agent}</span> — ${act.detail}`);
+            }
+        }
+    }
+}
+
+// 7. AGENT STATUS (heartbeats + age)
+async function updateAgentStatus() {
+    const status = await fetchJSON('/api/agent-status');
+    if (!status) return;
+
+    const health = await fetchJSON('/api/health');
+    if (health) {
+        document.getElementById('dot-ollama').className = `dot ${health.ollama ? 'on' : 'off'}`;
+        document.getElementById('dot-nvidia').className = `dot ${health.nvidia_api ? 'on' : 'warn'}`;
+        document.getElementById('dot-exchange').className = `dot ${health.exchange ? 'on' : 'off'}`;
+    }
+
+    const chips = document.querySelectorAll('.agent-chip');
+    chips.forEach(chip => {
+        const key = chip.dataset.agentKey;
+        if (!key || !status[key]) return;
+        
+        const info = status[key];
+        const dot = chip.querySelector('.agent-dot');
+        const ageEl = chip.querySelector('.agent-age');
+        
+        if (dot) {
+            dot.className = `agent-dot ${info.status === 'active' ? 'active' : info.status === 'stale' ? 'thinking' : 'idle'}`;
+        }
+        if (ageEl && info.age_seconds !== null) {
+            if (info.age_seconds < 60) ageEl.textContent = `${info.age_seconds}s ago`;
+            else if (info.age_seconds < 3600) ageEl.textContent = `${Math.floor(info.age_seconds/60)}m ago`;
+            else ageEl.textContent = `${Math.floor(info.age_seconds/3600)}h ago`;
+        } else if (ageEl) {
+            ageEl.textContent = info.status === 'offline' ? 'offline' : '';
+        }
+    });
+}
+
+// === INIT & POLLING ===
+updateAll();
+updateActivity(); 
+updateAgentStatus();
+addFeedItem('🚀', '<strong>Tengu Commander V10</strong> — Multi-Market Swarm attivo. Polling live ogni 3s.');
+
+setInterval(updateAll, 5000);       // State + positions + assets every 5s
+setInterval(updateActivity, 3000);  // Activity feed every 3s (fast!)
+setInterval(updateAgentStatus, 5000); // Agent heartbeats every 5s
+</script>
 </body>
 </html>

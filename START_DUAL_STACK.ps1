@@ -12,7 +12,7 @@ Start-Sleep -Seconds 5
 
 # 2. AVVIO CRYPTO STACK (Binance)
 Write-Host "[2/4] Inizializzazione AI-Binance Swarm (Settore Alpha)..." -ForegroundColor Cyan
-Start-Process cmd.exe -ArgumentList "/c cd /d h:\ai-binance && .\START_STACK.bat" -WindowStyle Minimized
+Start-Process cmd.exe -ArgumentList "/c cd /d H:\ai-binance && .\START_STACK.bat" -WindowStyle Minimized
 Start-Sleep -Seconds 10
 
 # 3. AVVIO TRADFI STACK (Gold Sandbox)
@@ -41,3 +41,4 @@ if ($i -eq $max_attempts) {
 Write-Host "`nMISSIONE NOTTURNA ATTIVA. I BOT STANNO EVOLVENDO." -ForegroundColor Green
 Write-Host "Premi un tasto per chiudere questo orchestratore (i bot rimarranno attivi)."
 Read-Host
+

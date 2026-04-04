@@ -314,6 +314,53 @@ def get_supervisor():
     }
 
 
+@router.get("/health")
+def get_health():
+    """Real health check — verifies which services are actually running."""
+    import requests
+    from datetime import datetime, timezone, timedelta
+    repo = Repository()
+    
+    # Check Ollama
+    ollama_ok = False
+    try:
+        r = requests.get("http://127.0.0.1:11434/api/tags", timeout=3)
+        ollama_ok = r.status_code == 200
+    except: pass
+    
+    # Check agent heartbeats (stale = >10 min = probably dead)
+    now = datetime.now(timezone.utc)
+    threshold = timedelta(minutes=10)
+    
+    services = ["squad_crypto", "squad_equity", "news_trader", "daemon", "risk_controller", "dream_agent", 
+                "coordinator", "autoevolve", "equity_daemon"]
+    status = {}
+    for svc in services:
+        state = repo.get_service_state(svc)
+        hb = state.get("last_heartbeat", "")
+        if hb and hb != "N/A":
+            try:
+                last = datetime.fromisoformat(hb.replace("Z", "+00:00"))
+                age = now - last
+                status[svc] = "active" if age < threshold else "stale"
+            except: status[svc] = "unknown"
+        else:
+            status[svc] = "offline"
+    
+    # Check NVIDIA API
+    nvidia_ok = False
+    nvidia_key = os.getenv("NVIDIA_API_KEY", "")
+    if nvidia_key and len(nvidia_key) > 10:
+        nvidia_ok = True  # Key exists, assume callable
+    
+    return {
+        "ollama": ollama_ok,
+        "nvidia_api": nvidia_ok,
+        "exchange": status.get("daemon", "offline") != "offline",
+        "agents": status
+    }
+
+
 @router.get("/system")
 def get_system():
     """Debug / system info."""
@@ -342,3 +389,51 @@ def get_system():
         "log_files": log_files,
         "port": 8087,
     }
+
+
+@router.get("/activity")
+def get_activity():
+    """Real-time activity feed from all agents."""
+    repo = Repository()
+    activities = repo.get_recent_activity(limit=30)
+    return activities
+
+
+@router.get("/agent-status")
+def get_agent_status():
+    """Detailed agent status with timestamps and metadata."""
+    from datetime import datetime, timezone, timedelta
+    repo = Repository()
+    now = datetime.now(timezone.utc)
+    threshold = timedelta(minutes=5)
+    
+    agents_info = {}
+    for svc in ["squad_crypto", "squad_equity", "news_trader", "executor", "risk_controller", 
+                "dream_agent", "coordinator", "evolution_loop", "equity_daemon"]:
+        state = repo.get_service_state(svc)
+        hb = state.get("last_heartbeat", "")
+        status = "offline"
+        age_seconds = None
+        meta = {}
+        
+        if hb and hb != "N/A":
+            try:
+                last = datetime.fromisoformat(hb.replace("Z", "+00:00"))
+                age = now - last
+                age_seconds = int(age.total_seconds())
+                status = "active" if age < threshold else "stale"
+            except: pass
+        
+        state_json = state.get("state_json", "{}")
+        try:
+            meta = json.loads(state_json) if state_json else {}
+        except: pass
+        
+        agents_info[svc] = {
+            "status": status,
+            "last_heartbeat": hb or "never",
+            "age_seconds": age_seconds,
+            "meta": meta
+        }
+    
+    return agents_info

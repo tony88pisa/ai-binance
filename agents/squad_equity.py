@@ -47,9 +47,16 @@ def job_ai_analysis(repo, executor):
             return
 
         snapshots = repo.get_latest_snapshots()
+        # [SQUAD EQUITY] Solo asset Tradizionali ammessi!
+        ep = EquityProvider()
+        equity_assets = ep.get_market_list("ALL")
+        
         for snap in snapshots:
             asset = snap["asset"]
             if any(t["asset"] == asset for t in open_trades):
+                continue
+                
+            if asset not in equity_assets:
                 continue
                 
             intel_types = ai_types.MarketIntelligence(
@@ -86,8 +93,7 @@ def job_ai_analysis(repo, executor):
             if ai_decision.decision.value == "buy" and ai_decision.confidence >= min_conf:
                 if snap.get("regime") not in ["TREND_DOWN", "HIGH_VOL_CHAOS"]:
                     size_pct = settings.trading.default_position_size
-                    
-                    # Verifichiamo se l'asset è un titolo Tradizionale e instradiamolo al broker corretto
+                    # [SQUAD EQUITY] - Operazioni Esclusive per Azioni / Materie Prime.
                     ep = EquityProvider()
                     equity_assets = ep.get_market_list("ALL")
                     
@@ -95,37 +101,22 @@ def job_ai_analysis(repo, executor):
                         equity_broker = MockEquityBroker()
                         wallet_eq = equity_broker.get_balance()
                         pos_value = wallet_eq * size_pct
-                        logger.info(f"[EQUITY_PAPER] PLACING BUY: {asset} for ${pos_value:.2f}")
+                        logger.info(f"[EQUITY_SQUAD] PLACING BUY: {asset} for ${pos_value:.2f}")
                         
                         success = equity_broker.open_position(asset, snap["price"], pos_value)
-                        target_ex_id = f"EQ-{uuid.uuid4().hex[:6]}" if success else None
+                        target_ex_id = f"EQ-{uuid.uuid4().hex[:8]}" if success else None
                         
                         if success:
                             repo.save_trade_decision({
-                                "id": f"DEC-{uuid.uuid4().hex[:8]}", "asset": asset, "action": "buy",
+                                "id": f"DEC-EQUITY-{uuid.uuid4().hex[:8]}", "asset": asset, "action": "buy",
                                 "confidence": ai_decision.confidence, "size_pct": size_pct, 
                                 "thesis": ai_decision.thesis, "regime": snap.get("regime", "UNKNOWN"), 
                                 "entry_price": snap["price"], "atr_stop_distance": snap.get("atr_5m", 0.0) * 1.5,
                                 "status": "OPEN", "inner_monologue": ai_decision.inner_monologue, 
-                                "agent_name": "WallStreet-Bot", "exchange_order_id": target_ex_id
-                            })
-                    else:
-                        # Logica precedente per le Criptovalute (Binance/Freqtrade)
-                        pos_value = wallet_current * size_pct
-                        logger.info(f"[{executor.mode.upper()}] PLACING BUY: {asset} for {pos_value:.2f}")
-                        ex_order = executor.place_market_buy(asset, pos_value)
-                        
-                        if ex_order:
-                            repo.save_trade_decision({
-                                "id": f"DEC-{uuid.uuid4().hex[:8]}", "asset": asset, "action": "buy",
-                                "confidence": ai_decision.confidence, "size_pct": size_pct, 
-                                "thesis": ai_decision.thesis, "regime": snap.get("regime", "UNKNOWN"), 
-                                "entry_price": snap["price"], "atr_stop_distance": snap.get("atr_5m", 0.0) * 1.5,
-                                "status": "OPEN", "inner_monologue": ai_decision.inner_monologue, 
-                                "agent_name": agent_identity, "exchange_order_id": ex_order.get("orderId")
+                                "agent_name": "WallStreet-Agent", "exchange_order_id": target_ex_id
                             })
                             
-        repo.update_service_heartbeat("analyzer", json.dumps({
+        repo.update_service_heartbeat("squad_equity", json.dumps({
             "mode": "ACTIVE", "last_run": datetime.now(timezone.utc).isoformat()
         }))
         logger.info(f"AI Analysis complete. Open trades: {len(open_trades)}")

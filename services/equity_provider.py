@@ -11,9 +11,10 @@ class EquityProvider:
     def __init__(self):
         # Tracking tickers for different markets
         self.markets = {
-            "USA": ["AAPL", "NVDA", "TSLA", "SPY"],
-            "EUROPE": ["BMW.DE", "STM.MI", "LVMUY"], # Germany, Italy/France cross
-            "CHINA": ["0700.HK", "BABA", "NIO"]      # Hong Kong, ADRs
+            "USA": ["AAPL", "NVDA", "TSLA", "SPY", "MSFT", "AMZN", "META", "GOOGL"],
+            "EUROPE": ["BMW.DE", "STM.MI", "LVMUY", "ENI.MI", "ENEL.MI", "SAP.DE"],
+            "CHINA": ["0700.HK", "BABA", "NIO", "9988.HK"],
+            "COMMODITIES": ["GC=F", "SI=F", "CL=F"]  # Gold, Silver, Oil futures via Yahoo
         }
         
     def get_market_list(self, region: str = "ALL"):

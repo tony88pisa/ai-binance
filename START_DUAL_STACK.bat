@@ -6,7 +6,7 @@ echo =============================================================
 echo.
 
 echo [1/2] Inizializzazione AI-Binance Swarm (Crypto Sector)...
-start /min cmd /c "cd /d h:\ai-binance && .\START_STACK.bat"
+start /min cmd /c "cd /d H:\ai-binance && .\START_STACK.bat"
 :: Pausa compatibile di 5 secondi
 ping -n 6 127.0.0.1 > nul
 
@@ -20,3 +20,4 @@ echo =============================================================
 echo.
 echo Premi un tasto per chiudere questo orchestratore (i bot rimarranno attivi).
 pause > nul
+

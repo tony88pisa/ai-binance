@@ -340,3 +340,40 @@ class Repository:
         with self._conn() as conn:
             rows = conn.execute("SELECT * FROM supervisor_logs ORDER BY timestamp DESC LIMIT ?", (limit,)).fetchall()
             return [dict(r) for r in rows]
+
+    # --- LIVE ACTIVITY FEED ---
+    def _ensure_activity_table(self):
+        with self._conn() as conn:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS agent_activity (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp TEXT NOT NULL,
+                    agent TEXT NOT NULL,
+                    action TEXT NOT NULL,
+                    detail TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            conn.commit()
+
+    def log_activity(self, agent: str, action: str, detail: str = ""):
+        """Log a real-time activity event from any agent for the live dashboard feed."""
+        self._ensure_activity_table()
+        with self._conn() as conn:
+            conn.execute(
+                "INSERT INTO agent_activity (timestamp, agent, action, detail) VALUES (?, ?, ?, ?)",
+                (datetime.now(timezone.utc).isoformat(), agent, action, detail)
+            )
+            # Keep only last 500 entries to avoid table bloat
+            conn.execute("DELETE FROM agent_activity WHERE id NOT IN (SELECT id FROM agent_activity ORDER BY id DESC LIMIT 500)")
+            conn.commit()
+
+    def get_recent_activity(self, limit: int = 30) -> List[Dict[str, Any]]:
+        """Get the most recent agent activity for the live dashboard feed."""
+        self._ensure_activity_table()
+        with self._conn() as conn:
+            rows = conn.execute(
+                "SELECT * FROM agent_activity ORDER BY id DESC LIMIT ?", (limit,)
+            ).fetchall()
+            return [dict(r) for r in rows]
+

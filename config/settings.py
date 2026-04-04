@@ -98,7 +98,12 @@ class TradingSettings:
     stake_currency: str = "USDT"
     timeframe: str = "5m"
     informative_timeframe: str = "1h"
-    pairs: list[str] = field(default_factory=lambda: ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"])
+    pairs: list[str] = field(default_factory=lambda: [
+        "BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT",
+        "XRP/USDT", "DOGE/USDT", "ADA/USDT", "AVAX/USDT",
+        "LINK/USDT", "DOT/USDT"
+    ])
+    default_position_size: float = 0.10  # 10% del wallet per trade
 
 
 @dataclass(frozen=True)
