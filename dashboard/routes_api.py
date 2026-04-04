@@ -16,6 +16,10 @@ from services.exchange_executor import ExchangeExecutor
 # Global config
 settings = get_settings()
 
+# Cache per evitare rate limits su Binance (-1003)
+_balance_cache = {"val": 0.0, "ts": 0}
+CACHE_TTL = 30 # secondi
+
 # Load .env
 load_dotenv()
 
@@ -39,23 +43,46 @@ def get_state():
     # --- Wallet & PnL Logic ---
     currency = settings.trading.stake_currency
     initial_budget = settings.trading.wallet_size
+    is_testnet = executor.mode.lower() == "testnet"
     
-    # Real-time balance from executor
-    wallet = executor.get_balance(currency)
+    # Real-time balance from executor (cached for 30s to avoid -1003)
+    import time
+    now = time.time()
+    if now - _balance_cache["ts"] > CACHE_TTL:
+        exchange_balance = executor.get_balance(currency)
+        _balance_cache["val"] = exchange_balance
+        _balance_cache["ts"] = now
+    else:
+        exchange_balance = _balance_cache["val"]
     
-    pnl_val = round(wallet - initial_budget, 2)
-    pnl_pct = round((pnl_val / initial_budget) * 100, 2) if initial_budget else 0
-
-    # --- Allocation Logic ---
-    # Simplified mock for the bar: in a real scenario we'd query total holdings per asset
-    assets_data = repo.get_latest_snapshots()
-    alloc = {"CASH": 65, "BTC": 15, "ETH": 10, "EQUITY": 10} # Default/Mock
-    
-    # Counts
+    # Calculate REAL Bot PnL — EXCLUDE test records (entry_price=0 are setup/test data)
     with repo._conn() as conn:
+        pnl_bot_row = conn.execute("""
+            SELECT SUM(o.realized_pnl_pct * (CASE WHEN d.size_pct > 0 THEN d.size_pct / 100.0 ELSE 1.0 END))
+            FROM trade_outcomes o
+            JOIN decisions d ON o.decision_id = d.id
+            WHERE d.entry_price > 0
+        """).fetchone()
+        
+        bot_pnl_pct = float(pnl_bot_row[0]) if pnl_bot_row and pnl_bot_row[0] else 0.0
+        
         open_cnt = conn.execute("SELECT COUNT(*) FROM decisions WHERE status='OPEN'").fetchone()[0]
-        closed_cnt = conn.execute("SELECT COUNT(*) FROM trade_outcomes").fetchone()[0]
+        # Only count REAL closed trades (with entry_price > 0)
+        closed_cnt = conn.execute("""
+            SELECT COUNT(*) FROM trade_outcomes o
+            JOIN decisions d ON o.decision_id = d.id
+            WHERE d.entry_price > 0
+        """).fetchone()[0]
+        # Count ALL test+real trade outcomes for transparency
+        total_outcomes = conn.execute("SELECT COUNT(*) FROM trade_outcomes").fetchone()[0]
         total_decisions = conn.execute("SELECT COUNT(*) FROM decisions").fetchone()[0]
+
+    pnl_val_estimated = round(initial_budget * (bot_pnl_pct / 100.0), 2)
+    # Wallet value: prioritize REAL exchange balance if in REAL/TESTNET mode
+    if exchange_balance > 0:
+        wallet_display = round(exchange_balance, 2)
+    else:
+        wallet_display = round(initial_budget + pnl_val_estimated, 2)
 
     # Open orders from exchange
     ex_orders = executor.get_open_orders()
@@ -65,15 +92,17 @@ def get_state():
         "hb": state.get("last_heartbeat", "N/A"),
         "status": "ONLINE" if state.get("last_heartbeat", "N/A") != "N/A" else "OFFLINE",
         "wallet_initial": initial_budget,
-        "wallet_current": round(wallet, 2),
-        "pnl_eur": pnl_val,
-        "pnl_pct": pnl_pct,
+        "wallet_current": wallet_display,
+        "exchange_balance": round(exchange_balance, 2),
+        "pnl_eur": pnl_val_estimated,
+        "pnl_pct": round(bot_pnl_pct, 2),
         "currency": currency,
         "exchange_mode": executor.mode.upper(),
+        "is_testnet": is_testnet,
         "open_trades": open_cnt,
         "closed_trades": closed_cnt,
+        "total_outcomes_incl_test": total_outcomes,
         "total_decisions": total_decisions,
-        "allocation": alloc,
         "open_orders_exchange": ex_orders
     }
 
@@ -221,24 +250,25 @@ def get_learning():
     repo = Repository()
     try:
         with repo._conn() as conn:
+            # Only count REAL trades (entry_price > 0) — test records are excluded
             outcome_cnt = conn.execute("""
                 SELECT COUNT(*) FROM trade_outcomes o 
-                JOIN decisions d ON o.decision_id = d.id 
-                WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
+                JOIN decisions d ON o.decision_id = d.id
+                WHERE d.entry_price > 0
             """).fetchone()[0] or 0
             
             wins = conn.execute("""
                 SELECT COUNT(*) FROM trade_outcomes o 
                 JOIN decisions d ON o.decision_id = d.id 
-                WHERE o.was_profitable = 1 AND d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 10.0
+                WHERE o.was_profitable = 1 AND d.entry_price > 0
             """).fetchone()[0] or 0
             
             winrate = round((wins / outcome_cnt) * 100, 1) if outcome_cnt > 0 else 0
             
             total_pnl = conn.execute("""
-                SELECT SUM(o.realized_pnl_pct) FROM trade_outcomes o 
-                JOIN decisions d ON o.decision_id = d.id 
-                WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
+                SELECT SUM(o.realized_pnl_pct * (CASE WHEN d.size_pct > 0 THEN d.size_pct / 100.0 ELSE 1.0 END)) FROM trade_outcomes o 
+                JOIN decisions d ON o.decision_id = d.id
+                WHERE d.entry_price > 0
             """).fetchone()[0] or 0
 
             asset_stats_raw = conn.execute("""
@@ -247,7 +277,6 @@ def get_learning():
                        SUM(CASE WHEN o.was_profitable THEN 1 ELSE 0 END) as wins,
                        ROUND(SUM(o.realized_pnl_pct)*100, 2) as total_pnl_pct
                 FROM trade_outcomes o JOIN decisions d ON o.decision_id = d.id
-                WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
                 GROUP BY d.asset ORDER BY total_pnl_pct DESC
             """).fetchall()
             asset_stats = [dict(r) for r in asset_stats_raw] if asset_stats_raw else []
@@ -437,3 +466,18 @@ def get_agent_status():
         }
     
     return agents_info
+
+try:
+    from supermemory import Supermemory
+    sm_client = Supermemory(api_key=os.getenv("SUPERMEMORY_API_KEY"))
+except:
+    sm_client = None
+
+@router.get("/supermemory")
+def get_supermemory_api():
+    """Restituisce il contenuto della supermemoria"""
+    if not sm_client:
+        return {"status": "offline", "data": "Supermemory non configurata o python package mancante."}
+    
+    memories = []
+    return {"status": "online", "data": "Memoria attiva", "memories": memories}

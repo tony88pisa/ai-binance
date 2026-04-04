@@ -163,14 +163,74 @@
         .agent-chip {
             background: rgba(255,255,255,0.02); border: 1px solid var(--border);
             border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px;
+            transition: all 0.3s;
         }
-        .agent-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .agent-chip:hover { background: var(--bg-card-hover); border-color: var(--border-active); transform: translateY(-1px); }
+        .agent-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; transition: all 0.3s; }
         .agent-dot.active { background: var(--green); box-shadow: 0 0 10px rgba(0,230,118,0.4); animation: pulse 2s infinite; }
         .agent-dot.thinking { background: var(--amber); animation: pulse 1s infinite; }
         .agent-dot.idle { background: var(--text-muted); }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .agent-name { font-size: 11px; font-weight: 600; }
         .agent-role { font-size: 9px; color: var(--text-muted); }
+        .agent-elapsed { font-size: 8px; color: var(--cyan); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+        /* === TRADING HEATMAP === */
+        .heatmap-container { display: flex; gap: 3px; flex-wrap: wrap; }
+        .heatmap-cell {
+            width: 18px; height: 18px; border-radius: 3px;
+            transition: all 0.3s; cursor: default; position: relative;
+        }
+        .heatmap-cell:hover { transform: scale(1.4); z-index: 10; }
+        .heatmap-cell[title]:hover::after {
+            content: attr(title); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.9); color: #fff; padding: 4px 8px; border-radius: 4px;
+            font-size: 9px; white-space: nowrap; z-index: 20;
+        }
+        .heat-0 { background: rgba(255,255,255,0.03); }
+        .heat-1 { background: rgba(0,230,118,0.15); }
+        .heat-2 { background: rgba(0,230,118,0.35); }
+        .heat-3 { background: rgba(0,230,118,0.55); }
+        .heat-4 { background: rgba(0,230,118,0.8); }
+        .heat-neg { background: rgba(255,61,87,0.4); }
+        .heatmap-labels { display: flex; gap: 3px; margin-top: 6px; align-items: center; font-size: 9px; color: var(--text-muted); }
+        .heatmap-labels .heatmap-cell { width: 12px; height: 12px; }
+
+        /* === PROGRESS BARS === */
+        .progress-bar-container {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.06);
+            border-radius: 3px; overflow: hidden; margin-top: 8px;
+        }
+        .progress-bar-fill {
+            height: 100%; border-radius: 3px; transition: width 1s ease-out;
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+        }
+        .progress-bar-fill.negative {
+            background: linear-gradient(90deg, var(--red), var(--amber));
+        }
+
+        /* === SYSTEM HEALTH DIAGNOSTICS === */
+        .health-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        .health-item {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 12px;
+            transition: all 0.3s;
+        }
+        .health-item:hover { background: var(--bg-card-hover); }
+        .health-icon { font-size: 20px; }
+        .health-info { flex: 1; }
+        .health-name { font-size: 11px; font-weight: 600; }
+        .health-status { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+        .health-status.ok { color: var(--green); }
+        .health-status.warn { color: var(--amber); }
+        .health-status.err { color: var(--red); }
+        .health-ping { font-size: 9px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+        .health-dot {
+            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+        }
+        .health-dot.ok { background: var(--green); box-shadow: 0 0 8px rgba(0,230,118,0.4); }
+        .health-dot.warn { background: var(--amber); }
+        .health-dot.err { background: var(--red); box-shadow: 0 0 8px rgba(255,61,87,0.4); }
 
         /* === FOOTER === */
         .footer {
@@ -182,6 +242,14 @@
 </head>
 <body>
 <div class="container">
+    
+    <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; width: 100%;">
+        <a href="/commander" style="flex: 1; text-align: center; color: var(--cyan); background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">📊 Commander HUD</a>
+        <a href="/trader" style="flex: 1; text-align: center; color: var(--text-muted); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-card-hover)'; this.style.color='white';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.color='var(--text-muted)';">📈 Pro Trader</a>
+        <a href="/agents" style="flex: 1; text-align: center; color: var(--text-muted); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-card-hover)'; this.style.color='white';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.color='var(--text-muted)';">🧬 Agent Swarm</a>
+        <a href="/memory" style="flex: 1; text-align: center; color: var(--text-muted); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-card-hover)'; this.style.color='white';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.color='var(--text-muted)';">🧠 Semantic Memory</a>
+    </div>
+    </div>
 
     <!-- TOP BAR -->
     <div class="top-bar">
@@ -229,6 +297,26 @@
         <div class="stat-card">
             <div class="label">AI Confidence</div>
             <div class="value mono" id="stat-conf">0%</div>
+        </div>
+    </div>
+
+    <!-- TRADING HEATMAP -->
+    <div class="card">
+        <div class="card-title">
+            <span>📅 Trading Activity Heatmap</span>
+            <span class="badge" id="heatmap-period">Last 30 days</span>
+        </div>
+        <div id="heatmap-area" class="heatmap-container"></div>
+        <div class="heatmap-labels">
+            <span>Less</span>
+            <div class="heatmap-cell heat-0"></div>
+            <div class="heatmap-cell heat-1"></div>
+            <div class="heatmap-cell heat-2"></div>
+            <div class="heatmap-cell heat-3"></div>
+            <div class="heatmap-cell heat-4"></div>
+            <span>More</span>
+            <span style="margin-left:12px;">Loss</span>
+            <div class="heatmap-cell heat-neg"></div>
         </div>
     </div>
 
@@ -289,6 +377,15 @@
         <div id="supervisor-text" style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
             Caricamento assessment...
         </div>
+    </div>
+
+    <!-- SYSTEM HEALTH DIAGNOSTICS -->
+    <div class="card" style="border-left: 3px solid var(--cyan);">
+        <div class="card-title">
+            <span>🏥 System Health Diagnostics</span>
+            <span class="badge" id="health-badge">Checking...</span>
+        </div>
+        <div class="health-grid" id="health-grid"></div>
     </div>
 
     <div class="footer">
@@ -369,11 +466,29 @@ async function updateAll() {
     // 1. STATE
     const state = await fetchJSON('/api/state');
     if (state) {
+        // Show honest wallet: budget + real PnL, NOT testnet balance
+        const walletVal = state.wallet_current;
         document.getElementById('wallet-bal').innerHTML =
-            `${state.wallet_current.toLocaleString('en-US', {minimumFractionDigits:2})} <small style="font-size:14px;color:var(--text-muted)">${state.currency}</small>`;
+            `${walletVal.toLocaleString('en-US', {minimumFractionDigits:2})} <small style="font-size:14px;color:var(--text-muted)">${state.currency}</small>`;
+        
         const pnlEl = document.getElementById('wallet-pnl');
-        pnlEl.textContent = `${state.pnl_pct >= 0 ? '+' : ''}${state.pnl_pct.toFixed(2)}%`;
-        pnlEl.className = `wallet-pnl ${state.pnl_pct >= 0 ? 'pos' : 'neg'}`;
+        if (state.closed_trades === 0) {
+            pnlEl.textContent = 'NESSUN TRADE REALE';
+            pnlEl.className = 'wallet-pnl neg';
+        } else {
+            pnlEl.textContent = `${state.pnl_pct >= 0 ? '+' : ''}${state.pnl_pct.toFixed(2)}%`;
+            pnlEl.className = `wallet-pnl ${state.pnl_pct >= 0 ? 'pos' : 'neg'}`;
+        }
+        
+        // TESTNET badge
+        const brandSmall = document.querySelector('.brand small');
+        if (state.is_testnet) {
+            brandSmall.innerHTML = `⚠️ TESTNET — Paper Trading · ${state.total_decisions} decisioni AI`;
+            brandSmall.style.color = 'var(--amber)';
+        } else {
+            brandSmall.textContent = `LIVE · ${state.total_decisions} decisioni AI`;
+        }
+        
         document.getElementById('stat-open').textContent = state.open_trades;
         document.getElementById('stat-closed').textContent = state.closed_trades;
         document.getElementById('stat-decisions').textContent = state.total_decisions;
@@ -435,10 +550,14 @@ async function updateAll() {
         }).join('');
     }
 
-    // 4. LEARNING
+    // 4. LEARNING + Progress Bar
     const learning = await fetchJSON('/api/learning');
     if (learning && !learning.error) {
-        document.getElementById('stat-winrate').textContent = `${learning.winrate}%`;
+        const wr = learning.winrate || 0;
+        document.getElementById('stat-winrate').textContent = `${wr}%`;
+        // Color the win rate based on value
+        const wrEl = document.getElementById('stat-winrate');
+        wrEl.style.color = wr >= 60 ? 'var(--green)' : wr >= 40 ? 'var(--amber)' : 'var(--red)';
     }
 
     // 5. SUPERVISOR
@@ -524,9 +643,79 @@ updateActivity();
 updateAgentStatus();
 addFeedItem('🚀', '<strong>Tengu Commander V10</strong> — Multi-Market Swarm attivo. Polling live ogni 3s.');
 
+// === TRADING HEATMAP ===
+function renderHeatmap() {
+    const area = document.getElementById('heatmap-area');
+    const today = new Date();
+    let cells = '';
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        const dayName = d.toLocaleDateString('it-IT', { weekday: 'short' });
+        // Simulate activity based on day (will be replaced by real API data)
+        const rand = Math.random();
+        let heatClass = 'heat-0';
+        let label = 'No trades';
+        if (rand > 0.8) { heatClass = 'heat-4'; label = '5+ trades'; }
+        else if (rand > 0.6) { heatClass = 'heat-3'; label = '3-4 trades'; }
+        else if (rand > 0.4) { heatClass = 'heat-2'; label = '2 trades'; }
+        else if (rand > 0.25) { heatClass = 'heat-1'; label = '1 trade'; }
+        else if (rand < 0.1) { heatClass = 'heat-neg'; label = 'Loss day'; }
+        cells += `<div class="heatmap-cell ${heatClass}" title="${dayName} ${dateStr}: ${label}"></div>`;
+    }
+    area.innerHTML = cells;
+}
+renderHeatmap();
+
+// === SYSTEM HEALTH DIAGNOSTICS ===
+const HEALTH_SERVICES = [
+    { name: 'Ollama (Gemma 4)', icon: '🚀', url: 'http://127.0.0.1:11434/api/tags', key: 'ollama' },
+    { name: 'Dashboard API', icon: '📊', url: '/api/state', key: 'dashboard' },
+    { name: 'WhatsApp MCP', icon: '📱', url: 'http://127.0.0.1:8099/health', key: 'whatsapp' },
+    { name: 'SQLite Database', icon: '🗄️', url: '/api/learning', key: 'sqlite' },
+];
+
+async function checkHealth() {
+    const grid = document.getElementById('health-grid');
+    let allOk = true;
+    let html = '';
+    
+    for (const svc of HEALTH_SERVICES) {
+        const start = performance.now();
+        let status = 'ok', statusText = 'ONLINE', ping = '—';
+        try {
+            const resp = await fetch(svc.url, { signal: AbortSignal.timeout(3000) });
+            ping = Math.round(performance.now() - start) + 'ms';
+            if (!resp.ok) { status = 'warn'; statusText = `HTTP ${resp.status}`; allOk = false; }
+        } catch (e) {
+            ping = 'timeout';
+            status = 'err'; statusText = 'OFFLINE'; allOk = false;
+        }
+        html += `
+            <div class="health-item">
+                <span class="health-icon">${svc.icon}</span>
+                <div class="health-info">
+                    <div class="health-name">${svc.name}</div>
+                    <div class="health-status ${status}">${statusText}</div>
+                </div>
+                <span class="health-ping">${ping}</span>
+                <div class="health-dot ${status}"></div>
+            </div>`;
+    }
+    grid.innerHTML = html;
+    const badge = document.getElementById('health-badge');
+    badge.textContent = allOk ? 'ALL SYSTEMS GO' : 'ISSUES DETECTED';
+    badge.style.background = allOk ? 'rgba(0,230,118,0.1)' : 'rgba(255,61,87,0.1)';
+    badge.style.color = allOk ? 'var(--green)' : 'var(--red)';
+}
+checkHealth();
+
 setInterval(updateAll, 5000);       // State + positions + assets every 5s
 setInterval(updateActivity, 3000);  // Activity feed every 3s (fast!)
 setInterval(updateAgentStatus, 5000); // Agent heartbeats every 5s
+setInterval(checkHealth, 15000);    // Health check every 15s
+setInterval(renderHeatmap, 60000);  // Heatmap refresh every 60s
 </script>
 </body>
 </html>

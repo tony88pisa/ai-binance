@@ -1,9 +1,17 @@
 import os
+import logging
 from pathlib import Path
 from datetime import datetime, timezone
 
+try:
+    from supermemory import Supermemory
+except ImportError:
+    Supermemory = None
+
+logger = logging.getLogger("storage.memory")
+
 class MemoryManager:
-    """Gestisce la memoria persistente su filesystem per gli agenti AI."""
+    """Gestisce la memoria persistente e dinamica per gli agenti AI."""
     
     def __init__(self, project_root: str):
         self.memory_dir = Path(project_root) / "ai_memory"
@@ -19,6 +27,15 @@ class MemoryManager:
         }
         
         self._init_dirs()
+        
+        # Inizializzazione Supermemory API
+        api_key = os.getenv("SUPERMEMORY_API_KEY")
+        if Supermemory and api_key and api_key.startswith("sm_"):
+            self.sm = Supermemory(api_key=api_key)
+            logger.info("✅ Supermemory Cloud Engine inizializzato (Knowledge Graph attivo).")
+        else:
+            self.sm = None
+            logger.info("⚠️ Supermemory disabilitato (API key assente). Fallback su local files.")
 
     def _init_dirs(self):
         """Inizializza la struttura delle directory e inserisce memorie di default se assenti."""
@@ -45,8 +62,20 @@ class MemoryManager:
         
         frontmatter = f"---\nname: {name}\ntype: {category}\ndescription: {description}\nlast_updated: {timestamp}\n---\n\n"
         
-        # Se il file esiste, aggiungiamo il contenuto come nuovo insight sotto il frontmatter esistente
-        # In un sistema reale potremmo voler aggiornare il frontmatter, qui semplifichiamo
+        # Salvataggio su supermemory (se attivo)
+        if self.sm:
+            try:
+                # Dobbiamo combinare il tutto, supermemory accetta payload non strutturato
+                sm_payload = f"Category: {category}\nContext: {description}\n\n{content}"
+                if hasattr(self.sm, "memories") and hasattr(self.sm.memories, "add"):
+                    self.sm.memories.add(content=sm_payload)
+                elif hasattr(self.sm, "add"):
+                    self.sm.add(content=sm_payload) # Fallback SDK api
+                logger.info(f"Mappato ricordo nel Knowledge Graph: {name}")
+            except Exception as e:
+                logger.error(f"Errore sincronizzazione Supermemory: {e}")
+                
+        # File di fallback locale
         with open(path, "w", encoding="utf-8") as f:
             f.write(frontmatter + content)
 
@@ -55,6 +84,26 @@ class MemoryManager:
         if category not in self.categories:
             return ""
             
+        # Retrieval intelligente da Supermemory
+        if self.sm:
+            try:
+                # Usa query generiche per recuperare la sintesi globale
+                query = "Quali sono le tue regole operative, i tuoi insight e i tuoi feedback passati riguardo il mercato?"
+                res = []
+                if hasattr(self.sm, "search") and hasattr(self.sm.search, "execute"):
+                    res = self.sm.search.execute(query=query)
+                elif hasattr(self.sm, "profile"):
+                    res = self.sm.profile(container_tag="tengu-swarm", q=query)
+                elif hasattr(self.sm, "search_memories"):
+                    res = self.sm.search_memories(query=query)
+                    
+                if res:
+                    return "--- SUPERMEMORY KNOWLEDGE GRAPH COMPENDIUM ---\n" + "\n- ".join([str(r) for r in res]) + "\n----------------------------------------\n"
+            except Exception as e:
+                # Silenzio l'errore per fallback tranquillo invece di spammare
+                pass
+        
+        # Fallback locale originario
         context = []
         for file in self.categories[category].glob("*.md"):
             try:

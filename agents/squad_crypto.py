@@ -1,4 +1,5 @@
 import time
+import os
 import json
 import logging
 import uuid
@@ -20,6 +21,13 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [SQUAD_CRYPTO] %(message)s",
                     handlers=[logging.FileHandler(LOGS_DIR / "squad_crypto.log", encoding='utf-8'), logging.StreamHandler()])
 logger = logging.getLogger("squad_crypto")
+
+try:
+    from supermemory import Supermemory
+    sm_client = Supermemory(api_key=os.getenv("SUPERMEMORY_API_KEY"))
+except Exception as e:
+    logger.warning(f"Supermemory non caricato: {e}")
+    sm_client = None
 
 from config.settings import get_settings
 from storage.repository import Repository
@@ -75,6 +83,12 @@ def job_crypto_cycle(repo, executor):
         wallet_current = executor.get_balance(CURRENCY)
         max_trades = controls.get("max_open_trades", settings.risk.max_open_trades)
         min_conf = controls.get("min_confidence", settings.risk.min_confidence_buy)
+        
+        # SBLOCCO TESTNET: Abbassiamo la soglia per triggerare veri trades e testare il flusso
+        if executor.mode.lower() == "testnet":
+            min_conf = min(min_conf, 40)
+            logger.info(f"🔓 TESTNET MODE UNLEASHED: min_conf abbassata a {min_conf}% per triggerare trades di test.")
+
         open_trades = repo.get_open_decisions()
 
         analyzed = 0
@@ -140,7 +154,6 @@ def job_crypto_cycle(repo, executor):
                         pos_value = wallet_current * size_pct
                         logger.info(f"🟢 PLACING BUY: {asset} for {pos_value:.2f} {CURRENCY}")
                         ex_order = executor.place_market_buy(asset, pos_value)
-                        
                         if ex_order:
                             repo.save_trade_decision({
                                 "id": f"DEC-CRYPTO-{uuid.uuid4().hex[:8]}", "asset": asset, "action": "buy",
@@ -151,6 +164,19 @@ def job_crypto_cycle(repo, executor):
                                 "agent_name": "Squad-Crypto", "exchange_order_id": ex_order.get("orderId")
                             })
                             repo.log_activity("squad_crypto", "BUY", f"{asset} @ ${price:,.2f} | Conf: {ai_decision.confidence}%")
+                            
+                            # --- Supermemory Logging ---
+                            if sm_client:
+                                try:
+                                    memory_blob = {
+                                        "asset": asset, "action": "BUY", "price": price,
+                                        "confidence": ai_decision.confidence, "thesis": ai_decision.thesis,
+                                        "timestamp": datetime.now(timezone.utc).isoformat()
+                                    }
+                                    sm_client.add(content=json.dumps(memory_blob))
+                                    logger.info(f"✅ Thesis logged to Supermemory for {asset}")
+                                except Exception as sme:
+                                    logger.error(f"Supermemory log failed: {sme}")
                             
             except Exception as e:
                 logger.error(f"Errore su {sym}: {e}")

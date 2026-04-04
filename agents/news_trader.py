@@ -22,8 +22,8 @@ settings = get_settings()
 class NewsTrader:
     def __init__(self):
         self.repo = Repository()
-        self.ollama_url = "http://127.0.0.1:11434/api/generate"
-        self.model = "llama3.2"  # Il nuovo modello 3B leggero appena scaricato!
+        self.ollama_url = "http://127.0.0.1:11434/api/chat"
+        self.model = "llama3.2:latest"  # Il nuovo modello 3B leggero appena scaricato!
         
     def _get_mock_news(self):
         # In un setup live questo chiama l'API RSS di Yahoo Finance o ForexFactory
@@ -43,7 +43,7 @@ class NewsTrader:
             try:
                 r = requests.post(self.ollama_url, json={
                     "model": self.model,
-                    "prompt": prompt,
+                    "messages": [{"role": "user", "content": prompt}],
                     "stream": False
                 }, timeout=30)
                 
@@ -58,6 +58,9 @@ class NewsTrader:
                         score = 0.0
                         
                     logger.info(f"[{item['asset']}] Sentiment: {response_text} (Score: {score})")
+                    
+                    # Log to live activity feed
+                    self.repo.log_activity("news_trader", "SENTIMENT", f"{item['asset']}: {response_text} — {item['headline'][:60]}...")
                     
                     # Salva il finding nel database per la Squadra Equity e Crypto
                     skill = {

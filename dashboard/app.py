@@ -51,6 +51,18 @@ def get_gpu_info():
 def page_commander(request: Request):
     return templates.TemplateResponse("commander.html", {"request": request})
 
+@app.get("/agents", response_class=HTMLResponse)
+def page_agents(request: Request):
+    return templates.TemplateResponse("agents.html", {"request": request})
+
+@app.get("/trader", response_class=HTMLResponse)
+def page_trader(request: Request):
+    return templates.TemplateResponse("trader.html", {"request": request})
+
+@app.get("/memory", response_class=HTMLResponse)
+def page_memory(request: Request):
+    return templates.TemplateResponse("memory.html", {"request": request})
+
 @app.get("/api/commander/data")
 def get_commander_data():
     repo = Repository()

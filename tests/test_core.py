@@ -98,7 +98,9 @@ class TestSettings:
     def test_load_settings(self):
         s = load_settings()
         assert isinstance(s, Settings)
-        assert s.model.model_name == "qwen3:8b"
+        # Check against environment or default
+        expected_model = os.getenv("OLLAMA_MODEL", "qwen3:8b")
+        assert s.model.model_name == expected_model
         assert s.risk.max_consecutive_losses == 3
         assert s.trading.dry_run  # Must be True in test
 

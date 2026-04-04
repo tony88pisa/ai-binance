@@ -103,6 +103,7 @@ def evaluate(intelligence: MarketIntelligence, repo=None) -> TradeDecision:
     if vmode in (ValidationMode.REAL.value, ValidationMode.CACHED.value):
         save_decision_to_cache(intelligence, decision)
 
+    # 4. FINAL LOG & RETURN
     logger.info(
         f"[{intelligence.asset}] [{vmode.upper()} MODE] decision={decision.decision.value} "
         f"conf={decision.confidence} quality={decision.data_quality.value} "
@@ -157,36 +158,40 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
     if intel.historical_lessons:
         lines.append(f"SHORT-TERM DB MEMORY: {intel.historical_lessons[:200]}")
 
+    # --- Supermemory Context Retrieval ---
     try:
-        from storage.memory_manager import MemoryManager
-        mm = MemoryManager(str(settings.paths.project_root))
+        from supermemory import Supermemory
+        import os
         
-        # 1. Tactical Strategy (Auto-Dream 2h rolling plan)
-        strategy = mm.get_typed_context("project")
-        if "Nessun dato" not in strategy:
-            lines.append("\n=== ROLLING TACTICAL STRATEGY (Next 2 Hours) ===")
-            lines.append(strategy)
-            lines.append("================================================")
-        
-        # 2. User/Feedback Memory
-        user_prefs = mm.get_typed_context("user")
-        if "Nessun dato" not in user_prefs:
-            lines.append("\n--- USER PREFERENCES & STYLE ---")
-            lines.append(user_prefs)
+        # Inizializza Supermemory con la chiave nell'ambiente
+        sm_key = os.getenv("SUPERMEMORY_API_KEY", "").strip()
+        if sm_key:
+            sm_client = Supermemory(api_key=sm_key)
             
-        feedback = mm.get_typed_context("feedback")
-        if "Nessun dato" not in feedback:
-            lines.append("\n--- PERFORMANCE FEEDBACK & LEARNINGS ---")
-            lines.append(feedback)
-
-        # 3. Asset Specific Memory (Legacy compatibility)
-        asset_memory = mm.read_asset_memory(intel.asset)
-        if asset_memory and "Nessuna memoria" not in asset_memory:
-            lines.append(f"\n--- LONG-TERM PERSISTENT MEMORY ({intel.asset}) ---")
-            lines.append(asset_memory)
-            lines.append("---------------------------------\n")
+            # Recupera memoria semantica basata sull'asset e trend attuale
+            search_query = f"Historical trading context and rules for {intel.asset} during {trend_5m} trend"
+            
+            # Ricerca semantica avanzata
+            mem_result = sm_client.search.memories(q=search_query, limit=3)
+            
+            if mem_result and hasattr(mem_result, 'data'):
+                retrieved_texts = [r.memory for r in mem_result.data if hasattr(r, 'memory')]
+            elif isinstance(mem_result, dict) and "data" in mem_result:
+                retrieved_texts = [r.get("memory", "") for r in mem_result["data"]]
+            else:
+                retrieved_texts = []
+                
+            if retrieved_texts:
+                lines.append("\n=== SUPERMEMORY (SEMANTIC CONTEXT) ===")
+                # Filtra memorie vuote e metti le prime 3 rilevanti
+                for i, text in enumerate(retrieved_texts[:3]):
+                    if text:
+                        lines.append(f"• {text.strip()[:300]}")
+                lines.append("========================================\n")
+        else:
+            logger.warning("SUPERMEMORY_API_KEY mancante, salto il recupero della memoria.")
     except Exception as e:
-        logger.error(f"Failed to load memory: {e}")
+        logger.error(f"Failed to load semantic memory from Supermemory: {e}")
 
 
     if repo:
@@ -210,45 +215,80 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
 
 def _call_model(user_msg: str, model: str, base_url: str,
                 timeout: int, max_retries: int) -> Optional[str]:
-    """Call Ollama and return raw response text. Returns None on total failure."""
+    """Call Ollama and return raw response text, executing any tools via Agentic Loop."""
     url = f"{base_url}/api/chat"
+    
+    try:
+        from ai.mcp_client import TenguMCPClient
+        mcp = TenguMCPClient()
+        tools_schema = mcp.get_ollama_tools_schema()
+    except Exception as e:
+        tools_schema = None
+        mcp = None
+        logger.error(f"Errore caricamento MCP Client: {e}")
+
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": user_msg}
+    ]
 
     for attempt in range(max_retries):
         try:
-            t_start = time.time()
-            resp = requests.post(
-                url,
-                json={
+            # Active Agentic Loop (supports up to 3 tool calls per evaluation)
+            for _step in range(4):
+                t_start = time.time()
+                payload = {
                     "model": model,
-                    "messages": [
-                        {"role": "system", "content": SYSTEM_PROMPT},
-                        {"role": "user", "content": user_msg}
-                    ],
+                    "messages": messages,
                     "stream": False,
-                    "think": False,
                     "options": {"temperature": 0.1, "num_predict": 1000},
-                },
-                timeout=timeout,
-            )
-            resp.raise_for_status()
-            duration_ms = int((time.time() - t_start) * 1000)
-            resp_data = resp.json()
-            
-            # Track cost
-            try:
-                from telemetry.cost_tracker import get_cost_tracker
-                tracker = get_cost_tracker()
-                usage = resp_data.get("eval_count", 0)
-                prompt_tokens = resp_data.get("prompt_eval_count", 0)
-                tracker.record_call(
-                    model=model, caller="decision_engine",
-                    input_tokens=prompt_tokens, output_tokens=usage,
-                    duration_ms=duration_ms, success=True
-                )
-            except Exception:
-                pass
-            
-            return resp_data.get("message", {}).get("content", "")
+                }
+                if tools_schema:
+                    payload["tools"] = tools_schema
+
+                resp = requests.post(url, json=payload, timeout=timeout)
+                resp.raise_for_status()
+                duration_ms = int((time.time() - t_start) * 1000)
+                resp_data = resp.json()
+                
+                # Track cost
+                try:
+                    from telemetry.cost_tracker import get_cost_tracker
+                    tracker = get_cost_tracker()
+                    usage = resp_data.get("eval_count", 0)
+                    prompt_tokens = resp_data.get("prompt_eval_count", 0)
+                    tracker.record_call(
+                        model=model, caller="decision_engine",
+                        input_tokens=prompt_tokens, output_tokens=usage,
+                        duration_ms=duration_ms, success=True
+                    )
+                except Exception:
+                    pass
+                
+                message = resp_data.get("message", {})
+                
+                # Check for tool_calls
+                if "tool_calls" in message and message["tool_calls"] and mcp:
+                    messages.append(message) # Add AI request to history
+                    for tool_call in message["tool_calls"]:
+                        tool_name = tool_call["function"]["name"]
+                        args = tool_call["function"].get("arguments", {})
+                        
+                        # Esegui il tool locamente
+                        tool_response = mcp.execute_tool(tool_name, args)
+                        
+                        # Aggiungi l'esito alla conversazione
+                        messages.append({
+                            "role": "tool",
+                            "name": tool_name,
+                            "content": tool_response
+                        })
+                    # Loop back to Ollama with the new context
+                    continue
+                else:
+                    # Final response given
+                    return message.get("content", "")
+
         except requests.exceptions.Timeout:
             logger.warning(f"Model timeout (attempt {attempt + 1}/{max_retries})")
         except Exception as e:

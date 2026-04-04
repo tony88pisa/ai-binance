@@ -7,10 +7,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from dotenv import load_dotenv
 
+import sys
+from pathlib import Path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
 # Configuration setup
 from config.settings import get_settings
 settings = get_settings()
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
 load_dotenv(PROJECT_ROOT / ".env")
 
 # Logging setup
@@ -149,22 +154,52 @@ import schedule
 
 def job_supervise(repo):
     try:
-        from storage.memory_manager import MemoryManager
-        mm = MemoryManager(str(PROJECT_ROOT))
-        risk_policy = mm.read_risk_policy()
+        from dotenv import load_dotenv
+        load_dotenv(PROJECT_ROOT / ".env")
+        
+        from config.settings import get_settings
+        settings = get_settings()
+        
+        sm_key = os.getenv("SUPERMEMORY_API_KEY", "").strip()
+        if not sm_key:
+            logger.warning("SUPERMEMORY_API_KEY non trovata. Bypass semantico.")
+            sm_client = None
+        else:
+            try:
+                from supermemory import Supermemory
+                sm_client = Supermemory(api_key=sm_key)
+            except Exception as e:
+                logger.error(f"Errore caricamento Supermemory library: {e}")
+                sm_client = None
+                
+        risk_policy = ""
+        if sm_client:
+            try:
+                # Recupera policy generale con retry
+                resp = sm_client.search.memories(q="Global historical risk policy and emergency insights", limit=2)
+                if resp and hasattr(resp, 'data'):
+                    risk_policy = " ".join([r.memory for r in resp.data if hasattr(r, 'memory')])
+                elif isinstance(resp, dict) and "data" in resp:
+                    risk_policy = " ".join([r.get("memory", "") for r in resp["data"]])
+            except Exception as e:
+                logger.warning(f"Errore durante la ricerca semantica (Supermemory): {e}. Procedo con contesto base.")
         
         context = get_market_context(repo)
         logger.info(f"Analyzing state... Wallet: {context['wallet']:.2f} {context['currency']}")
         
         advice = call_ai_supervisor(context, risk_policy)
         if advice:
-            logger.info(f"AI Assessment: {advice['assessment']}")
+            logger.info(f"AI NVIDIA Assessment: {advice['assessment']}")
             
-            # Save new insights
+            # Save new insights to Supermemory
             new_insights = advice.get("new_insights", [])
             for insight in new_insights:
-                mm.append_risk_insight(insight)
-                logger.info(f"Appended new insight to memory: {insight}")
+                insight_str = f"RISK_INSIGHT: {insight}"
+                if sm_client:
+                    sm_client.add(content=insight_str)
+                    logger.info(f"Appended new insight to Supermemory: {insight}")
+                else:
+                    logger.info(f"(Simulated) Appended new insight: {insight}")
             
             initial_budget = settings.trading.wallet_size
             emergency_limit = initial_budget * 0.90

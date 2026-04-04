@@ -27,6 +27,12 @@ from services.exchange_executor import ExchangeExecutor
 from services.mock_equity_broker import MockEquityBroker
 from services.equity_provider import EquityProvider
 
+try:
+    from supermemory import Supermemory
+    sm_client = Supermemory(api_key=os.getenv("SUPERMEMORY_API_KEY"))
+except Exception as e:
+    sm_client = None
+
 settings = get_settings()
 
 def job_ai_analysis(repo, executor):
@@ -115,6 +121,19 @@ def job_ai_analysis(repo, executor):
                                 "status": "OPEN", "inner_monologue": ai_decision.inner_monologue, 
                                 "agent_name": "WallStreet-Agent", "exchange_order_id": target_ex_id
                             })
+                            
+                            # --- Supermemory Logging ---
+                            if sm_client:
+                                try:
+                                    memory_blob = {
+                                        "asset": asset, "action": "BUY_EQUITY", "price": snap["price"],
+                                        "confidence": ai_decision.confidence, "thesis": ai_decision.thesis,
+                                        "timestamp": datetime.now(timezone.utc).isoformat()
+                                    }
+                                    sm_client.add(content=json.dumps(memory_blob))
+                                    logger.info(f"✅ Equity Thesis logged to Supermemory for {asset}")
+                                except Exception as sme:
+                                    logger.error(f"Supermemory log failed: {sme}")
                             
         repo.update_service_heartbeat("squad_equity", json.dumps({
             "mode": "ACTIVE", "last_run": datetime.now(timezone.utc).isoformat()

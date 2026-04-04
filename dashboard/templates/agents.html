@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Network | Tengu V10</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-purple: #a855f7;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 16px;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .nav-links a.active {
+            color: var(--accent-purple);
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+        .nav-links a:hover:not(.active) {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+        .panel-title {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .monologue {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            color: var(--accent-blue);
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .memory-item {
+            padding: 12px;
+            border-left: 3px solid var(--accent-green);
+            background: rgba(16, 185, 129, 0.05);
+            margin-bottom: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9em;
+        }
+        .memory-source {
+            font-size: 0.75em;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h1 style="margin: 0; font-size: 1.5em; font-weight: 700;">AGENT NETWORK & MEMORY</h1>
+            <div style="color: var(--text-muted); font-size: 0.9em; margin-top: 4px;">🧠 Supermemory Semantic Layer Active</div>
+        </div>
+        <div class="nav-links">
+            <a href="/commander">Dashboard</a>
+            <a href="/trader">Pro Trader</a>
+            <a href="/agents" class="active">Agent Swarm</a>
+            <a href="/memory">🧠 Memory</a>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="panel">
+            <div class="panel-title">🤖 Live Inner Monologue (Squadra Crypto)</div>
+            <div class="monologue" id="monologue-box">Loading agent streams...</div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">🧠 Supermemory Retrievals (Dream Consolidation)</div>
+            <div id="memory-box">
+                <div style="color: var(--text-muted); font-size: 0.9em; font-style: italic;">Connessione a Supermemory API...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadAgentsData() {
+            try {
+                // Fetch basic data from commander API
+                const cmRes = await fetch('/api/commander/data');
+                const cmData = await cmRes.json();
+                
+                const monoBox = document.getElementById('monologue-box');
+                const reasonings = cmData.reasoning || [];
+                monoBox.innerHTML = reasonings.length > 0 
+                    ? reasonings.join('\n\n---\n\n') 
+                    : "L'agente non ha ancora pubblicato riflessioni recenti.";
+
+                // Fetch supermemory
+                const smRes = await fetch('/api/supermemory');
+                const smData = await smRes.json();
+                
+                const memBox = document.getElementById('memory-box');
+                if (smData.status === "offline") {
+                    memBox.innerHTML = `<div style="color: #ef4444; font-size: 0.9em;">⚠️ ${smData.data}</div>`;
+                } else if (smData.memories && smData.memories.length > 0) {
+                    memBox.innerHTML = smData.memories.map(m => `
+                        <div class="memory-item">
+                            <div class="memory-source">${m.source} · ${new Date(m.timestamp).toLocaleTimeString()}</div>
+                            <div>${m.text}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    memBox.innerHTML = `<div style="color: var(--text-muted); font-size: 0.9em;">Nessuna memoria a lungo termine trovata. I bot devono ancora completare un ciclo Dream.</div>`;
+                }
+            } catch (err) {
+                console.error("Agent UI Update Error:", err);
+            }
+        }
+
+        setInterval(loadAgentsData, 5000);
+        loadAgentsData();
+    </script>
+</body>
+</html>
