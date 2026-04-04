@@ -118,6 +118,7 @@ def job_check_positions(repo, executor, brain):
                     asset_qty = executor.get_asset_balance(asset)
                     if asset_qty <= 0: asset_qty = (wallet_current * float(trade.get("size_pct", 0.1))) / e_price
                     
+                    repo.log_activity("executor", "SELL", f"{asset} closing: {reason} | PnL: {round(pnl_pct*100, 2)}%")
                     logger.info(f"[{executor.mode.upper()}] Transitioning {asset} to CLOSING due to {reason}.")
                     repo.update_decision_status(trade["id"], "CLOSING")
                     
@@ -135,6 +136,7 @@ def job_check_positions(repo, executor, brain):
             "exchange_mode": executor.mode.upper(), "supervisor_active": not emergency_stop,
             "max_trades": controls.get("max_open_trades", settings.risk.max_open_trades)
         }))
+        repo.log_activity("executor", "CYCLE", f"Checked {len(open_trades)} positions. Wallet: {wallet_current:.2f} {CURRENCY}")
         logger.info(f"Execution run complete. Checked {len(open_trades)} positions. Wallet: {wallet_current:.2f} {CURRENCY}")
     except Exception as e:
         logger.error(f"Executor Error: {e}", exc_info=True)
