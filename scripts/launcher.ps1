@@ -52,7 +52,7 @@ Write-Host-Colored "`nAvvio Servizi Infrastruttura..." "Cyan"
 foreach ($svc in $SERVICES) {
     Write-Host-Colored "Lancio $($svc.name)..." "Gray"
     if ($svc.type -eq "background") {
-        Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -Command $($svc.cmd)" -NoNewWindow
+        Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile", "-Command", "& { $($svc.cmd) }" -NoNewWindow
     }
     Start-Sleep -Seconds 3
 }
@@ -62,7 +62,7 @@ Write-Host-Colored "`nIngaggio Swarm d'Elite (Agenti)..." "Cyan"
 
 foreach ($agent in $AGENTS) {
     Write-Host-Colored "Attivazione $($agent.name)..." "Gray"
-    Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -Command $($agent.cmd)" -NoNewWindow
+    Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile", "-Command", "& { $($agent.cmd) }" -NoNewWindow
     Start-Sleep -Seconds 2
 }
 

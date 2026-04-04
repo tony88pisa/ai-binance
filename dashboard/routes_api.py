@@ -27,6 +27,20 @@ router = APIRouter(prefix="/api")
 
 LOGS_DIR = Path(__file__).resolve().parent.parent / "logs"
 
+@router.get("/logs/tail")
+def tail_logs(source: str, lines: int = 50):
+    """Returns the last N lines of a log file."""
+    log_file = LOGS_DIR / f"{source}.log"
+    if not log_file.exists():
+        return {"error": "Log file not found", "lines": []}
+    
+    try:
+        with open(log_file, "r", encoding="utf-8", errors="ignore") as f:
+            all_lines = f.readlines()
+            return {"source": source, "lines": all_lines[-lines:]}
+    except Exception as e:
+        return {"error": str(e), "lines": []}
+
 
 @router.get("/state")
 def get_state():

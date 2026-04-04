@@ -63,6 +63,10 @@ def page_trader(request: Request):
 def page_memory(request: Request):
     return templates.TemplateResponse("memory.html", {"request": request})
 
+@app.get("/logs", response_class=HTMLResponse)
+def page_logs(request: Request):
+    return templates.TemplateResponse("logs.html", {"request": request})
+
 @app.get("/api/commander/data")
 def get_commander_data():
     repo = Repository()

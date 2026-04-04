@@ -1,52 +1,152 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Logs & AI | Antigravity</title>
-  <link rel="stylesheet" href="/static/css/main.css?v=9.4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tengu Logs | System Control Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #06090f;
+            --bg-card: rgba(14, 20, 33, 0.85);
+            --border: rgba(255,255,255,0.06);
+            --cyan: #00d4ff;
+            --green: #00e676;
+            --red: #ff3d57;
+            --amber: #ffab00;
+            --text-primary: #e8edf5;
+            --text-secondary: #7a8ba7;
+            --text-muted: #4a5568;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 16px; height: 100vh; display: flex; flex-direction: column; gap: 14px; }
+        
+        /* === NAVIGATION === */
+        .nav-bar { display: flex; gap: 12px; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+        .nav-item { flex: 1; text-align: center; color: var(--text-secondary); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { scale: 1.02; color: var(--cyan); background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3); }
+
+        /* === LOGS LAYOUT === */
+        .logs-grid { display: grid; grid-template-columns: 240px 1fr; gap: 14px; flex: 1; overflow: hidden; }
+        
+        .sidebar { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .sidebar-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
+        .log-source { padding: 10px 14px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; font-size: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .log-source:hover { background: rgba(255,255,255,0.03); border-color: var(--border); }
+        .log-source.active { background: rgba(0, 212, 255, 0.08); border-color: rgba(0, 180, 255, 0.2); color: var(--cyan); font-weight: 600; }
+        .log-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); }
+        .log-dot.live { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .main-viewer { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .viewer-header { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+        .viewer-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+        .viewer-actions { display: flex; gap: 10px; }
+        .btn-small { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); padding: 4px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; transition: all 0.2s; }
+        .btn-small:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .log-content { flex: 1; overflow-y: auto; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; color: #cbd5e1; background: #000; }
+        .log-content::-webkit-scrollbar { width: 6px; }
+        .log-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        
+        .line { border-bottom: 1px solid rgba(255,255,255,0.02); padding: 4px 0; white-space: pre-wrap; word-break: break-all; }
+        .timestamp { color: var(--text-muted); margin-right: 10px; }
+        .level-info { color: var(--cyan); }
+        .level-warn { color: var(--amber); }
+        .level-error { color: var(--red); background: rgba(255,61,87,0.1); }
+    </style>
 </head>
 <body>
-  <nav class="nav">
-    <span class="nav-brand">ANTIGRAVITY</span>
-    <div class="nav-links">
-      <a href="/trading" class="nav-link">Trading</a>
-      <a href="/logs" class="nav-link active">Logs</a>
-      <a href="/learning" class="nav-link">Learning</a>
-      <a href="/system" class="nav-link">System</a>
+<div class="container">
+    <div class="nav-bar">
+        <a href="/commander" class="nav-item">📊 Commander HUD</a>
+        <a href="/trader" class="nav-item">📈 Pro Trader</a>
+        <a href="/agents" class="nav-item">🧬 Agent Swarm</a>
+        <a href="/memory" class="nav-item">🧠 Semantic Memory</a>
+        <a href="/logs" class="nav-item active">🕵️ System Logs</a>
     </div>
-    <div class="nav-right">
-      <span class="pulse"></span>
-      <span id="sys-status" class="badge badge-green">ONLINE</span>
-    </div>
-  </nav>
 
-  <div class="main">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">Live System Logs</span>
-        <div class="log-controls">
-          <select id="log-source">
-            <option value="daemon">Daemon (Bot)</option>
-            <option value="error">Errori</option>
-            <option value="evolution">AI NVIDIA</option>
-            <option value="evolution_error">AI Errors</option>
-            <option value="dashboard">Dashboard</option>
-            <option value="cloudflare">Cloudflare</option>
-            <option value="supervisor">AI Supervisor</option>
-          </select>
-          <button id="btn-pause">⏸ Pausa</button>
-          <button id="btn-copy">📋 Copia</button>
-          <button id="btn-clear">🗑 Pulisci</button>
+    <div class="logs-grid">
+        <div class="sidebar">
+            <div class="sidebar-title">Sorgenti Log</div>
+            <div class="log-source active" id="btn-squad_crypto" onclick="switchLog('squad_crypto')">
+                <span>₿ Squad Crypto</span>
+                <div class="log-dot live"></div>
+            </div>
+            <div class="log-source" id="btn-executor" onclick="switchLog('executor')">
+                <span>⚡ Binance Executor</span>
+                <div class="log-dot live"></div>
+            </div>
+            <div class="log-source" id="btn-supervisor" onclick="switchLog('supervisor')">
+                <span>🛡️ Risk Supervisor</span>
+                <div class="log-dot live"></div>
+            </div>
         </div>
-      </div>
-      <div class="terminal" id="log-terminal">Connecting to log stream...</div>
-    </div>
-  </div>
 
-  <script src="/static/js/logs.js?v=9.4"></script>
+        <div class="main-viewer">
+            <div class="viewer-header">
+                <div class="viewer-title" id="current-log-title">squad_crypto.log</div>
+                <div class="viewer-actions">
+                    <button class="btn-small" onclick="clearViewer()">Clear</button>
+                    <button class="btn-small" id="btn-scroll" onclick="toggleAutoScroll()">Auto-scroll: ON</button>
+                </div>
+            </div>
+            <div class="log-content" id="log-content">
+                <div class="line">Aggancio log stream...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLog = 'squad_crypto';
+    let autoScroll = true;
+
+    function switchLog(source) {
+        currentLog = source;
+        document.querySelectorAll('.log-source').forEach(el => el.classList.remove('active'));
+        document.getElementById(`btn-${source}`).classList.add('active');
+        document.getElementById('current-log-title').textContent = source + '.log';
+        document.getElementById('log-content').innerHTML = `<div class="line">Caricamento log: ${source}...</div>`;
+        fetchLogs();
+    }
+
+    function clearViewer() { document.getElementById('log-content').innerHTML = ''; }
+    function toggleAutoScroll() {
+        autoScroll = !autoScroll;
+        document.getElementById('btn-scroll').textContent = `Auto-scroll: ${autoScroll ? 'ON' : 'OFF'}`;
+    }
+
+    async function fetchLogs() {
+        try {
+            const resp = await fetch(`/api/logs/tail?source=${currentLog}&lines=100`);
+            const data = await resp.json();
+            if (data.lines) {
+                const viewer = document.getElementById('log-content');
+                viewer.innerHTML = data.lines.map(line => `<div class="line">${formatLine(line)}</div>`).join('');
+                if (autoScroll) viewer.scrollTop = viewer.scrollHeight;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function formatLine(line) {
+        if (line.includes('ERROR') || line.includes('Exception')) return `<span class="level-error">${line}</span>`;
+        if (line.includes('WARNING')) return `<span class="level-warn">${line}</span>`;
+        return line;
+    }
+
+    setInterval(fetchLogs, 2000);
+    fetchLogs();
+</script>
 </body>
 </html>
-
-
-
