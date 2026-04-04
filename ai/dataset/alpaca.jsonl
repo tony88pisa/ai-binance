@@ -1,0 +1,2 @@
+{"instruction": "Asset=BTC/USDC Regime=None", "input": "Market analysis: Moon", "output": "{\"decision\": \"BUY\", \"confidence\": 92, \"strategy\": \"NVIDIA_Evolved_V11\"}"}
+{"instruction": "Asset=BTC/USDC Regime=bullish", "input": "Market analysis: Bullish Divergence", "output": "{\"decision\": \"BUY\", \"confidence\": 92, \"strategy\": \"NVIDIA_Evolved_V11\"}"}

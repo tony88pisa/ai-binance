@@ -13,7 +13,7 @@ if (!$ollama_proc) {
 
 # 2. Dashboard
 Write-Host "[2/12] Avvio Dashboard (Port 8087)..." -ForegroundColor Yellow
-Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "-m uvicorn dashboard.app:app --host 0.0.0.0 --port 8087" -RedirectStandardOutput "logs\dashboard.log" -RedirectStandardError "logs\dashboard_error.log" -WindowStyle Hidden
+Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "-m uvicorn dashboard.app:app --host 0.0.0.0 --port 8088" -RedirectStandardOutput "logs\dashboard.log" -RedirectStandardError "logs\dashboard_error.log" -WindowStyle Hidden
 
 # 3. Binance Executor Agent
 Write-Host "[3/12] Avvio Execution Agent (Incrocio Live & Stop)..." -ForegroundColor Yellow
@@ -63,42 +63,42 @@ Start-Process ".\.venv\Scripts\python.exe" -ArgumentList "agents/dream_agent.py"
 Write-Host "[11/12] Avvio Cloudflare Tunnel (HTTPS)..." -ForegroundColor Yellow
 $cf_proc = Get-Process cloudflared -ErrorAction SilentlyContinue
 if (!$cf_proc) {
-    Start-Process ".\cloudflared.exe" -ArgumentList "tunnel --url http://localhost:8087" -RedirectStandardError "logs\cloudflared.log" -WindowStyle Hidden
+    Start-Process ".\cloudflared.exe" -ArgumentList "tunnel --url http://localhost:8088" -RedirectStandardError "logs\cloudflared.log" -WindowStyle Hidden
 }
 
-# 12. Tengu Desktop Control Center
-Write-Host "[12/13] Avvio Tengu Desktop (GUI)..." -ForegroundColor Yellow
-# We launch Electron using cmd /c npm.cmd run dev to avoid opening npm.ps1 in an editor
-# We explicitly force the directory to H:\ai-binance\tengu-desktop to avoid confusion
-Start-Process cmd.exe -ArgumentList "/c npm.cmd run dev" -WorkingDirectory "H:\ai-binance\tengu-desktop" -WindowStyle Hidden
+# 12. Tengu Alpha Web Dashboard
+Write-Host "[12/12] Avvio Tengu Alpha Arena (Web HUD)..." -ForegroundColor Yellow
+# We no longer launch Electron. The FastAPI server handles the static build.
 
-Write-Host "In attesa che il Backend (Port 8087) e la GUI (Port 5173) siano pronti..." -ForegroundColor Magenta
+Write-Host "In attesa che il Centro di Comando Web (Port 8088) sia pronto..." -ForegroundColor Magenta
 
-# HEALTH CHECK LOOP: Wait for FastAPI and Vite to be alive
+# HEALTH CHECK LOOP: Wait for FastAPI
 $max_attempts = 15
 $attempt = 0
 while ($attempt -lt $max_attempts) {
     Start-Sleep -Seconds 3
-    $backend_up = (Test-NetConnection 127.0.0.1 -Port 8087 -ErrorAction SilentlyContinue).TcpTestSucceeded
-    $gui_up = (Test-NetConnection 127.0.0.1 -Port 5173 -ErrorAction SilentlyContinue).TcpTestSucceeded
+    $backend_up = (Test-NetConnection 127.0.0.1 -Port 8088 -ErrorAction SilentlyContinue).TcpTestSucceeded
     
-    if ($backend_up -and $gui_up) {
-        Write-Host "[SUCCESSO] Tutti i sistemi sono ONLINE!" -ForegroundColor Green
+    if ($backend_up) {
+        Write-Host "[SUCCESSO] Centro di Comando ONLINE!" -ForegroundColor Green
         break
     }
     $attempt++
-    Write-Host "Verifica in corso ($attempt/$max_attempts)... [Backend: $backend_up, GUI: $gui_up]" -ForegroundColor Gray
+    Write-Host "Verifica in corso ($attempt/$max_attempts)... [Web Server: $backend_up]" -ForegroundColor Gray
 }
 
-# 13. WhatsApp MCP Server
-Write-Host "[13/13] Avvio WhatsApp MCP Server (Node.js)..." -ForegroundColor Yellow
-Start-Process "node" -ArgumentList "server.js" -WorkingDirectory "h:\ai-binance\services\whatsapp_mcp" -WindowStyle Hidden
-
-Write-Host "`n--- STACK COMPLETO AVVIATO ---" -ForegroundColor Cyan
-Write-Host "Dashboard:     http://127.0.0.1:8087"
+Write-Host "`n--- TENGU COMMANDER COCKPIT ---" -ForegroundColor Cyan
+Write-Host "Dashboard HUD: http://127.0.0.1:8088/commander"
 Write-Host "WhatsApp MCP:  [Attivo] su http://127.0.0.1:8099"
 Write-Host "MCP Server:    http://127.0.0.1:8089/sse"
 Write-Host "Coordinator:   Active (ai_memory/project/daily_synthesis.md)"
 Write-Host "Dream Agent:   Active (ai_memory/project/current_strategy.md)"
-Write-Host "Tengu GUI:     Avviata (Desktop App)"
-Write-Host "Cloudflare:    https://journalism-episode-podcasts-bite.trycloudflare.com"
+
+if ($attempt -eq $max_attempts) {
+    Write-Host "[ATTENZIONE] Il server web potrebbe essere lento ad avviarsi sulla porta 8088. Se non carica, riprova tra pochi secondi." -ForegroundColor Yellow
+}
+
+Write-Host "`n[SUCCESSO] Inizializzazione completata." -ForegroundColor Green
+Write-Host "Apri il browser su: http://127.0.0.1:8088/commander" -ForegroundColor Cyan
+Write-Host "Premi un tasto per chiudere questa finestra o lasciala aperta."
+Read-Host

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tengu Commander | AI Trading Cockpit</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tippy.js (Tooltips) -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'alpha-cyan': '#00f3ff',
+                        'alpha-emerald': '#10b981',
+                        'alpha-rose': '#f43f5e',
+                        'alpha-indigo': '#6366f1',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .neon-border-cyan { box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.2); }
+        .neon-border-emerald { box-shadow: 0 0 15px rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
+        
+        .alpha-grid {
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .hud-scanner {
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #00f3ff, transparent);
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,243,255,0.2); border-radius: 10px; }
+
+        .tooltip-box {
+            background: #1e293b !important;
+            border: 1px solid #00f3ff44 !important;
+            color: #94a3b8 !important;
+            font-size: 11px !important;
+            border-radius: 8px !important;
+            padding: 8px !important;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-alpha-cyan/30">
+
+    <div class="fixed inset-0 alpha-grid pointer-events-none -z-10"></div>
+    <div class="fixed inset-0 bg-radial-gradient from-alpha-cyan/5 to-transparent pointer-events-none -z-10"></div>
+
+    <!-- MAIN COCKPIT -->
+    <div class="min-h-screen flex flex-col p-4 md:p-8 space-y-6 max-w-7xl mx-auto">
+        
+        <!-- HEADER HUD -->
+        <header class="flex flex-col md:flex-row items-center justify-between gap-6 glass-panel p-6 rounded-3xl neon-border-cyan relative overflow-hidden">
+            <div class="hud-scanner"></div>
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-alpha-cyan/10 rounded-2xl">
+                    <i data-lucide="zap" class="text-alpha-cyan w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-[0.4em] uppercase text-white">Tengu Commander</h1>
+                    <p class="text-[9px] uppercase tracking-widest text-slate-500 font-bold" data-tippy-content="Versione stabile del sistema con protezione AI Supervisor.">V8.1-PRO HUD (STABLE)</p>
+                </div>
+            </div>
+
+            <!-- THE VAULT (PROFITS) -->
+            <div class="flex items-center gap-8" data-tippy-content="Il tuo guadagno netto attuale (PnL). La linea nel grafico sotto mostra come sta crescendo il tuo portafoglio.">
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] uppercase text-slate-500 font-bold tracking-widest">Total Vault</span>
+                    <div class="text-3xl font-mono font-bold text-white flex items-baseline gap-2">
+                         <span id="currency-symbol">€</span> <span id="pnl-total">0.00</span>
+                    </div>
+                </div>
+                <div id="pnl-pct-pill" class="px-3 py-1 rounded-full bg-alpha-emerald/10 border border-alpha-emerald/20 text-[10px] font-bold text-alpha-emerald">
+                    +0.00%
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 flex-1">
+            
+            <!-- LEFT PANEL: CRYPTO SECTOR -->
+            <div class="md:col-span-4 flex flex-col gap-6">
+                
+                <!-- CRYPTO CONFIDENCE -->
+                <div class="glass-panel p-6 rounded-3xl flex flex-col gap-4 group border-l-4 border-l-alpha-cyan" data-tippy-content="Settore Crypto: Mostra la sicurezza degli agenti Binance.">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Crypto Readiness</span>
+                        <span class="text-[9px] px-2 py-0.5 rounded bg-alpha-cyan/20 text-alpha-cyan font-bold tracking-tighter">BINANCE</span>
+                    </div>
+                    
+                    <div class="relative h-28 flex items-center justify-center">
+                        <canvas id="confidence-chart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center mt-4">
+                            <span id="confidence-score" class="text-xl font-mono font-bold text-white bg-black/40 px-2 rounded">0%</span>
+                        </div>
+                    </div>
+
+                    <div id="status-badge" class="text-center py-2 rounded-xl bg-slate-800/50 text-[10px] uppercase font-bold tracking-widest text-slate-500">
+                        Analyzing Crypto...
+                    </div>
+                </div>
+
+                <!-- GOLD SECTOR (TRADFI) -->
+                <div class="glass-panel p-6 rounded-3xl flex flex-col gap-4 border-l-4 border-l-alpha-amber" data-tippy-content="Settore Oro: Mostra le performance della Sandbox XAU/USD.">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Gold Sandbox</span>
+                        <span class="text-[9px] px-2 py-0.5 rounded bg-alpha-amber/20 text-alpha-amber font-bold tracking-tighter">OANDA</span>
+                    </div>
+                    
+                    <div class="h-28">
+                        <canvas id="tradfi-chart"></canvas>
+                    </div>
+
+                    <div class="flex justify-between items-center px-1">
+                        <span class="text-[9px] text-slate-500 font-bold uppercase">XAU/USD STABILITY</span>
+                        <span class="text-[10px] font-mono text-alpha-amber font-bold">STABLE</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CENTER/RIGHT PANEL: UNIVERSAL PERFORMANCE & LOGS -->
+            <div class="md:col-span-8 flex flex-col gap-6">
+                
+                <!-- UNIVERSAL PROFIT CHART -->
+                <div class="glass-panel p-6 rounded-3xl flex flex-col gap-4 h-48" data-tippy-content="Vault Performance: La linea verde è Crypto, la linea ambra è l'Oro.">
+                    <div class="flex items-center justify-between">
+                         <h3 class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Universal Performance History</h3>
+                         <div class="flex gap-4">
+                            <span class="text-[9px] text-alpha-cyan font-mono uppercase tracking-widest">● Crypto</span>
+                            <span class="text-[9px] text-alpha-amber font-mono uppercase tracking-widest">● Gold</span>
+                         </div>
+                    </div>
+                    <div class="flex-1">
+                        <canvas id="profit-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- THE MONOLOGUE & LOGS -->
+                <div class="flex-1 glass-panel p-6 rounded-3xl flex flex-col gap-4 neon-border-cyan overflow-hidden max-h-[300px]">
+                    <div class="flex items-center justify-between">
+                         <div class="flex items-center gap-3">
+                            <i data-lucide="terminal" class="text-alpha-cyan w-4 h-4"></i>
+                            <h3 class="text-[10px] uppercase text-slate-400 font-bold tracking-widest">Universal Reasoning Stream</h3>
+                         </div>
+                         <span class="text-[9px] text-alpha-cyan font-mono animate-pulse">BI-DATA_LINK</span>
+                    </div>
+
+                    <div id="log-container" class="flex-1 space-y-3 font-mono text-[10px] overflow-y-auto custom-scrollbar pr-4">
+                        <!-- Reasoning Items from Both Worlds -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+                <!-- AGENT GRID -->
+                <div class="glass-panel p-6 rounded-3xl" data-tippy-content="Questi sono i tuoi agenti AI pronti all'azione. Ognuno ha una specializzazione diversa (Sicurezza, Analisi, Esecuzione).">
+                    <h3 class="text-[10px] uppercase text-slate-500 font-bold mb-4 tracking-widest">Active Agent Swarm</h3>
+                    <div id="agent-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <!-- Agents populated here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="flex items-center justify-between py-4 border-t border-white/5 text-[9px] text-slate-500 font-mono tracking-widest uppercase">
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-alpha-emerald shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                    Binance Integrity S.O.S
+                </div>
+                <span>Sync Latency: 22ms</span>
+            </div>
+            <div>Tengu OS © 2026 - Educational Commander HUD</div>
+        </footer>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Init Tooltips
+        tippy('[data-tippy-content]', {
+            theme: 'alpha',
+            animation: 'shift-away',
+            placement: 'top',
+        });
+
+        // --- CHARTS INITIALIZATION ---
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            },
+            elements: {
+                point: { radius: 0 },
+                line: { tension: 0.4, borderWidth: 2 }
+            }
+        };
+
+        const ctxProfit = document.getElementById('profit-chart').getContext('2d');
+        const profitChart = new Chart(ctxProfit, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'Crypto', data: [], borderColor: '#00f2ff', backgroundColor: 'transparent' },
+                    { label: 'Gold', data: [], borderColor: '#ffcc00', backgroundColor: 'transparent' }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { display: false }, 
+                    y: { 
+                        grid: { color: 'rgba(255,255,255,0.05)' }, 
+                        ticks: { color: '#64748b', font: { size: 8 } } 
+                    } 
+                }
+            }
+        });
+
+        const ctxConf = document.getElementById('confidence-chart').getContext('2d');
+        const confidenceChart = new Chart(ctxConf, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#00f2ff', fill: true, backgroundColor: 'rgba(0, 242, 255, 0.1)' }] },
+            options: commonOptions
+        });
+
+        const ctxTradFi = document.getElementById('tradfi-chart').getContext('2d');
+        const tradfiChart = new Chart(ctxTradFi, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#ffcc00', fill: true, backgroundColor: 'rgba(255, 204, 0, 0.1)' }] },
+            options: commonOptions
+        });
+
+        // --- DATA POLLING ---
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/api/commander/data');
+                const data = await response.json();
+                
+                // 1. Update Core Stats (Crypto Focused)
+                const pnlEl = document.getElementById('pnl-total');
+                const pnlPctEl = document.getElementById('pnl-pct-pill');
+                if (pnlEl) pnlEl.innerText = data.profit.total.toFixed(2);
+                
+                const pct = data.profit.pct;
+                if (pnlPctEl) {
+                    pnlPctEl.innerText = `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`;
+                    pnlPctEl.className = `px-3 py-1 rounded-full text-[10px] font-bold ${pct >= 0 ? 'bg-alpha-emerald/10 border border-alpha-emerald/20 text-alpha-emerald' : 'bg-alpha-rose/10 border border-alpha-rose/20 text-alpha-rose'}`;
+                }
+
+                document.getElementById('confidence-score').innerText = `${data.confidence.readiness_pct}%`;
+                
+                const badge = document.getElementById('status-badge');
+                badge.innerText = data.confidence.status === 'READY' ? 'MISSION READY' : 'TRAINING...';
+                badge.className = `text-center py-2 rounded-xl text-[10px] uppercase font-bold tracking-widest ${data.confidence.status === 'READY' ? 'bg-alpha-emerald/20 text-alpha-emerald' : 'bg-slate-800/50 text-slate-500'}`;
+
+                // 2. Update Charts
+                // Main Profit Chart (Multi-Dataset)
+                profitChart.data.labels = data.profit.history.map(h => h.date);
+                profitChart.data.datasets[0].data = data.profit.history.map(h => h.val);
+                
+                // Update TradFi Data if available
+                if (data.tradfi && data.tradfi.history.length > 0) {
+                    profitChart.data.datasets[1].data = data.tradfi.history.map(h => h.val);
+                    
+                    tradfiChart.data.labels = data.tradfi.history.map(h => h.date);
+                    tradfiChart.data.datasets[0].data = data.tradfi.history.map(h => h.val);
+                    tradfiChart.update('none');
+                }
+                profitChart.update('none');
+
+                confidenceChart.data.labels = data.confidence.history.map((_, i) => i);
+                confidenceChart.data.datasets[0].data = data.confidence.history.map(h => h.val);
+                confidenceChart.update('none');
+
+                // 3. Update Universal Reasoning Stream
+                const logCont = document.getElementById('log-container');
+                if (data.reasoning.length > 0) {
+                    logCont.innerHTML = data.reasoning.map(txt => `
+                        <div class="p-3 rounded-xl bg-slate-800/30 border border-white/5 flex gap-3 transition-all hover:bg-white/5 animate-fade-in">
+                             <span class="text-alpha-cyan">▶</span>
+                             <p class="leading-relaxed text-[10px]">${txt}</p>
+                        </div>
+                    `).join('');
+                }
+
+                // 4. Agent Grid
+                const agentGrid = document.getElementById('agent-grid');
+                if (agentGrid) {
+                    agentGrid.innerHTML = data.agents.slice(0, 4).map(agent => `
+                        <div class="p-3 rounded-2xl bg-slate-800/40 border border-white/5 flex flex-col items-center gap-1">
+                            <div class="w-8 h-8 rounded-lg bg-alpha-cyan/10 flex items-center justify-center mb-1">
+                                <i data-lucide="shield" class="w-4 h-4 text-alpha-cyan"></i>
+                            </div>
+                            <span class="text-[8px] font-bold text-slate-400 uppercase truncate text-center w-full">${agent.name.split('-')[0]}</span>
+                            <span class="text-[10px] font-mono ${agent.pnl >= 0 ? 'text-alpha-emerald' : 'text-alpha-rose'}">${agent.pnl >= 0 ? '+' : ''}${agent.pnl}%</span>
+                        </div>
+                    `).join('');
+                    lucide.createIcons();
+                }
+
+            } catch (err) { console.error("Sync Error:", err); }
+        }
+
+        setInterval(updateDashboard, 5000);
+        updateDashboard();
+    </script>
+script>
+
+</body>
+</html>
