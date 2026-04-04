@@ -1,29 +1,19 @@
 @echo off
-title V8.1.1 AI TRADING PLATFORM - UNIFIED LAUNCHER
-echo ==========================================
-echo Starting V8.1.1 AI Platform...
-echo ==========================================
+title START AI TRADING (LEGACY BRIDGE)
+color 0B
+set ROOT_DIR=%~dp0
+cd /d "%ROOT_DIR%"
 
-REM Robust PowerShell Resolver (pwsh -> powershell)
-set "PS_CMD=pwsh"
-echo | %PS_CMD% -Version >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
-    echo [INFO] pwsh not found. Trying powershell...
-    set "PS_CMD=powershell"
-    echo | %PS_CMD% -Version >nul 2>&1
-    if %ERRORLEVEL% NEQ 0 (
-        echo [CRITICAL] PowerShell not found. Please install PowerShell 7 or use Windows PowerShell.
-        pause
-        exit /b 1
-    )
-)
+echo =============================================================
+echo    REINDIRIZZAMENTO ALLO STACK COMPLETO (2026 READY)
+echo    Tengu OS: Crypto + Equity + DeFi + News + Arbitrage
+echo =============================================================
+echo.
 
-echo [READY] Using %PS_CMD%. Executing launcher...
-%PS_CMD% -NoProfile -ExecutionPolicy Bypass -File "%~dp0\START_AI_TRADING.ps1"
+REM Inoltro al nuovo launcher centralizzato
+call "%ROOT_DIR%START_STACK.bat"
 
 if %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Launcher PS1 failed with code %ERRORLEVEL%.
+    echo [ERRORE] Il launcher principale ha fallito.
     pause
-) else (
-    echo [SUCCESS] Platform initialization triggered.
 )

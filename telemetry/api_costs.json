@@ -1,0 +1,600 @@
+{
+  "session_start": "2026-04-03T17:58:21.455447+00:00",
+  "total_calls": 163,
+  "total_input_tokens": 566483,
+  "total_output_tokens": 9970,
+  "total_cost_usd": 0.00229,
+  "total_duration_ms": 491464,
+  "calls_by_model": {
+    "qwen3:8b": {
+      "calls": 160,
+      "input_tokens": 562382,
+      "output_tokens": 9570,
+      "cost_usd": 0.0
+    },
+    "dummy-sim-model": {
+      "calls": 2,
+      "input_tokens": 300,
+      "output_tokens": 100,
+      "cost_usd": 0.00021
+    },
+    "nvidia/nemotron-3-super-120b-a12b": {
+      "calls": 1,
+      "input_tokens": 3801,
+      "output_tokens": 300,
+      "cost_usd": 0.00208
+    }
+  },
+  "calls_by_caller": {
+    "decision_engine": {
+      "calls": 160,
+      "input_tokens": 562382,
+      "output_tokens": 9570,
+      "cost_usd": 0.0
+    },
+    "sim_test": {
+      "calls": 2,
+      "input_tokens": 300,
+      "output_tokens": 100,
+      "cost_usd": 0.00021
+    },
+    "dream_agent": {
+      "calls": 1,
+      "input_tokens": 3801,
+      "output_tokens": 300,
+      "cost_usd": 0.00208
+    }
+  },
+  "recent_calls": [
+    {
+      "timestamp": "2026-04-03T23:17:58.503558+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4074,
+      "output_tokens": 160,
+      "duration_ms": 6980,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:18:02.136941+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4070,
+      "output_tokens": 42,
+      "duration_ms": 3514,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:05.385207+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 30,
+      "duration_ms": 2130,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:08.366739+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 44,
+      "duration_ms": 2668,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:11.124872+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4075,
+      "output_tokens": 45,
+      "duration_ms": 2484,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:14.324475+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4073,
+      "output_tokens": 53,
+      "duration_ms": 2921,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:18.211481+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 49,
+      "duration_ms": 3762,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:21.455100+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 57,
+      "duration_ms": 2897,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:24.442198+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4074,
+      "output_tokens": 49,
+      "duration_ms": 2740,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:23:27.769388+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4070,
+      "output_tokens": 42,
+      "duration_ms": 2998,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:28:32.403658+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 30,
+      "duration_ms": 3559,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:28:34.927298+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 44,
+      "duration_ms": 2422,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:28:38.691396+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4077,
+      "output_tokens": 41,
+      "duration_ms": 3657,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:28:42.288163+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4073,
+      "output_tokens": 52,
+      "duration_ms": 3499,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:28:46.004476+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4075,
+      "output_tokens": 42,
+      "duration_ms": 3600,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:28:49.995959+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 57,
+      "duration_ms": 3887,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:28:56.837435+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4074,
+      "output_tokens": 159,
+      "duration_ms": 6741,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:29:00.298047+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4070,
+      "output_tokens": 42,
+      "duration_ms": 3356,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:02.717719+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 30,
+      "duration_ms": 1085,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:04.076396+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 45,
+      "duration_ms": 1285,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:05.509654+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4075,
+      "output_tokens": 55,
+      "duration_ms": 1367,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:07.349284+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4073,
+      "output_tokens": 52,
+      "duration_ms": 1761,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:09.031311+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 37,
+      "duration_ms": 1596,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:10.844601+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 57,
+      "duration_ms": 1730,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:12.537140+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4074,
+      "output_tokens": 51,
+      "duration_ms": 1618,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:34:14.278374+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4070,
+      "output_tokens": 42,
+      "duration_ms": 1666,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:16.082780+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 30,
+      "duration_ms": 1100,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:17.407850+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 44,
+      "duration_ms": 1259,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:19.075443+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4077,
+      "output_tokens": 41,
+      "duration_ms": 1587,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:20.780878+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4073,
+      "output_tokens": 52,
+      "duration_ms": 1610,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:22.675006+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 47,
+      "duration_ms": 1797,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:24.535937+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 57,
+      "duration_ms": 1789,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:26.335242+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4074,
+      "output_tokens": 49,
+      "duration_ms": 1729,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:39:27.937661+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4070,
+      "output_tokens": 42,
+      "duration_ms": 1529,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:30.365799+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 41,
+      "duration_ms": 1237,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:32.057568+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 42,
+      "duration_ms": 1566,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:33.828733+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4075,
+      "output_tokens": 55,
+      "duration_ms": 1623,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:35.729110+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4073,
+      "output_tokens": 55,
+      "duration_ms": 1749,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:37.381135+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 41,
+      "duration_ms": 1569,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:39.163250+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 45,
+      "duration_ms": 1655,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:40.917209+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4074,
+      "output_tokens": 45,
+      "duration_ms": 1679,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:44:42.739552+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4070,
+      "output_tokens": 53,
+      "duration_ms": 1750,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:45.212804+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 41,
+      "duration_ms": 1224,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:46.876541+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 42,
+      "duration_ms": 1566,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:48.587204+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4075,
+      "output_tokens": 54,
+      "duration_ms": 1634,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:50.344725+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4073,
+      "output_tokens": 55,
+      "duration_ms": 1627,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:52.030564+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4076,
+      "output_tokens": 48,
+      "duration_ms": 1602,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:53.801052+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4072,
+      "output_tokens": 45,
+      "duration_ms": 1620,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:56.849293+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4074,
+      "output_tokens": 160,
+      "duration_ms": 2969,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-03T23:49:58.763199+00:00",
+      "model": "qwen3:8b",
+      "caller": "decision_engine",
+      "input_tokens": 4070,
+      "output_tokens": 53,
+      "duration_ms": 1825,
+      "cost_usd": 0.0,
+      "success": true,
+      "error": null
+    }
+  ]
+}

@@ -59,7 +59,7 @@ class EvolutionLoop:
             with sqlite3.connect(FT_DB_PATH) as ft_conn:
                 ft_conn.row_factory = sqlite3.Row
                 trades = ft_conn.execute(
-                    "SELECT id, pair, profit_ratio, profit_abs, open_date, close_date, enter_tag "
+                    "SELECT id, pair, profit_ratio as realized_pnl_pct, profit_abs, open_date, close_date, enter_tag "
                     "FROM trades WHERE is_open = 0"
                 ).fetchall()
                 for t in trades:
@@ -75,9 +75,9 @@ class EvolutionLoop:
                         "asset": t["pair"],
                         "open_at": t["open_date"],
                         "closed_at": t["close_date"],
-                        "realized_pnl_pct": float(t["profit_ratio"]) * 100,
+                        "realized_pnl_pct": float(t["realized_pnl_pct"]) * 100,
                         "realized_pnl_abs": float(t["profit_abs"]),
-                        "was_profitable": bool(t["profit_ratio"] > 0)
+                        "was_profitable": bool(t["realized_pnl_pct"] > 0)
                     })
                     synced += 1
         except Exception as e:
@@ -90,17 +90,17 @@ class EvolutionLoop:
     # ========== PHASE 2: REGIME SNAPSHOT ==========
     def snapshot_regime(self):
         """Read latest regime from decisions table."""
-        regime_label = MarketRegime.UNKNOWN
+        regime_label = "UNKNOWN"
         try:
             with self.repo._conn() as conn:
                 rows = conn.execute(
-                    "SELECT market_regime FROM decisions WHERE market_regime IS NOT NULL "
-                    "ORDER BY timestamp_utc DESC LIMIT 10"
+                    "SELECT regime FROM decisions WHERE regime IS NOT NULL "
+                    "ORDER BY timestamp DESC LIMIT 10"
                 ).fetchall()
                 if rows:
                     from collections import Counter
-                    valid = [r["market_regime"].upper() for r in rows
-                             if r["market_regime"] and r["market_regime"] != "unknown"]
+                    valid = [r["regime"].upper() for r in rows
+                             if r["regime"] and r["regime"] != "unknown"]
                     if valid:
                         regime_label = Counter(valid).most_common(1)[0][0]
         except Exception as e:
@@ -117,22 +117,25 @@ class EvolutionLoop:
             return candidates
         assets = {}
         for row in outcomes:
+            # Row is sqlite3.Row, access by key
             a = row["asset"]
             if a not in assets:
                 assets[a] = {"pnl": 0.0, "tot": 0}
-            assets[a]["pnl"] += row["realized_pnl_abs"]
+            assets[a]["pnl"] += row["realized_pnl_pct"]
             assets[a]["tot"] += 1
 
         worst = min(assets.items(), key=lambda x: x[1]["pnl"])
         if worst[1]["pnl"] < -5.0:
-            tag = f"Local-Filter-{int(time.time())}"
-            rules = {
-                "blocked_pairs": [worst[0]],
-                "regime": self.run_summary["regime"],
-                "reasoning": f"Asset {worst[0]}: {worst[1]['pnl']:.2f} USDC / {worst[1]['tot']} trades"
+            skill = {
+                "skill_id": f"SKL-LOC-{int(time.time())}",
+                "name": f"guard_toxic_{worst[0]}",
+                "version": "1.0.0",
+                "validation_status": "candidate",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "logic": f"Block setup on {worst[0]} due to toxic PnL: {worst[1]['pnl']:.2f}%"
             }
-            self.repo.register_strategy_version(tag, "LocalEvolution-V8.3", json.dumps(rules), "OllamaHybrid")
-            logger.info(f"LOCAL candidate: {tag}")
+            self.repo.save_skill_candidate(skill)
+            logger.info(f"LOCAL candidate: {skill['skill_id']}")
             candidates += 1
         return candidates
 
@@ -140,56 +143,46 @@ class EvolutionLoop:
     def nvidia_review(self, outcomes):
         """Send outcomes to NVIDIA Teacher for deep review."""
         candidates = 0
-        if not self.nvidia.enabled or not self.nvidia.api_key:
-            logger.info("NVIDIA Teacher disabled or no API key.")
+        from ai.nvidia_teacher import NvidiaTeacher
+        teacher = NvidiaTeacher(self.repo)
+        analysis = teacher.analyze()
+        
+        if not analysis or not analysis.get("findings"):
+            logger.info("NVIDIA Teacher returned no findings.")
             return candidates
 
-        batch = [dict(o) for o in outcomes[:20]]
-        review = self.nvidia.review_closed_trades(batch)
-        if not review:
-            logger.warning("NVIDIA Teacher returned no review.")
-            return candidates
-
-        # Save review
-        rev_id = f"REV-NV-{int(time.time())}"
-        self.repo.log_nvidia_review({
-            "review_id": rev_id,
-            "reviewed_period": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-            "dominant_failures": review.get("dominant_failures"),
-            "confidence_miscalibration": review.get("confidence_miscalibration"),
-            "regime_findings": review.get("regime_findings"),
-            "prompt_corrections": review.get("prompt_corrections"),
-            "rule_corrections": review.get("rule_corrections"),
-            "candidate_strategies": review.get("candidate_strategies"),
-            "suggested_labels": review.get("suggested_labels"),
-            "risk_notes": review.get("risk_notes"),
-            "token_usage": 4500
-        })
-        logger.info(f"NVIDIA review saved: {rev_id}")
-        self.run_summary["nvidia_review"] = True
-
-        # Register NVIDIA candidate strategies
-        for i, cand in enumerate(review.get("candidate_strategies", [])):
-            tag = f"STRAT-NV-{int(time.time())}-{i}"
-            cand["regime_context"] = self.run_summary["regime"]
-            self.repo.register_strategy_version(tag, "NvidiaTeacher-V8.3", json.dumps(cand), "OllamaHybrid")
-            logger.info(f"NVIDIA candidate registered: {tag}")
+        # Register NVIDIA candidates as skills
+        for i, finding in enumerate(analysis.get("findings", [])):
+            skill_id = f"SKL-NV-{int(time.time())}-{i}"
+            skill = {
+                "skill_id": skill_id,
+                "name": f"guard_{finding.get('suggested_regime', 'general').lower()}",
+                "version": "1.0.0",
+                "validation_status": "candidate",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "logic": finding.get("edge", "Optimize RSI")
+            }
+            self.repo.save_skill_candidate(skill)
+            logger.info(f"NVIDIA candidate registered: {skill_id}")
             candidates += 1
         return candidates
 
     # ========== PHASE 5: REGIME-AWARE CANDIDATE ==========
     def regime_candidate(self):
-        """Generate a regime-aware candidate from the strategy map."""
+        """Generate a regime-aware candidate (simplified)."""
         regime = self.run_summary["regime"]
-        if regime in REGIME_STRATEGY_MAP:
-            params = REGIME_STRATEGY_MAP[regime]
-            tag = f"Regime-{regime}-{int(time.time())}"
-            self.repo.register_strategy_version(
-                tag, params["family"],
-                json.dumps({"regime": regime, **params}),
-                "RegimeDetector-V8.3"
-            )
-            logger.info(f"Regime candidate: {tag} ({regime})")
+        if regime != "UNKNOWN":
+            skill_id = f"SKL-REG-{regime}-{int(time.time())}"
+            skill = {
+                "skill_id": skill_id,
+                "name": f"optimized_{regime.lower()}",
+                "version": "1.0.0",
+                "validation_status": "candidate",
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "logic": f"Tailored RSI and MACD for {regime}"
+            }
+            self.repo.save_skill_candidate(skill)
+            logger.info(f"Regime candidate: {skill_id}")
             return 1
         return 0
 
@@ -199,9 +192,8 @@ class EvolutionLoop:
         self.run_summary["timestamp"] = datetime.now(timezone.utc).isoformat()
 
         # Count total candidates in registry
-        with self.repo._conn() as conn:
-            row = conn.execute("SELECT COUNT(*) as c FROM strategy_versions WHERE status='candidate'").fetchone()
-            total_candidates = row["c"] if row else 0
+        skills = self.repo.list_skill_candidates()
+        total_candidates = len(skills)
 
         source = "hybrid" if self.run_summary["nvidia_review"] else "local"
         self.run_summary["source"] = source

@@ -3,14 +3,14 @@ from datetime import datetime, time as dt_time
 
 logger = logging.getLogger("scheduler")
 
-# Finestra LAB configurabile: 02:00 - 03:00 locale
-LAB_START = dt_time(2, 0)
-LAB_END = dt_time(3, 0)
-
+# Finestra LAB configurabile: Primi 20 minuti di ogni ora
 def current_mode() -> str:
-    """Ritorna LIVE_MODE o LAB_MODE dipendente dall'ora locale. Il mercato crypto è 24/7."""
-    now = datetime.now().time()
-    if LAB_START <= now < LAB_END:
+    """Ritorna 'LAB_MODE' o 'LIVE_MODE' basandosi sull'ora locale.
+    LAB_MODE: Primi 20 minuti di ogni ora.
+    LIVE_MODE: Resto dell'ora.
+    """
+    now_m = datetime.now().minute
+    if 0 <= now_m < 55:
         return "LAB_MODE"
     return "LIVE_MODE"
 

@@ -32,15 +32,18 @@ SYSTEM_PROMPT = """You are a quantitative trading evaluator. You receive market 
 RULES:
 - Output ONLY a valid JSON object. No markdown, no explanation, no text outside JSON.
 - Format:
-{"decision":"buy","confidence":75,"thesis":"one line reason","technical_basis":["RSI at 28"],"news_basis":["ETF rumor"],"risk_flags":["extreme_fear"]}
+{"decision":"buy","confidence":75,"thesis":"one line reason","inner_monologue":"detailed multi-step reasoning","technical_basis":["RSI at 28"],"news_basis":["ETF rumor"],"risk_flags":["extreme_fear"]}
 - decision: only "buy" or "hold"
 - confidence: integer 0-100
 - thesis: max 80 chars, ASCII only
+- inner_monologue: detailed strategic reflexion (the 'why' behind everything)
 - technical_basis: array of strings (may be empty)
 - news_basis: array of strings (may be empty)
 - risk_flags: array of strings (may be empty)
 - If uncertain, output hold with low confidence.
-- Never fabricate data. If information is missing, say so."""
+- In TREND_UP with neutral RSI, favor buying for momentum.
+- Never fabricate data. If information is missing, say so.
+- BE HONEST about risks in the inner_monologue."""
 
 
 def evaluate(intelligence: MarketIntelligence, repo=None) -> TradeDecision:
@@ -117,6 +120,7 @@ def _evaluate_mock(intel: MarketIntelligence) -> TradeDecision:
             decision=Action.BUY,
             confidence=85,
             thesis="Mock: deterministic mock buy trigger",
+            inner_monologue="L'RSI è estremamente basso (<30) e il MACD mostra i primi segnali di divergenza rialzista. Le condizioni tecniche suggeriscono un rimbalzo imminente (Mock Logic).",
             risk_flags=["mock_mode_active"]
         )
     return TradeDecision.default_hold(
@@ -127,6 +131,7 @@ def _evaluate_mock(intel: MarketIntelligence) -> TradeDecision:
 
 def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
     """Build structured, concise input for the model. No prose."""
+    settings = get_settings()
     trend_5m = "bullish" if intel.macd_5m > 0 else "bearish"
     trend_1h = "bullish" if intel.macd_1h > 0 else "bearish"
 
@@ -150,7 +155,39 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
         lines.append("HEADLINES: " + " | ".join(intel.top_headlines[:3]))
 
     if intel.historical_lessons:
-        lines.append(f"MEMORY: {intel.historical_lessons[:200]}")
+        lines.append(f"SHORT-TERM DB MEMORY: {intel.historical_lessons[:200]}")
+
+    try:
+        from storage.memory_manager import MemoryManager
+        mm = MemoryManager(str(settings.paths.project_root))
+        
+        # 1. Tactical Strategy (Auto-Dream 2h rolling plan)
+        strategy = mm.get_typed_context("project")
+        if "Nessun dato" not in strategy:
+            lines.append("\n=== ROLLING TACTICAL STRATEGY (Next 2 Hours) ===")
+            lines.append(strategy)
+            lines.append("================================================")
+        
+        # 2. User/Feedback Memory
+        user_prefs = mm.get_typed_context("user")
+        if "Nessun dato" not in user_prefs:
+            lines.append("\n--- USER PREFERENCES & STYLE ---")
+            lines.append(user_prefs)
+            
+        feedback = mm.get_typed_context("feedback")
+        if "Nessun dato" not in feedback:
+            lines.append("\n--- PERFORMANCE FEEDBACK & LEARNINGS ---")
+            lines.append(feedback)
+
+        # 3. Asset Specific Memory (Legacy compatibility)
+        asset_memory = mm.read_asset_memory(intel.asset)
+        if asset_memory and "Nessuna memoria" not in asset_memory:
+            lines.append(f"\n--- LONG-TERM PERSISTENT MEMORY ({intel.asset}) ---")
+            lines.append(asset_memory)
+            lines.append("---------------------------------\n")
+    except Exception as e:
+        logger.error(f"Failed to load memory: {e}")
+
 
     if repo:
         try:
@@ -165,6 +202,7 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
             logger.error(f"Failed to load skills: {e}")
 
     lines.append(f"DATA_QUALITY: {intel.data_quality}")
+    lines.append(f"MODE: {settings.exchange.mode.upper()} (Exploration encouraged)")
     lines.append("Respond with JSON only.")
 
     return "\n".join(lines)
@@ -177,6 +215,7 @@ def _call_model(user_msg: str, model: str, base_url: str,
 
     for attempt in range(max_retries):
         try:
+            t_start = time.time()
             resp = requests.post(
                 url,
                 json={
@@ -187,12 +226,29 @@ def _call_model(user_msg: str, model: str, base_url: str,
                     ],
                     "stream": False,
                     "think": False,
-                    "options": {"temperature": 0.1, "num_predict": 200},
+                    "options": {"temperature": 0.1, "num_predict": 1000},
                 },
                 timeout=timeout,
             )
             resp.raise_for_status()
-            return resp.json().get("message", {}).get("content", "")
+            duration_ms = int((time.time() - t_start) * 1000)
+            resp_data = resp.json()
+            
+            # Track cost
+            try:
+                from telemetry.cost_tracker import get_cost_tracker
+                tracker = get_cost_tracker()
+                usage = resp_data.get("eval_count", 0)
+                prompt_tokens = resp_data.get("prompt_eval_count", 0)
+                tracker.record_call(
+                    model=model, caller="decision_engine",
+                    input_tokens=prompt_tokens, output_tokens=usage,
+                    duration_ms=duration_ms, success=True
+                )
+            except Exception:
+                pass
+            
+            return resp_data.get("message", {}).get("content", "")
         except requests.exceptions.Timeout:
             logger.warning(f"Model timeout (attempt {attempt + 1}/{max_retries})")
         except Exception as e:
@@ -265,6 +321,9 @@ def _validate_parsed(data: dict, asset: str) -> TradeDecision:
     # Thesis
     thesis = _sanitize_str(data.get("thesis", data.get("reason", "")), max_len=100)
 
+    # Monologue
+    monologue = _sanitize_str(data.get("inner_monologue", data.get("reflexion", "")), max_len=1000)
+
     # Lists
     technical_basis = _sanitize_list(data.get("technical_basis", []))
     news_basis = _sanitize_list(data.get("news_basis", []))
@@ -275,6 +334,7 @@ def _validate_parsed(data: dict, asset: str) -> TradeDecision:
         decision=decision,
         confidence=confidence,
         thesis=thesis,
+        inner_monologue=monologue,
         technical_basis=technical_basis,
         news_basis=news_basis,
         risk_flags=risk_flags,

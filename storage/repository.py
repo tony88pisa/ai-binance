@@ -94,6 +94,12 @@ class Repository:
         if 'exchange_order_id' not in columns:
             try: conn.execute("ALTER TABLE decisions ADD COLUMN exchange_order_id TEXT")
             except: pass
+        if 'inner_monologue' not in columns:
+            try: conn.execute("ALTER TABLE decisions ADD COLUMN inner_monologue TEXT")
+            except: pass
+        if 'agent_name' not in columns:
+            try: conn.execute("ALTER TABLE decisions ADD COLUMN agent_name TEXT")
+            except: pass
             
         conn.commit()
 
@@ -131,7 +137,18 @@ class Repository:
                 data["regime"], data["consensus_score"], data["position_size_pct"],
                 data["atr_stop_distance"], data["why_not_trade"], datetime.now(timezone.utc).isoformat()
             ))
+        with self._conn() as conn:
+            conn.execute("""
+                INSERT INTO market_history (asset, price, rsi_5m, macd_5m, decision, confidence, timestamp)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (data["asset"], data["price"], data["rsi_5m"], data["macd_5m"], 
+                  data["decision"], data["confidence"], datetime.now(timezone.utc).isoformat()))
             conn.commit()
+
+    def get_market_history(self, asset: str, limit: int = 100) -> List[Dict[str, Any]]:
+        with self._conn() as conn:
+            rows = conn.execute("SELECT * FROM market_history WHERE asset=? ORDER BY timestamp DESC LIMIT ?", (asset, limit)).fetchall()
+            return [dict(r) for r in rows]
 
     def get_latest_snapshot(self, asset: str) -> Dict[str, Any]:
         with self._conn() as conn:
@@ -146,12 +163,12 @@ class Repository:
     def save_trade_decision(self, data: Dict[str, Any]):
         with self._conn() as conn:
             conn.execute("""
-                INSERT INTO decisions (id, asset, action, confidence, size_pct, thesis, regime, timestamp, entry_price, atr_stop_distance, status, exchange_order_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO decisions (id, asset, action, confidence, size_pct, thesis, regime, timestamp, entry_price, atr_stop_distance, status, inner_monologue, agent_name, exchange_order_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (data["id"], data["asset"], data["action"], data["confidence"],
                   data["size_pct"], data["thesis"], data["regime"], datetime.now(timezone.utc).isoformat(),
                   data.get("entry_price", 0.0), data.get("atr_stop_distance", 0.0), data.get("status", "OPEN"),
-                  data.get("exchange_order_id", None)))
+                  data.get("inner_monologue", ""), data.get("agent_name", "Alpha-Sentinel"), data.get("exchange_order_id", None)))
             conn.commit()
 
     def get_open_decisions(self) -> List[Dict[str, Any]]:
@@ -159,7 +176,23 @@ class Repository:
             rows = conn.execute("""
                 SELECT d.* FROM decisions d
                 LEFT JOIN trade_outcomes o ON d.id = o.decision_id
-                WHERE d.status = 'OPEN' AND o.id IS NULL
+                WHERE (d.status = 'OPEN' OR d.status = 'CLOSING' OR d.status = 'PENDING')
+                AND o.id IS NULL
+            """).fetchall()
+            return [dict(r) for r in rows]
+
+    def update_decision_status(self, decision_id: str, status: str):
+        with self._conn() as conn:
+            conn.execute("UPDATE decisions SET status = ? WHERE id = ?", (status, decision_id))
+            conn.commit()
+
+    def get_stale_decisions(self, max_age_hours: int = 24) -> List[Dict[str, Any]]:
+        """Find trades that have been open for too long without completion."""
+        with self._conn() as conn:
+            rows = conn.execute(f"""
+                SELECT * FROM decisions 
+                WHERE status IN ('OPEN', 'PENDING', 'CLOSING')
+                AND timestamp < datetime('now', '-{max_age_hours} hour')
             """).fetchall()
             return [dict(r) for r in rows]
 
@@ -214,6 +247,25 @@ class Repository:
                 VALUES (?, 'active', ?, ?) ON CONFLICT(service) DO UPDATE SET
                 last_heartbeat=excluded.last_heartbeat, state_json=excluded.state_json, status='active'
             """, (service, datetime.now(timezone.utc).isoformat(), state_json))
+            conn.commit()
+
+    def update_service_state(self, service: str, status: str, pid: int, state_data: Dict[str, Any]):
+        """Legacy compatibility for evolution_loop."""
+        state_data["pid"] = pid
+        state_data["status_detail"] = status
+        self.update_service_heartbeat(service, json.dumps(state_data))
+
+    def log_nvidia_review(self, review: Dict[str, Any]):
+        """Saves detailed AI assessment log."""
+        with self._conn() as conn:
+            conn.execute("""
+                INSERT INTO supervisor_logs (timestamp, ai_assessment, actions_taken)
+                VALUES (?, ?, ?)
+            """, (
+                datetime.now(timezone.utc).isoformat(),
+                json.dumps(review.get("regime_findings", "N/A")),
+                f"Review ID: {review.get('review_id')} | Candidates: {len(review.get('candidate_strategies', []))}"
+            ))
             conn.commit()
 
     def get_service_state(self, service: str) -> Dict[str, Any]:

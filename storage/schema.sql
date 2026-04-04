@@ -27,7 +27,9 @@ CREATE TABLE IF NOT EXISTS decisions (
     timestamp TEXT NOT NULL,
     entry_price REAL DEFAULT 0.0,
     atr_stop_distance REAL DEFAULT 0.0,
-    status TEXT DEFAULT 'OPEN'
+    status TEXT DEFAULT 'OPEN',
+    inner_monologue TEXT,
+    exchange_order_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS trade_outcomes (
@@ -87,7 +89,17 @@ CREATE TABLE IF NOT EXISTS supervisor_controls (
 CREATE TABLE IF NOT EXISTS supervisor_logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp TEXT NOT NULL,
-    wallet_state TEXT NOT NULL,
     ai_assessment TEXT NOT NULL,
     actions_taken TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS market_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    asset TEXT NOT NULL,
+    price REAL NOT NULL,
+    rsi_5m REAL,
+    macd_5m REAL,
+    decision TEXT,
+    confidence INTEGER,
+    timestamp TEXT NOT NULL
 );

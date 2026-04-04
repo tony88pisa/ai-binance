@@ -12,8 +12,13 @@ Get-CimInstance Win32_Process -Filter "Name = 'python.exe' AND CommandLine LIKE 
     Write-Host "[X] Processo Python ID $($_.ProcessId) terminato." -ForegroundColor DarkGray
 }
 
+# Stop Node (WhatsApp MCP)
+Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force
+Write-Host "[X] WhatsApp MCP (Node) terminato." -ForegroundColor DarkGray
+
 # Stop Cloudflare
 Get-Process cloudflared -ErrorAction SilentlyContinue | Stop-Process -Force
 Write-Host "[X] Cloudflare Tunnel chiuso." -ForegroundColor DarkGray
 
 Write-Host "--- STACK FERMO ---" -ForegroundColor Red
+

@@ -7,6 +7,7 @@ import os
 import json
 from pathlib import Path
 from dotenv import load_dotenv
+from fastapi import APIRouter
 from config.settings import get_settings
 from storage.repository import Repository
 from scheduler.session_manager import current_mode
@@ -45,6 +46,11 @@ def get_state():
     pnl_val = round(wallet - initial_budget, 2)
     pnl_pct = round((pnl_val / initial_budget) * 100, 2) if initial_budget else 0
 
+    # --- Allocation Logic ---
+    # Simplified mock for the bar: in a real scenario we'd query total holdings per asset
+    assets_data = repo.get_latest_snapshots()
+    alloc = {"CASH": 65, "BTC": 15, "ETH": 10, "EQUITY": 10} # Default/Mock
+    
     # Counts
     with repo._conn() as conn:
         open_cnt = conn.execute("SELECT COUNT(*) FROM decisions WHERE status='OPEN'").fetchone()[0]
@@ -67,6 +73,7 @@ def get_state():
         "open_trades": open_cnt,
         "closed_trades": closed_cnt,
         "total_decisions": total_decisions,
+        "allocation": alloc,
         "open_orders_exchange": ex_orders
     }
 
@@ -99,6 +106,80 @@ def get_assets():
     return out
 
 
+@router.get("/arena")
+def get_arena():
+    """Aggregated performance and sentiment for Agent dots."""
+    repo = Repository()
+    with repo._conn() as conn:
+        # Get latest performance per agent from outcomes
+        perf = conn.execute("""
+            SELECT d.agent_name, 
+                   AVG(o.realized_pnl_pct) as avg_pnl, 
+                   COUNT(*) as trades,
+                   AVG(d.confidence) as avg_conf
+            FROM decisions d 
+            JOIN trade_outcomes o ON d.id = o.decision_id
+            GROUP BY d.agent_name
+        """).fetchall()
+        
+    agents = []
+    # Mix real data with predefined agents if no data exists yet
+    known_agents = ["Alpha-Quantum", "Trend-Scout", "WallStreet-Bot"]
+    found_names = [row["agent_name"] for row in perf]
+    
+    # Real data
+    for row in perf:
+        agents.append({
+            "name": row["agent_name"],
+            "pnl": round(row["avg_pnl"] * 100, 2),
+            "trades": row["trades"],
+            "sentiment": round(row["avg_conf"], 0), # Using confidence as a proxy for 'greed'
+            "status": "ACTIVE"
+        })
+        
+    # 2. Add Active Thoughts (from current market snapshots)
+    snaps = repo.get_latest_snapshots()
+    for snap in snaps:
+        # We assign thoughts to 'Trend-Scout' or 'Alpha-Quantum' based on confidence/asset
+        name = "Alpha-Quantum" if "/" in snap["asset"] and snap["confidence"] > 60 else "Trend-Scout"
+        # Only add as active thought if not already counted as trade performer
+        agents.append({
+            "name": name,
+            "asset": snap["asset"],
+            "pnl": 0.0, # Neutral Y position for thoughts
+            "sentiment": snap["confidence"],
+            "status": "THINKING",
+            "thesis": snap["why_not_trade"] or snap["decision"]
+        })
+
+    return agents
+
+
+@router.get("/knowledge")
+def get_knowledge():
+    """Calculates 'Market Affinity' based on learning state and data density."""
+    repo = Repository()
+    # 1. Check Dream Agent status
+    dream_state = repo.get_service_state("dream_agent")
+    
+    # 2. Calculate affinity based on how many assets are currently being analyzed
+    snaps = repo.get_latest_snapshots()
+    active_count = len([s for s in snaps if (s.get("confidence") or 0) > 0])
+    
+    # 3. Baseline affinity (progress bar filler)
+    # If dream_agent is active and we have data, we are 'synced'
+    affinity = 40 # Base
+    if dream_state: affinity += 30
+    if active_count > 5: affinity += 20
+    if active_count > 10: affinity += 10
+    
+    return {
+        "affinity_pct": min(affinity, 100),
+        "learning_status": "Deep Learning" if affinity > 70 else "Observing",
+        "last_paradigm_update": dream_state.get("last_heartbeat", "N/A")
+    }
+
+
 @router.get("/positions")
 def get_positions():
     """Open trades with current market price for PnL calc."""
@@ -121,6 +202,7 @@ def get_positions():
             "pnl_pct": pnl_pct,
             "direction": "up" if pnl_pct >= 0 else "down",
             "opened_at": t.get("timestamp", "N/A"),
+            "inner_monologue": t.get("inner_monologue", ""),
             "exchange_order_id": t.get("exchange_order_id")
         })
     return out
@@ -135,53 +217,65 @@ def get_history():
 
 @router.get("/learning")
 def get_learning():
-    """Lab evolution stats."""
+    """Lab evolution stats with safety."""
     repo = Repository()
-    with repo._conn() as conn:
-        # Filter legacy/corrupted data
-        outcome_cnt = conn.execute("""
-            SELECT COUNT(*) FROM trade_outcomes o 
-            JOIN decisions d ON o.decision_id = d.id 
-            WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
-        """).fetchone()[0]
-        
-        wins = conn.execute("""
-            SELECT COUNT(*) FROM trade_outcomes o 
-            JOIN decisions d ON o.decision_id = d.id 
-            WHERE o.was_profitable = 1 AND d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 10.0
-        """).fetchone()[0]
-        
-        winrate = round((wins / outcome_cnt) * 100, 1) if outcome_cnt > 0 else 0
-        
-        total_pnl = conn.execute("""
-            SELECT SUM(o.realized_pnl_pct) FROM trade_outcomes o 
-            JOIN decisions d ON o.decision_id = d.id 
-            WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
-        """).fetchone()[0] or 0
+    try:
+        with repo._conn() as conn:
+            outcome_cnt = conn.execute("""
+                SELECT COUNT(*) FROM trade_outcomes o 
+                JOIN decisions d ON o.decision_id = d.id 
+                WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
+            """).fetchone()[0] or 0
+            
+            wins = conn.execute("""
+                SELECT COUNT(*) FROM trade_outcomes o 
+                JOIN decisions d ON o.decision_id = d.id 
+                WHERE o.was_profitable = 1 AND d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 10.0
+            """).fetchone()[0] or 0
+            
+            winrate = round((wins / outcome_cnt) * 100, 1) if outcome_cnt > 0 else 0
+            
+            total_pnl = conn.execute("""
+                SELECT SUM(o.realized_pnl_pct) FROM trade_outcomes o 
+                JOIN decisions d ON o.decision_id = d.id 
+                WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
+            """).fetchone()[0] or 0
 
-        # Per-asset stats sanitized
-        asset_stats = conn.execute("""
-            SELECT d.asset,
-                   COUNT(*) as cnt,
-                   SUM(CASE WHEN o.was_profitable THEN 1 ELSE 0 END) as wins,
-                   ROUND(SUM(o.realized_pnl_pct)*100, 2) as total_pnl_pct
-            FROM trade_outcomes o JOIN decisions d ON o.decision_id = d.id
-            WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
-            GROUP BY d.asset ORDER BY total_pnl_pct DESC
-        """).fetchall()
-        asset_stats = [dict(r) for r in asset_stats]
+            asset_stats_raw = conn.execute("""
+                SELECT d.asset,
+                       COUNT(*) as cnt,
+                       SUM(CASE WHEN o.was_profitable THEN 1 ELSE 0 END) as wins,
+                       ROUND(SUM(o.realized_pnl_pct)*100, 2) as total_pnl_pct
+                FROM trade_outcomes o JOIN decisions d ON o.decision_id = d.id
+                WHERE d.entry_price > 0 AND ABS(o.realized_pnl_pct) < 5.0
+                GROUP BY d.asset ORDER BY total_pnl_pct DESC
+            """).fetchall()
+            asset_stats = [dict(r) for r in asset_stats_raw] if asset_stats_raw else []
 
-    skills = repo.list_skill_candidates()
-    return {
-        "outcomes_total": outcome_cnt,
-        "winrate": winrate,
-        "total_pnl_pct": round(total_pnl * 100, 2),
-        "skill_candidates": len(skills),
-        "skills": [{"id": s["skill_id"], "name": s["name"], "status": s["status"]} for s in skills[:10]],
-        "asset_performance": asset_stats,
-        "lab_mode": "ISOLATED",
-        "promotion_mode": "MANUAL ONLY",
-    }
+        skills = repo.list_skill_candidates()
+        formatted_skills = []
+        for s in skills[:10]:
+            formatted_skills.append({
+                "id": s.get("skill_id", "N/A"),
+                "name": s.get("name", "N/A"),
+                "status": s.get("status", "N/A")
+            })
+
+        return {
+            "outcomes_total": outcome_cnt,
+            "winrate": winrate,
+            "total_pnl_pct": round(total_pnl * 100, 2),
+            "skill_candidates": len(skills),
+            "skills": formatted_skills,
+            "asset_performance": asset_stats,
+            "lab_mode": "ISOLATED",
+            "promotion_mode": "MANUAL ONLY",
+        }
+    except Exception as e:
+        import traceback
+        print(f"Error in get_learning: {e}")
+        print(traceback.format_exc())
+        return {"error": str(e), "status": "failed"}
 
 
 @router.get("/logs")
@@ -194,7 +288,8 @@ def get_logs(source: str = "daemon", lines: int = 40):
         "evolution": "evolution_loop.log",
         "evolution_error": "evolution_loop_error.log",
         "cloudflare": "cloudflared.log",
-        "supervisor": "supervisor.log"
+        "supervisor": "supervisor.log",
+        "analyzer": "analyzer.log"
     }
     fname = allowed.get(source)
     if not fname:

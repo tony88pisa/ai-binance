@@ -61,7 +61,7 @@ class TelegramSettings:
 class DashboardSettings:
     enabled: bool = True
     host: str = "127.0.0.1"
-    port: int = 8080
+    port: int = 8087
     username: str = ""
     password: str = ""
     jwt_secret: str = ""
@@ -98,7 +98,7 @@ class TradingSettings:
     stake_currency: str = "USDT"
     timeframe: str = "5m"
     informative_timeframe: str = "1h"
-    pairs: list[str] = field(default_factory=lambda: ["BTC/USDC", "ETH/USDC", "SOL/USDC"])
+    pairs: list[str] = field(default_factory=lambda: ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"])
 
 
 @dataclass(frozen=True)
@@ -154,6 +154,8 @@ def load_settings() -> Settings:
             chat_id=os.getenv("TELEGRAM_CHAT_ID", ""),
         ),
         dashboard=DashboardSettings(
+            host=os.getenv("DASHBOARD_HOST", "127.0.0.1"),
+            port=int(os.getenv("DASHBOARD_PORT", "8087")),
             username=os.getenv("API_USERNAME", ""),
             password=os.getenv("API_PASSWORD", ""),
             jwt_secret=os.getenv("API_JWT_SECRET", ""),

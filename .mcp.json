@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "whatsapp": {
+      "command": "node",
+      "args": ["services/whatsapp_mcp/server.js"],
+      "env": {},
+      "description": "WhatsApp MCP Server per il trading bot - invia/ricevi alert e comandi via WhatsApp personale"
+    }
+  }
+}

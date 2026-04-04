@@ -12,23 +12,42 @@ class MarketIntelligence:
     atr_5m: float
 
 class LiveBrain:
-    def evaluate(self, intel: MarketIntelligence) -> Dict[str, Any]:
-        regime = self._detect_regime(intel.macd_1h, intel.rsi_1h)
-        consensus = self._calculate_consensus(intel.rsi_5m, intel.rsi_1h, intel.macd_5m, intel.macd_1h)
-        atr_stop = intel.atr_5m * 2.0
+    def evaluate(self, intel: Any) -> Dict[str, Any]:
+        """Evaluates market signals. Supports both dictionary and MarketIntelligence object."""
+        # Duck-typing or conversion to dict if it's a dataclass
+        if hasattr(intel, "__dataclass_fields__"):
+            data = {field: getattr(intel, field) for field in intel.__dataclass_fields__}
+        elif isinstance(intel, dict):
+            data = intel
+        else:
+            raise TypeError(f"LiveBrain.evaluate expects dict or MarketIntelligence, got {type(intel)}")
+
+        def get_val(key, default=0.0):
+            return data.get(key, default)
+
+        m1h = get_val("macd_1h")
+        r1h = get_val("rsi_1h", 50.0)
+        r5m = get_val("rsi_5m", 50.0)
+        m5m = get_val("macd_5m")
+        a5m = get_val("atr_5m")
+        price = get_val("price")
+
+        regime = self._detect_regime(m1h, r1h)
+        consensus = self._calculate_consensus(r5m, r1h, m5m, m1h)
+        atr_stop = a5m * 2.0
         
         # Contratto rigoroso: "buy" o "hold"
         decision = "hold"
         confidence = 50
         why_not = "No clear edge detected"
         risk_flags: List[str] = []
-        tech_basis: List[str] = [f"RSI 5m: {intel.rsi_5m:.1f}"]
+        tech_basis: List[str] = [f"RSI 5m: {r5m:.1f}"]
         size_pct = 0.0
 
-        if consensus > 0.65 and intel.rsi_5m < 45 and regime == "TREND_UP":
+        if consensus > 0.65 and r5m < 45 and regime == "TREND_UP":
             decision = "buy"
             confidence = int(consensus * 100)
-            size_pct = self._calculate_size(intel.atr_5m, intel.price)
+            size_pct = self._calculate_size(a5m, price)
             why_not = ""
             tech_basis.append("Oversold dip in confirmed Uptrend")
         else:
@@ -39,8 +58,10 @@ class LiveBrain:
                 why_not = "Declined: asset is in downtrend, spot bot holds"
                 confidence = int((1.0 - consensus) * 100)
             else:
-                why_not = "Consensus insufficient for entry"
-
+                rsi_val = float(data.get("rsi_5m") if data.get("rsi_5m") is not None else 50.0)
+                regime_val = data.get("regime") or "momentum"
+                why_not = f"Exploratory analysis on {data.get('asset', 'unknown')}: Optimize RSI entry threshold ({rsi_val:.1f}) for {regime_val}"
+        
         return {
             "decision": decision,
             "confidence": confidence,
@@ -51,13 +72,20 @@ class LiveBrain:
             "thesis": f"System determined {decision} (Conf: {confidence}%) based on {regime}.",
             "technical_basis": tech_basis,
             "risk_flags": risk_flags,
-            "why_not_trade": why_not
+            "why_not_trade": why_not,
+            # Return inputs for consumer modules (daemon/dashboard)
+            "rsi_5m": r5m,
+            "rsi_1h": r1h,
+            "macd_5m": m5m,
+            "macd_1h": m1h,
+            "atr_5m": a5m,
+            "price": price
         }
 
     def _detect_regime(self, macd_1h: float, rsi_1h: float) -> str:
-        if macd_1h > 0 and rsi_1h >= 50: return "TREND_UP"
-        if macd_1h < 0 and rsi_1h <= 50: return "TREND_DOWN"
-        if 40 < rsi_1h < 60: return "RANGE"
+        if (macd_1h or 0) > 0 and (rsi_1h or 50) >= 50: return "TREND_UP"
+        if (macd_1h or 0) < 0 and (rsi_1h or 50) <= 50: return "TREND_DOWN"
+        if 40 < (rsi_1h or 50) < 60: return "RANGE"
         return "HIGH_VOL_CHAOS"
 
     def _calculate_consensus(self, rsi5: float, rsi1h: float, macd5: float, macd1h: float) -> float:

@@ -152,6 +152,7 @@ class TradeDecision:
     technical_basis: list[str] = field(default_factory=list)     # e.g. ["RSI oversold at 28", "MACD bullish cross"]
     news_basis: list[str] = field(default_factory=list)          # e.g. ["ETF approval rumor"]
     risk_flags: list[str] = field(default_factory=list)          # e.g. ["extreme_fear_regime"]
+    inner_monologue: str = ""               # Deep reasoning / reflexion (Alpha Arena style)
     data_quality: DataQuality = DataQuality.LOW
     staleness_seconds: float = 0.0
     requires_risk_review: bool = True
