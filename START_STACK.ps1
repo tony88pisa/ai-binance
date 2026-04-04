@@ -68,8 +68,27 @@ if (!$cf_proc) {
 
 # 12. Tengu Desktop Control Center
 Write-Host "[12/13] Avvio Tengu Desktop (GUI)..." -ForegroundColor Yellow
-# We launch Electron using cmd /c npm run dev to avoid opening npm.ps1 in an editor
-Start-Process cmd.exe -ArgumentList "/c npm.cmd run dev -- --port 5173 --strictPort" -WorkingDirectory "h:\ai-binance\tengu-desktop" -WindowStyle Hidden
+# We launch Electron using cmd /c npm.cmd run dev to avoid opening npm.ps1 in an editor
+# We explicitly force the directory to H:\ai-binance\tengu-desktop to avoid confusion
+Start-Process cmd.exe -ArgumentList "/c npm.cmd run dev" -WorkingDirectory "H:\ai-binance\tengu-desktop" -WindowStyle Hidden
+
+Write-Host "In attesa che il Backend (Port 8087) e la GUI (Port 5173) siano pronti..." -ForegroundColor Magenta
+
+# HEALTH CHECK LOOP: Wait for FastAPI and Vite to be alive
+$max_attempts = 15
+$attempt = 0
+while ($attempt -lt $max_attempts) {
+    Start-Sleep -Seconds 3
+    $backend_up = (Test-NetConnection 127.0.0.1 -Port 8087 -ErrorAction SilentlyContinue).TcpTestSucceeded
+    $gui_up = (Test-NetConnection 127.0.0.1 -Port 5173 -ErrorAction SilentlyContinue).TcpTestSucceeded
+    
+    if ($backend_up -and $gui_up) {
+        Write-Host "[SUCCESSO] Tutti i sistemi sono ONLINE!" -ForegroundColor Green
+        break
+    }
+    $attempt++
+    Write-Host "Verifica in corso ($attempt/$max_attempts)... [Backend: $backend_up, GUI: $gui_up]" -ForegroundColor Gray
+}
 
 # 13. WhatsApp MCP Server
 Write-Host "[13/13] Avvio WhatsApp MCP Server (Node.js)..." -ForegroundColor Yellow
