@@ -133,7 +133,7 @@ class DreamAgent:
             logger.warning("NvidiaTeacher non disponibile — skip consolidation LLM.")
             return None
         try:
-            teacher = NvidiaTeacher()
+            teacher = NvidiaTeacher(self.repo)
             result = teacher.ask(prompt)
             return result
         except Exception as e:

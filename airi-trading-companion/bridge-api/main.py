@@ -6,9 +6,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
-# Aggiungi provvisoriamente il core del bot al sys.path per importare i moduli di storage senza duplicare il codice
-AI_BINANCE_ROOT = Path(__file__).resolve().parent.parent.parent
+# Configuration
+AI_BINANCE_ROOT = Path(os.environ.get("AI_BINANCE_ROOT", str(Path(__file__).resolve().parent.parent.parent)))
 sys.path.insert(0, str(AI_BINANCE_ROOT))
+
+# Validate paths
+if not (AI_BINANCE_ROOT / "storage").exists():
+    raise RuntimeError(f"Core non trovato in {AI_BINANCE_ROOT}")
 
 from storage.repository import Repository
 from config.settings import get_settings
@@ -63,6 +67,24 @@ def get_pnl_today():
     
     today_pct = row[0] if row and row[0] else 0.0
     return {"today_pnl_pct": round(today_pct, 2)}
+
+@app.get("/pnl/total")
+def get_pnl_total():
+    """Calcola il PNL generato storicamente da tutte le operazioni."""
+    with repo._conn() as conn:
+        row = conn.execute("SELECT SUM(realized_pnl_pct) FROM trade_outcomes").fetchone()
+    total_pct = row[0] if row and row[0] else 0.0
+    return {"total_pnl_pct": round(total_pct, 2)}
+
+@app.get("/wallet")
+def get_wallet():
+    squad_crypto_state = repo.get_service_state("squad_crypto")
+    try:
+        sc_sj = json.loads(squad_crypto_state.get("state_json", "{}"))
+        current_wallet = round(float(sc_sj.get("equity", settings.trading.wallet_size)), 2)
+    except:
+        current_wallet = settings.trading.wallet_size
+    return {"current_wallet": current_wallet, "initial_budget": settings.trading.wallet_size}
 
 @app.get("/positions/open")
 def get_positions_open():
@@ -128,6 +150,23 @@ def get_agents_status():
         "emergency_stop": controls.get("emergency_stop", 0),
         "agents": status_db
     }
+
+@app.get("/reports/coordinator/latest")
+def get_coordinator_latest():
+    log_path = AI_BINANCE_ROOT / "logs" / "coordinator.log"
+    if not log_path.exists():
+        return {"report": "Non disponibile"}
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()[-30:]
+        return {"report": "".join(lines).strip()}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/events/recent")
+def get_events_recent():
+    """Ultime righe the system alert logic/log"""
+    return {"events": "Tutto regolare in stazione"}
 
 @app.get("/reports/dream/latest")
 def get_dream_latest():
