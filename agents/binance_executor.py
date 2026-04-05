@@ -228,23 +228,23 @@ def job_check_positions(repo: Repository, executor: ExchangeExecutor, brain: Liv
                 })
 
         # ── Heartbeat ────────────────────────────────────────────────────────
-repo.update_service_heartbeat(
-    "executor",
-    json.dumps({
-        "mode": "LIVE_EXECUTOR",
-        "wallet_eur": round(wallet_current, 2),
-        "currency": CURRENCY,
-        "exchange_mode": executor.mode.upper(),
-        "supervisor_active": not emergency_stop,
-        "max_trades": controls.get("max_open_trades", settings.risk.max_open_trades),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-    }),
-)
-repo.log_activity(
-    "executor", "CYCLE",
-    f"Checked {len(open_trades)} positions. Wallet: {wallet_current:.2f} {CURRENCY}"
-)
-logger.info(f"Execution run complete. Wallet: {wallet_current:.2f} {CURRENCY} | Positions: {len(open_trades)}")
+        repo.update_service_heartbeat(
+            "executor",
+            json.dumps({
+                "mode": "LIVE_EXECUTOR",
+                "wallet_eur": round(wallet_current, 2),
+                "currency": CURRENCY,
+                "exchange_mode": executor.mode.upper(),
+                "supervisor_active": not emergency_stop,
+                "max_trades": controls.get("max_open_trades", settings.risk.max_open_trades),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }),
+        )
+        repo.log_activity(
+            "executor", "CYCLE",
+            f"Checked {len(open_trades)} positions. Wallet: {wallet_current:.2f} {CURRENCY}"
+        )
+        logger.info(f"Execution run complete. Wallet: {wallet_current:.2f} {CURRENCY} | Positions: {len(open_trades)}")
 
     except Exception as e:
         logger.error(f"Executor Error: {e}", exc_info=True)
