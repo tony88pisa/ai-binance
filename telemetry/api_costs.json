@@ -1,10 +1,10 @@
 {
   "session_start": "2026-04-03T17:58:21.455447+00:00",
-  "total_calls": 610,
-  "total_input_tokens": 1955840,
-  "total_output_tokens": 198170,
-  "total_cost_usd": 0.809873,
-  "total_duration_ms": 14554220,
+  "total_calls": 612,
+  "total_input_tokens": 1956934,
+  "total_output_tokens": 199544,
+  "total_cost_usd": 0.811244,
+  "total_duration_ms": 14587914,
   "calls_by_model": {
     "qwen3:8b": {
       "calls": 160,
@@ -19,10 +19,10 @@
       "cost_usd": 0.00021
     },
     "nvidia/nemotron-3-super-120b-a12b": {
-      "calls": 171,
-      "input_tokens": 412018,
-      "output_tokens": 80185,
-      "cost_usd": 0.254113
+      "calls": 173,
+      "input_tokens": 413112,
+      "output_tokens": 81559,
+      "cost_usd": 0.255484
     },
     "gemma4:e4b": {
       "calls": 213,
@@ -57,35 +57,13 @@
       "cost_usd": 0.002654
     },
     "risk_controller": {
-      "calls": 169,
-      "input_tokens": 407549,
-      "output_tokens": 79485,
-      "cost_usd": 0.251459
+      "calls": 171,
+      "input_tokens": 408643,
+      "output_tokens": 80859,
+      "cost_usd": 0.25283
     }
   },
   "recent_calls": [
-    {
-      "timestamp": "2026-04-05T10:40:03.413536+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2861,
-      "output_tokens": 655,
-      "duration_ms": 15190,
-      "cost_usd": 0.001824,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T10:45:04.319064+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2861,
-      "output_tokens": 657,
-      "duration_ms": 15708,
-      "cost_usd": 0.001825,
-      "success": true,
-      "error": null
-    },
     {
       "timestamp": "2026-04-05T10:50:08.195823+00:00",
       "model": "nvidia/nemotron-3-super-120b-a12b",
@@ -611,6 +589,28 @@
       "output_tokens": 584,
       "duration_ms": 13849,
       "cost_usd": 0.000624,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T15:30:14.183549+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 547,
+      "output_tokens": 729,
+      "duration_ms": 23550,
+      "cost_usd": 0.000711,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T15:35:01.702013+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 547,
+      "output_tokens": 645,
+      "duration_ms": 10144,
+      "cost_usd": 0.00066,
       "success": true,
       "error": null
     }

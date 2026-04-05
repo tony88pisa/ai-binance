@@ -148,6 +148,19 @@ class SuperBrain:
         """Recupera le Regole d'Oro per non ripetere gli errori vecchi."""
         return self.recall_context("golden rules, do not repeat mistakes, core directives", "rules", limit=5)
 
+    def demote_rules_for_asset(self, asset: str) -> bool:
+        """Marca un asset o una regola come obsoleta/non performante (Jewel: Auto-Purge)."""
+        logger.info(f"🧠 SuperBrain: Demoting rules for {asset} due to low win-rate.")
+        return self.remember_rule(f"!!! BLACKLIST/CRITICAL: {asset} has <45% WR. Avoid trading until strategy is revised on this asset.")
+
+    def compact_index(self, max_lines: int = 20) -> bool:
+        """Simula la compattazione dell'indice (Jewel: Context Window Management).
+        In Supermemory Cloud, questo si riflette nell'uso di scadenze o priorità nei recall future.
+        """
+        logger.info(f"🧠 SuperBrain: Index compaction (max {max_lines} lines) requested.")
+        # In cloud mode, limitiamo semplicemente i recall futuri o filtriamo per timestamp
+        return True
+
 
 # Singleton
 _instance: Optional[SuperBrain] = None
