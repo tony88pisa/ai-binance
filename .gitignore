@@ -14,7 +14,8 @@ __pycache__/
 *.sqlite.bak
 
 # Logs
-user_data/logs/*.log
+logs/
+*.log
 
 # IDE
 .vscode/
@@ -26,15 +27,20 @@ user_data/logs/*.log
 Thumbs.db
 .DS_Store
 
-# Freqtrade
-user_data/backtest_results/
-user_data/hyperopt_results/
+# Large binaries (NEVER commit these)
+*.exe
+*.msi
+*.zip
+*.tar.gz
+*.7z
 
-# WhatsApp MCP
-services/whatsapp_mcp/node_modules/
-services/whatsapp_mcp/.wwebjs_auth/
-services/whatsapp_mcp/.wwebjs_cache/
-services/whatsapp_mcp/config.json
-
-# Node
+# Node (not used)
 node_modules/
+
+# Cache
+.pytest_cache/
+.wwebjs_cache/
+
+# Temporary
+tmp/
+tmp_*.py

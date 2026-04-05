@@ -1,6 +1,0 @@
-INFO:     Started server process [26540]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-ERROR:    [Errno 13] error while attempting to bind on address ('127.0.0.1', 8086): [winerror 10013] tentativo di accesso al socket con modalitÓ non consentite dalle rispettive autorizzazioni di accesso
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.

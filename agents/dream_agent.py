@@ -5,8 +5,12 @@ import os
 import requests
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from dotenv import load_dotenv
 import schedule
+from pathlib import Path
+from dotenv import load_dotenv
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(PROJECT_ROOT / ".env")
 
 # Configuration setup
 from config.settings import get_settings
@@ -17,10 +21,9 @@ from ai.skill_generator import SkillGenerator
 from ai.skill_validator import SkillValidator
 from ai.promotion_gate import PromotionGate
 from ai.nvidia_teacher import NvidiaTeacher
+from storage.superbrain import get_superbrain
 
 settings = get_settings()
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(PROJECT_ROOT / ".env")
 
 # Logging setup
 LOGS_DIR = PROJECT_ROOT / "logs"
@@ -81,40 +84,79 @@ class DreamAgent:
         3. Consolidates: Asks NVIDIA NIM to synthesize a tactical strategy.
         4. Prunes: Cleans old feedback.
         """
-        logger.info("Auto-Dream sequence initiated. Analyzing recent market phase...")
+        logger.info("Auto-Dream 4-Phase sequence initiated...")
+        brain = get_superbrain()
         
-        # 1 & 2: Orient & Gather
+        # === PHASE 1: ORIENT ===
+        logger.info("[Phase 1/4] Orient — Reading current state...")
         perf = self._get_recent_performance()
-        feedback = self.mm.get_typed_context("feedback")
+        
+        # Read existing strategy from SuperBrain
+        existing_strategy = brain.get_current_strategy()
+        if existing_strategy:
+            logger.info(f"Current strategy found ({len(existing_strategy)} chars). Will update, not duplicate.")
+        
+        # === PHASE 2: GATHER ===
+        logger.info("[Phase 2/4] Gather — Collecting recent signal...")
+        
+        # Read feedback from SuperBrain first, fallback to local files
+        feedback = brain.get_recent_feedback()
+        if not feedback:
+            feedback = self.mm.get_typed_context("feedback")
         
         if not feedback or "Nessun dato" in feedback:
-            logger.info("No significant new feedback to consolidate. Generating baseline rolling strategy.")
             feedback = "No specific errors or anomalies detected recently. Typical market flow."
+        
+        # Get market context from SuperBrain
+        market_ctx = brain.recall_context(
+            "recent trading signals, news sentiment, and market patterns",
+            "market", limit=5
+        )
             
-        # 3. Consolidate via LLM
+        # === PHASE 3: CONSOLIDATE via LLM ===
+        logger.info("[Phase 3/4] Consolidate — Synthesizing tactical strategy via LLM...")
         api_key = os.getenv("NVIDIA_API_KEY")
         model = os.getenv("NVIDIA_MODEL", "meta/llama-3.1-70b-instruct")
         url = "https://integrate.api.nvidia.com/v1/chat/completions"
         
-        prompt = f"""
-        You are the 'Auto-Dream' consolidation layer for an autonomous crypto trading bot.
-        You wake up every 30 minutes to process recent memories and synthesize a tactical strategy.
-        
-        PAST 24H PERFORMANCE:
-        - Trades: {perf['total_trades']}
-        - Wins/Losses: {perf['wins']}/{perf['losses']}
-        - Net PnL: {perf['net_pnl_pct']:.2f}%
-        
-        RECENT RAW FEEDBACK (from Risk Controller and System logs):
-        {feedback}
-        
-        TASK:
-        Write a concise, 3-to-4 bullet point "Tactical Strategy" for the next 30 minutes.
-        Resolve any contradictions in the raw feedback. Focus on what the Analyzer agent should look for right now (e.g., "avoid breakouts due to chop", "increase confidence threshold", "favor small pullbacks on SOL").
-        Be aggressive in adapting to rapidly changing conditions.
-        
-        Do NOT write code. Output only the plain Markdown bullet points.
-        """
+        prompt = f"""# Dream: Memory Consolidation & Tactical Strategy
+
+You are the 'Auto-Dream' consolidation layer for the Tengu V10 autonomous trading swarm.
+You wake up every 30 minutes to consolidate recent memories and generate a tactical strategy.
+
+## Phase 1 — Current State
+
+PAST 24H PERFORMANCE:
+- Total Trades: {perf['total_trades']}
+- Wins/Losses: {perf['wins']}/{perf['losses']}
+- Net PnL: {perf['net_pnl_pct']:.2f}%
+
+EXISTING STRATEGY (to update, not duplicate):
+{existing_strategy[:300] if existing_strategy else 'No previous strategy.'}
+
+## Phase 2 — Recent Signal
+
+FEEDBACK FROM RISK CONTROLLER AND AGENTS:
+{feedback[:800]}
+
+MARKET CONTEXT (news, signals):
+{market_ctx[:500] if market_ctx else 'No recent market signals.'}
+
+## Phase 3 — Consolidate
+
+Do the following:
+1. Identify contradictions between the existing strategy and new data. Resolve them.
+2. Convert any relative dates to absolute dates.
+3. If the previous strategy worked (positive PnL), refine it. If it failed, change approach.
+4. Focus on concrete, actionable rules (e.g., "avoid BTC breakouts due to chop", "increase min confidence to 80%").
+
+## Phase 4 — Output
+
+Write a concise 4-to-6 bullet point "Tactical Strategy" for the NEXT 30 MINUTES.
+Be aggressive in adapting to rapidly changing conditions.
+Each bullet must be specific and actionable — no vague advice like "be careful".
+
+Do NOT write code. Output only the plain Markdown bullet points."""
         
         try:
             t_start = time.time()
@@ -122,7 +164,7 @@ class DreamAgent:
                 "model": model,
                 "messages": [{"role": "user", "content": prompt}],
                 "temperature": 0.3,
-                "max_tokens": 300
+                "max_tokens": 400
             }, headers={"Authorization": f"Bearer {api_key}"}, timeout=60)
             res.raise_for_status()
             duration_ms = int((time.time() - t_start) * 1000)
@@ -142,14 +184,17 @@ class DreamAgent:
             except Exception:
                 pass
             
-            # Save the new tactical strategy
+            # Save to SuperBrain (primary)
+            brain.remember_strategy(strategy_content)
+            
+            # Save to local files (fallback)
             self.mm.save_typed_memory(
                 category="project",
                 name="current_strategy",
                 content=strategy_content,
-                description="Rolling 2-hour tactical strategy generated by Dream Agent."
+                description="Rolling 30-min tactical strategy generated by Dream Agent V2."
             )
-            logger.info("Successfully consolidated memory into new 'current_strategy'.")
+            logger.info(f"[Phase 3/4] Strategy consolidated ({len(strategy_content)} chars, {duration_ms}ms).")
             
         except Exception as e:
             logger.error(f"Dream LLM synthesis failed: {e}")

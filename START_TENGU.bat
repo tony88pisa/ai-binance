@@ -9,9 +9,9 @@ CD /D "%~dp0"
 SET "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0\;%PATH%"
 
 echo ============================================================
-echo   TENGU OS V10 - FULL BRAIN AUTO-LAUNCHER
+echo   TENGU OS V10 - FULL BRAIN V3 AUTO-LAUNCHER
 echo   "Nuclear Reset" + "4-Phase Smart Init" (Aprile 2026)
-echo   Agenti Attivati: Squad, Risk, Dream, Coordinator
+echo   8 Agenti + Swarm Consensus + SuperBrain
 echo ============================================================
 
 :: 3. Controllo Privilegi

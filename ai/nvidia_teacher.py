@@ -56,6 +56,12 @@ class NvidiaTeacher:
         llm_response = self.client.review_closed_trades([trade_data])
         
         if llm_response:
+            # Se l'LLM restituisce un array invece di un singolo oggetto, prendiamo il primo elemento
+            if isinstance(llm_response, list) and len(llm_response) > 0:
+                llm_response = llm_response[0]
+            elif not isinstance(llm_response, dict):
+                llm_response = {}
+
             # Estraiamo i suggerimenti JSON che l'LLM ha creato (candidate_strategies, risk_notes)
             new_rules = llm_response.get("rule_corrections", [])
             strategies = llm_response.get("candidate_strategies", {})

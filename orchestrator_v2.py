@@ -16,13 +16,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 PYTHON_EXE = sys.executable
 LOGS_DIR = PROJECT_ROOT / "logs"
 
-# Percorsi comuni per trovare ollama/node/npx
+# Percorsi comuni per trovare ollama
 EXTRA_PATHS = [
     r"C:\Windows\System32",
-    r"C:\Program Files\nodejs",
     r"C:\Users\tony1\AppData\Local\Programs\Ollama",
     r"C:\Program Files\Ollama",
-    os.path.expandvars(r"%AppData%\npm")
 ]
 
 def find_cmd(name):
@@ -103,19 +101,12 @@ def main():
     except:
         print("      [WARN] Caricamento lento. Gli agenti riproveranno.")
 
-    # 1.3 Supermemory Bridge (Memoria Semantica)
-    npx_bin = find_cmd("npx")
-    start_service("MemoryBridge", f"{npx_bin} -y mcp-remote https://api.supermemory.ai/mcp")
-    
-    # 1.4 WhatsApp Hub
-    node_bin = find_cmd("node")
-    start_service("WhatsApp", f"{node_bin} services/whatsapp_mcp/server.js")
 
     # ═══════════════════════════════════════════
     # FASE 2: DASHBOARD & MONITORAGGIO
     # ═══════════════════════════════════════════
     print("\n[FASE 2] Dashboard & Monitoraggio...")
-    start_service("Dashboard", f'"{PYTHON_EXE}" dashboard/app.py', wait_port=8088)
+    start_service("Dashboard", f'"{PYTHON_EXE}" -m dashboard.app', wait_port=8088)
 
     # ═══════════════════════════════════════════
     # FASE 3: CERVELLO OPERATIVO (AGENTI CORE)
@@ -123,41 +114,59 @@ def main():
     print("\n[FASE 3] Cervello Operativo (Agenti Core)...")
     
     # 3.1 Squad Crypto — Analista di mercato principale
-    start_service("Agents_Squad", f'"{PYTHON_EXE}" agents/squad_crypto.py')
+    start_service("Agents_Squad", f'"{PYTHON_EXE}" -m agents.squad_crypto')
     time.sleep(2)
     
-    # 3.2 Risk Controller — Supervisor Nemotron 120B
-    start_service("Agents_Risk", f'"{PYTHON_EXE}" agents/risk_controller.py')
+    # 3.2 Squad Equity — Analisi azioni e materie prime  
+    start_service("Agents_Equity", f'"{PYTHON_EXE}" -m agents.squad_equity')
+    time.sleep(2)
+    
+    # 3.3 Risk Controller — Supervisor Nemotron 120B
+    start_service("Agents_Risk", f'"{PYTHON_EXE}" -m agents.risk_controller')
     time.sleep(2)
 
     # ═══════════════════════════════════════════
-    # FASE 4: INTELLIGENZA AVANZATA (MODULI DORMIENTI ATTIVATI)
+    # FASE 4: INTELLIGENZA AVANZATA
     # ═══════════════════════════════════════════
-    print("\n[FASE 4] Intelligenza Avanzata (Moduli Attivati)...")
+    print("\n[FASE 4] Intelligenza Avanzata...")
     
-    # 4.1 Dream Agent — Consolidamento memoria ogni 2h
-    #     Analizza errori passati e genera strategie tattiche rolling
-    start_service("Agents_Dream", f'"{PYTHON_EXE}" agents/dream_agent.py')
+    # 4.1 Dream Agent — Consolidamento memoria ogni 30 min
+    #     + Skill Generator: auto-genera nuove strategie da NVIDIA Teacher
+    #     + 4-Phase Prompt: Orient → Gather → Consolidate → Prune
+    start_service("Agents_Dream", f'"{PYTHON_EXE}" -m agents.dream_agent')
     time.sleep(2)
     
     # 4.2 Coordinator — Supervisore globale con circuit breaker
-    #     Impedisce budget overflow e genera report di salute
-    start_service("Agents_Coordinator", f'"{PYTHON_EXE}" agents/coordinator.py')
+    start_service("Agents_Coordinator", f'"{PYTHON_EXE}" -m agents.coordinator')
+    time.sleep(2)
+    
+    # 4.3 News Trader V2 — Sentiment reale da RSS + Fear & Greed
+    start_service("Agents_News", f'"{PYTHON_EXE}" -m agents.news_trader')
+    time.sleep(2)
+
+    # 4.4 Auto Optimizer — Brute Force offline
+    start_service("Auto_Optimizer", f'"{PYTHON_EXE}" -m ai.auto_optimizer')
 
     # ═══════════════════════════════════════════
     # COMPLETATO
     # ═══════════════════════════════════════════
     print("\n============================================================")
-    print("   🧠 TENGU V10 — FULL BRAIN OPERATIVO")
+    print("   🧠 TENGU V10.5 — FULL BRAIN OPERATIVO")
     print("   ─────────────────────────────────────")
     print("   Dashboard:  http://localhost:8088")
-    print("   Logs:       http://localhost:8088/logs")
     print("   ─────────────────────────────────────")
-    print("   Agenti Attivi:")
-    print("     ● Squad Crypto    (Analisi di Mercato)")
-    print("     ● Risk Controller (Supervisore Nemotron 120B)")
-    print("     ● Dream Agent     (Consolidamento Memoria 2h)")
-    print("     ● Coordinator     (Circuit Breaker + Reports)")
+    print("   Agenti Operativi:")
+    print("     ● Squad Crypto      (Analisi + Trading Crypto)")
+    print("     ● Squad Equity      (Analisi Azioni)")
+    print("     ● Risk Controller   (AI Supervisor + MCP Macro)")
+    print("     ● Coordinator       (Circuit Breaker + Notifiche)")
+    print("   Intelligenza:")
+    print("     ● Dream Agent       (Memory Consolidation)")
+    print("     ● News Trader V2    (RSS + Fear&Greed)")
+    print("     ● Brute Force V2    (EMA + Volume Optimizer)")
+    print("   Layer Decisionale:")
+    print("     ● MCP Tools         (CoinGecko + F&G + Trending)")
+    print("     ● Swarm Consensus   (3 AI Gratuiti Votano)")
     print("   ─────────────────────────────────────")
     print("   Premi CTRL+C per chiudere tutto.")
     print("============================================================")
@@ -169,3 +178,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

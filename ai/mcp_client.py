@@ -1,179 +1,180 @@
+"""
+MCP Client V2 — Model Context Protocol Emulator.
+Ispirato da prism-insight. Fornisce strumenti gratuiti al Decision Engine
+senza API a pagamento, usando endpoint pubblici (CoinGecko, Alternative.me, RSS).
+"""
 import requests
-import json
 import logging
-import subprocess
+import json
 from datetime import datetime
 
 logger = logging.getLogger("ai.mcp_client")
 
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+
+
+class MCPClient:
+    """Lightweight macro regime detector (used by Risk Controller)."""
+    
+    def __init__(self):
+        self.headers = HEADERS
+
+    def fetch_macro_regime(self) -> dict:
+        try:
+            res = requests.get("https://api.alternative.me/fng/", headers=self.headers, timeout=5)
+            fng_data = res.json()
+            if "data" in fng_data and len(fng_data["data"]) > 0:
+                fng_value = int(fng_data["data"][0]["value"])
+                fng_class = fng_data["data"][0]["value_classification"]
+            else:
+                fng_value = 50
+                fng_class = "Neutral"
+
+            regime = "RISK-ON" if fng_value > 55 else "RISK-OFF" if fng_value < 40 else "NEUTRAL"
+            
+            return {
+                "mcp_source": "crypto_fng",
+                "macro_regime": regime,
+                "score": fng_value,
+                "classification": fng_class,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"MCP Client error fetching macro: {e}")
+            return {"macro_regime": "NEUTRAL", "score": 50, "error": str(e)}
+
+
 class TenguMCPClient:
     """
-    Bridge client che espone i tool al protocollo MCP-like compatibile con il tool-calling nativo di Ollama/Gemma 4.
+    Full MCP Client per il Decision Engine.
+    Fornisce "tools" locali che Ollama può chiamare durante la valutazione
+    per arricchire il contesto prima di decidere BUY/HOLD.
+    Tutti gli endpoint sono GRATUITI.
     """
+    
     def __init__(self):
-        # Definisco l'array dei tool nel formato API atteso da Ollama / OpenAI
-        self.tools = [
+        self.headers = HEADERS
+        self._cache = {}
+        self._cache_ts = {}
+    
+    def _is_fresh(self, key: str, max_age_sec: int = 120) -> bool:
+        if key not in self._cache_ts:
+            return False
+        return (datetime.now() - self._cache_ts[key]).total_seconds() < max_age_sec
+
+    # =========================================
+    # TOOL 1: Trending coins from CoinGecko
+    # =========================================
+    def get_trending_coins(self) -> str:
+        key = "trending"
+        if self._is_fresh(key):
+            return self._cache[key]
+        try:
+            res = requests.get("https://api.coingecko.com/api/v3/search/trending", 
+                             headers=self.headers, timeout=5)
+            data = res.json()
+            coins = data.get("coins", [])[:7]
+            lines = [f"#{i+1} {c['item']['name']} ({c['item']['symbol']}) — Rank #{c['item']['market_cap_rank'] or '?'}" 
+                     for i, c in enumerate(coins)]
+            result = "TRENDING COINS (CoinGecko):\n" + "\n".join(lines)
+            self._cache[key] = result
+            self._cache_ts[key] = datetime.now()
+            return result
+        except Exception as e:
+            return f"Trending unavailable: {e}"
+
+    # =========================================
+    # TOOL 2: Global market macro snapshot
+    # =========================================
+    def get_global_market_data(self) -> str:
+        key = "global"
+        if self._is_fresh(key):
+            return self._cache[key]
+        try:
+            res = requests.get("https://api.coingecko.com/api/v3/global",
+                             headers=self.headers, timeout=5)
+            data = res.json().get("data", {})
+            btc_dom = data.get("market_cap_percentage", {}).get("btc", 0)
+            total_mc = data.get("total_market_cap", {}).get("usd", 0)
+            total_vol = data.get("total_volume", {}).get("usd", 0)
+            mc_change = data.get("market_cap_change_percentage_24h_usd", 0)
+            result = (f"GLOBAL CRYPTO MARKET:\n"
+                     f"Total Market Cap: ${total_mc/1e9:.1f}B (24h change: {mc_change:+.2f}%)\n"
+                     f"Total Volume 24h: ${total_vol/1e9:.1f}B\n"
+                     f"BTC Dominance: {btc_dom:.1f}%")
+            self._cache[key] = result
+            self._cache_ts[key] = datetime.now()
+            return result
+        except Exception as e:
+            return f"Global data unavailable: {e}"
+
+    # =========================================
+    # TOOL 3: Fear & Greed Index
+    # =========================================
+    def get_fear_greed(self) -> str:
+        key = "fng"
+        if self._is_fresh(key):
+            return self._cache[key]
+        try:
+            res = requests.get("https://api.alternative.me/fng/?limit=3", 
+                             headers=self.headers, timeout=5)
+            data = res.json().get("data", [])
+            lines = []
+            for d in data:
+                lines.append(f"  {d.get('value', '?')}/100 ({d.get('value_classification', '?')}) — {d.get('timestamp', '?')}")
+            result = "FEAR & GREED INDEX (last 3 days):\n" + "\n".join(lines)
+            self._cache[key] = result
+            self._cache_ts[key] = datetime.now()
+            return result
+        except Exception as e:
+            return f"F&G unavailable: {e}"
+
+    # =========================================
+    # TOOL EXECUTOR (called by decision_engine)
+    # =========================================
+    def execute_tool(self, tool_name: str, args: dict) -> str:
+        """Execute a tool by name and return string result."""
+        dispatch = {
+            "get_trending_coins": lambda _: self.get_trending_coins(),
+            "get_global_market_data": lambda _: self.get_global_market_data(),
+            "get_fear_greed": lambda _: self.get_fear_greed(),
+        }
+        fn = dispatch.get(tool_name)
+        if fn:
+            try:
+                return fn(args)
+            except Exception as e:
+                return f"Tool error ({tool_name}): {e}"
+        return f"Unknown tool: {tool_name}"
+
+    # =========================================
+    # OLLAMA TOOLS SCHEMA (JSON Schema format)
+    # =========================================
+    def get_ollama_tools_schema(self) -> list:
+        """Return the tools schema for Ollama function calling."""
+        return [
             {
                 "type": "function",
                 "function": {
-                    "name": "fetch_web_news",
-                    "description": "Ottieni i titoli delle ultime notizie finanziarie per un asset specifico. Usalo se c'e' alta volatilita' o se i dati tecnici sono contraddittori.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "asset": {
-                                "type": "string",
-                                "description": "Il nome dell'asset (es. BTC, ETH, AAPL)"
-                            }
-                        },
-                        "required": ["asset"]
-                    }
+                    "name": "get_trending_coins",
+                    "description": "Get the top 7 trending cryptocurrencies on CoinGecko right now",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
                 }
             },
             {
                 "type": "function",
                 "function": {
-                    "name": "ask_human_override",
-                    "description": "Invia una notifica di emergenza WhatsApp all'umano supervisore chiedendo un'opinione prima di un trade rischioso.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "message": {
-                                "type": "string",
-                                "description": "Il messaggio di allarme da inviare su WP all'utente."
-                            }
-                        },
-                        "required": ["message"]
-                    }
+                    "name": "get_global_market_data",
+                    "description": "Get global crypto market cap, volume, and BTC dominance",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
                 }
             },
             {
                 "type": "function",
                 "function": {
-                    "name": "search_memories",
-                    "description": "Cerca nella memoria semantica a lungo termine (Supermemory). Usalo per trovare regole storiche, vecchi trade o approfondimenti su un asset.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "query": {
-                                "type": "string",
-                                "description": "La query di ricerca semantica (es. 'Bitcoin halving lessons 2024')"
-                            }
-                        },
-                        "required": ["query"]
-                    }
+                    "name": "get_fear_greed",
+                    "description": "Get the Crypto Fear and Greed Index for the last 3 days",
+                    "parameters": {"type": "object", "properties": {}, "required": []}
                 }
             },
-            {
-                "type": "function",
-                "function": {
-                    "name": "add_memory",
-                    "description": "Salva una nuova tesi o un'osservazione importante nella memoria a lungo termine dello Swarm.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "content": {
-                                "type": "string",
-                                "description": "Il contenuto della memoria da salvare (formato testo o JSON string)"
-                            }
-                        },
-                        "required": ["content"]
-                    }
-                }
-            }
         ]
-        
-    def get_ollama_tools_schema(self):
-        """Specifica JSON dei tools da iniettare in ogni chiamata LLM."""
-        return self.tools
-        
-    def execute_tool(self, tool_name: str, arguments: dict) -> str:
-        """Esegue il tool chiamato dall'LLM e restituisce l'esito testuale per la memoria a breve termine."""
-        logger.info(f"⚡ [MCP TOOL CALL] Esecuzione: {tool_name} con args: {arguments}")
-        
-        try:
-            if tool_name == "fetch_web_news":
-                return self._tool_fetch_web_news(arguments.get("asset", ""))
-            elif tool_name == "ask_human_override":
-                return self._tool_ask_human_override(arguments.get("message", ""))
-            elif tool_name == "search_memories":
-                return self._tool_supermemory_search(arguments.get("query", ""))
-            elif tool_name == "add_memory":
-                return self._tool_supermemory_add(arguments.get("content", ""))
-            else:
-                return f"Errore MCP: Tool {tool_name} inesistente."
-        except Exception as e:
-            err = f"Errore interno nell'esecuzione del tool {tool_name}: {e}"
-            logger.error(err)
-            return err
-
-    def _tool_fetch_web_news(self, asset: str) -> str:
-        """Simulatore o connettore reale per le news finanziarie (Integrazione Web)."""
-        # Per MVP di Aprile 2026: mockiamo la fetch web o usiamo una API libera.
-        # Immaginiamo di leggere da cryptopanic o un bridge rss.
-        if "BTC" in asset.upper():
-            return "Risultato Ricerca Web: 'La Federal Reserve annuncia tassi stabili. Binance registra flussi record in entrata su Bitcoin.'"
-        elif "SOL" in asset.upper():
-            return "Risultato Ricerca Web: 'Tensione sulla rete Solana, un recente bug riduce la probabilita' di breakout.'"
-        return f"Risultato Ricerca Web: Nessuna news critica urgente rilevata per {asset} nelle ultime 24h."
-        
-    def _tool_ask_human_override(self, message: str) -> str:
-        """Invia al MCP Node WhatsApp e simula la ricezione se offline."""
-        logger.warning(f"💬 [WHATSAPP OUTBOUND] => {message}")
-        try:
-            # Integraazione REALE con il server.js WhatsApp Webhook su porta 8099
-            payload = {
-                "type": "custom",
-                "payload": {"message": f"🤖 *Gemma 4 MCP Tool Call*\n{message}"}
-            }
-            resp = requests.post("http://127.0.0.1:8099", json=payload, timeout=5)
-            
-            if resp.status_code == 200:
-                logger.info("WhatsApp inviato con successo al supervisore.")
-                return "Notifica WhatsApp inviata con successo. Procedi assumendo che l'utente stia leggendo, ma aspetta conferme esterne per le manovre che richiedono esplicito input."
-            else:
-                return f"Errore server WhatsApp MCP: {resp.status_code}"
-                
-        except Exception as e:
-            return f"Impossibile connettersi al server WhatsApp (forse non avviato tramite START_STACK): {e}"
-
-    def _tool_supermemory_search(self, query: str) -> str:
-        """Chiama il bridge MCP Supermemory o l'API diretta."""
-        import os
-        key = os.getenv("SUPERMEMORY_API_KEY", "").strip()
-        if not key: return "Errore: SUPERMEMORY_API_KEY non configurata."
-        
-        try:
-            # Preferisco usare la lib diretta se installata, o il bridge HTTP mcp-remote
-            # Per ora usiamo requests verso l'endpoint mcp-remote simulato o l'API reale
-            url = "https://api.supermemory.ai/v3/search"
-            headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-            resp = requests.post(url, json={"q": query, "limit": 3}, timeout=10)
-            resp.raise_for_status()
-            data = resp.json()
-            
-            results = []
-            if "data" in data:
-                for item in data["data"]:
-                    results.append(f"- {item.get('memory', 'N/A')}")
-            
-            return "Risultati Supermemory:\n" + ("\n".join(results) if results else "Nessuna memoria rilevante trovata.")
-        except Exception as e:
-            logger.error(f"Supermemory search tool error: {e}")
-            return f"Errore Supermemory: {e}"
-
-    def _tool_supermemory_add(self, content: str) -> str:
-        """Aggiunge una memoria al layer semantico."""
-        import os
-        key = os.getenv("SUPERMEMORY_API_KEY", "").strip()
-        if not key: return "Errore: SUPERMEMORY_API_KEY non configurata."
-        
-        try:
-            url = "https://api.supermemory.ai/v3/documents"
-            headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
-            resp = requests.post(url, json={"content": content}, timeout=10)
-            resp.raise_for_status()
-            return "Memoria salvata correttamente nel layer semantico."
-        except Exception as e:
-            logger.error(f"Supermemory add tool error: {e}")
-            return f"Errore salvataggio Supermemory: {e}"

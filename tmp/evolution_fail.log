@@ -1,4 +1,0 @@
-2026-03-30 03:47:42,469 - storage.repository - INFO - V8.1.1 Database initialized at H:\ai binance\storage\v8_platform.sqlite
-2026-03-30 03:47:42,469 - EVOLUTION_LOOP - INFO - --- Evolution Loop Heartbeat ---
-2026-03-30 03:47:42,482 - EVOLUTION_LOOP - ERROR - Sync error: no such column: profit_ratio
-2026-03-30 03:47:42,482 - EVOLUTION_LOOP - INFO - Dati insufficienti per evoluzione (2/15 trade necessari).

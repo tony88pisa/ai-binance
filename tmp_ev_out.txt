@@ -1,7 +1,0 @@
-2026-03-30 11:52:01,482 - storage.repository - INFO - V8.1.1 Database initialized at H:\ai binance\storage\v8_platform.sqlite
-2026-03-30 11:52:01,482 - EVOLUTION_LOOP - INFO - --- Evolution Loop Heartbeat ---
-2026-03-30 11:52:01,483 - EVOLUTION_LOOP - ERROR - Sync error: no such column: profit_ratio
-2026-03-30 11:52:01,483 - EVOLUTION_LOOP - INFO - Soglia evoluzione raggiunta. Avvio analisi pattern...
-2026-03-30 11:52:01,484 - ai.dataset.build_training_sets - INFO - Dataset V8.1.1 generated with 2 entries at H:\ai binance\ai\ai\dataset\V811_1774864321.jsonl
-2026-03-30 11:52:01,487 - EVOLUTION_LOOP - INFO - Fase 2: Avvio Review NVIDIA Teacher Batch...
-2026-03-30 11:52:01,487 - ai.nvidia_client - WARNING - NVIDIA Teacher API Key non valida o in modalitÓ MOCK.

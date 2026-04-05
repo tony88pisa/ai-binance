@@ -32,6 +32,7 @@ logging.basicConfig(
 logger = logging.getLogger("controller")
 
 from storage.repository import Repository
+from ai.mcp_client import MCPClient
 
 def get_market_context(repo: Repository):
     state = repo.get_service_state("daemon")
@@ -58,7 +59,8 @@ def get_market_context(repo: Repository):
         "open_count": len(open_trades),
         "winrate_recent": winrate,
         "recent_outcomes": outcomes[:10],
-        "open_trades": [{"asset": t["asset"], "pnl": t.get("pnl_pct", 0)} for t in open_trades]
+        "open_trades": [{"asset": t["asset"], "pnl": t.get("pnl_pct", 0)} for t in open_trades],
+        "macro_regime": MCPClient().fetch_macro_regime()
     }
 
 def call_ai_supervisor(context: dict, risk_policy: str = ""):
@@ -79,8 +81,8 @@ def call_ai_supervisor(context: dict, risk_policy: str = ""):
     Mission: Protect CAPITAL. The bot's initial budget is {context['wallet']} {context['currency']}.
     
     Rules for output:
-    1. emergency_stop: SET TO 1 ONLY if the wallet is below {context['wallet'] * 0.90} {context['currency']} (10% loss). 
-       If the wallet is above this threshold, ALWAYS set emergency_stop to 0 (resume).
+    1. emergency_stop: SET TO 1 ONLY if the wallet is below {context['wallet'] * 0.90} {context['currency']} (10% loss) OR if Macro System Regime is "RISK-OFF". 
+       If the wallet is above this threshold AND Macro is OK, ALWAYS set emergency_stop to 0 (resume).
     2. min_confidence: Regulate between 68 and 75. Lower values (68-70) are encouraged in TESTNET for exploration.
     3. Return ONLY a JSON object.
     

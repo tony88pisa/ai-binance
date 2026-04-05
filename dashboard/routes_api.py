@@ -336,7 +336,9 @@ def get_logs(source: str = "daemon", lines: int = 40):
         "dream_agent": "dream_agent.log",
         "coordinator": "coordinator.log",
         "controller": "controller.log",
-        "squad_crypto": "squad_crypto.log"
+        "squad_crypto": "squad_crypto.log",
+        "squad_equity": "squad_equity.log",
+        "news_trader": "news_trader.log"
     }
     fname = allowed.get(source)
     if not fname:

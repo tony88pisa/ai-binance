@@ -34,8 +34,10 @@ from storage.repository import Repository
 import ai.types as ai_types
 import ai.decision_engine as decision_engine
 from services.exchange_executor import ExchangeExecutor
+from modules.notifications_hub import NotificationsHub
 
 settings = get_settings()
+notifier = NotificationsHub()
 
 # Universo crypto gestito da questa squadra
 CRYPTO_SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT"]
@@ -164,6 +166,7 @@ def job_crypto_cycle(repo, executor):
                                 "agent_name": "Squad-Crypto", "exchange_order_id": ex_order.get("orderId")
                             })
                             repo.log_activity("squad_crypto", "BUY", f"{asset} @ ${price:,.2f} | Conf: {ai_decision.confidence}%")
+                            notifier.broadcast(f"🟢 BUY {asset} @ ${price:,.2f}\nConf: {ai_decision.confidence}%\n{ai_decision.thesis}")
                             
                             # --- Supermemory Logging ---
                             if sm_client:

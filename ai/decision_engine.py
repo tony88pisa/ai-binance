@@ -99,6 +99,10 @@ def evaluate(intelligence: MarketIntelligence, repo=None) -> TradeDecision:
         intelligence.macro_risk_level > 0.7
     )
 
+    # 3.5 SWARM CONSENSUS VALIDATION (solo per BUY ad alta confidenza)
+    if decision.decision == Action.BUY and decision.confidence >= 70:
+        decision = _validate_with_swarm(decision, intelligence)
+
     # Save to cache if we just did a REAL inference
     if vmode in (ValidationMode.REAL.value, ValidationMode.CACHED.value):
         save_decision_to_cache(intelligence, decision)
@@ -107,8 +111,21 @@ def evaluate(intelligence: MarketIntelligence, repo=None) -> TradeDecision:
     logger.info(
         f"[{intelligence.asset}] [{vmode.upper()} MODE] decision={decision.decision.value} "
         f"conf={decision.confidence} quality={decision.data_quality.value} "
+        f"swarm={'validated' if getattr(decision, '_swarm_validated', False) else 'skipped'} "
         f"thesis={decision.thesis[:60]}"
     )
+
+    # Salva decisione su SuperBrain
+    try:
+        from storage.superbrain import get_superbrain
+        brain = get_superbrain()
+        brain.remember_market_signal(
+            intelligence.asset,
+            f"Decision: {decision.decision.value} (conf: {decision.confidence}%) — {decision.thesis[:100]}",
+            confidence=decision.confidence
+        )
+    except Exception:
+        pass
 
     return decision
 
@@ -158,40 +175,24 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
     if intel.historical_lessons:
         lines.append(f"SHORT-TERM DB MEMORY: {intel.historical_lessons[:200]}")
 
-    # --- Supermemory Context Retrieval ---
+    # --- SuperBrain Context Retrieval (Supermemory-First) ---
     try:
-        from supermemory import Supermemory
-        import os
-        
-        # Inizializza Supermemory con la chiave nell'ambiente
-        sm_key = os.getenv("SUPERMEMORY_API_KEY", "").strip()
-        if sm_key:
-            sm_client = Supermemory(api_key=sm_key)
-            
-            # Recupera memoria semantica basata sull'asset e trend attuale
-            search_query = f"Historical trading context and rules for {intel.asset} during {trend_5m} trend"
-            
-            # Ricerca semantica avanzata
-            mem_result = sm_client.search.memories(q=search_query, limit=3)
-            
-            if mem_result and hasattr(mem_result, 'data'):
-                retrieved_texts = [r.memory for r in mem_result.data if hasattr(r, 'memory')]
-            elif isinstance(mem_result, dict) and "data" in mem_result:
-                retrieved_texts = [r.get("memory", "") for r in mem_result["data"]]
-            else:
-                retrieved_texts = []
-                
-            if retrieved_texts:
-                lines.append("\n=== SUPERMEMORY (SEMANTIC CONTEXT) ===")
-                # Filtra memorie vuote e metti le prime 3 rilevanti
-                for i, text in enumerate(retrieved_texts[:3]):
-                    if text:
-                        lines.append(f"• {text.strip()[:300]}")
-                lines.append("========================================\n")
-        else:
-            logger.warning("SUPERMEMORY_API_KEY mancante, salto il recupero della memoria.")
+        from storage.superbrain import get_superbrain
+        brain = get_superbrain()
+
+        # Semantic market context for this asset
+        market_ctx = brain.get_market_context(intel.asset)
+        if market_ctx:
+            lines.append("\n" + market_ctx)
+
+        # Current tactical strategy from Dream Agent
+        strategy = brain.get_current_strategy()
+        if strategy:
+            lines.append("\n=== TACTICAL STRATEGY (Dream Agent) ===")
+            lines.append(strategy[:400])
+            lines.append("========================================")
     except Exception as e:
-        logger.error(f"Failed to load semantic memory from Supermemory: {e}")
+        logger.error(f"SuperBrain context retrieval failed: {e}")
 
 
     if repo:
@@ -431,3 +432,66 @@ def _sanitize_list(lst: list, max_items: int = 5) -> list[str]:
     if not isinstance(lst, list):
         return []
     return [_sanitize_str(str(item), 80) for item in lst[:max_items]]
+
+
+def _validate_with_swarm(decision: TradeDecision, intel: MarketIntelligence) -> TradeDecision:
+    """Valida una decisione BUY interrogando 3 modelli AI gratuiti via OpenRouter.
+    Se almeno 2/3 confermano BUY, la decisione è validata. Altrimenti → HOLD.
+    Non-blocking: se OpenRouter è offline, la decisione passa invariata."""
+    try:
+        from ai.openrouter_client import call_swarm_consensus
+
+        prompt = (
+            f"Should I BUY {intel.asset} right now?\n"
+            f"Price: {intel.close_price:.2f}, RSI_5m: {intel.rsi_5m:.1f}, "
+            f"MACD_5m: {intel.macd_5m:.4f}, Regime: {intel.market_regime}, "
+            f"Fear&Greed: {intel.fear_and_greed_value}/100\n"
+            f"AI thesis: {decision.thesis}\n"
+            f"Answer ONLY 'BUY' or 'HOLD' with a one-line reason."
+        )
+
+        messages = [
+            {"role": "system", "content": "You are a concise trading analyst. Answer BUY or HOLD with one reason."},
+            {"role": "user", "content": prompt}
+        ]
+
+        results = call_swarm_consensus(messages, max_models=3, timeout=15)
+
+        if not results:
+            logger.debug(f"[{intel.asset}] Swarm unreachable, decision unchanged.")
+            return decision
+
+        # Count BUY votes
+        buy_votes = 0
+        total_votes = len(results)
+        for model, response in results.items():
+            response_upper = response.upper() if response else ""
+            if "BUY" in response_upper:
+                buy_votes += 1
+            logger.debug(f"[SWARM] {model}: {response[:60] if response else 'N/A'}")
+
+        consensus = buy_votes >= 2  # At least 2/3 agree
+
+        if consensus:
+            decision._swarm_validated = True
+            # Boost confidence slightly when swarm confirms
+            decision.confidence = min(95, decision.confidence + 5)
+            decision.thesis += f" [Swarm: {buy_votes}/{total_votes} BUY]"
+            logger.info(f"[{intel.asset}] ✅ Swarm Consensus: {buy_votes}/{total_votes} BUY → CONFIRMED")
+        else:
+            # Degrade to HOLD if swarm disagrees
+            old_conf = decision.confidence
+            decision.decision = Action.HOLD
+            decision.confidence = 30
+            decision.thesis = f"Swarm rejected ({buy_votes}/{total_votes} BUY). Original conf: {old_conf}%"
+            decision.risk_flags.append("swarm_rejection")
+            logger.warning(f"[{intel.asset}] ⚠️ Swarm Rejection: {buy_votes}/{total_votes} BUY → DOWNGRADED TO HOLD")
+
+        return decision
+    except ImportError:
+        logger.debug("OpenRouter client not available. Swarm validation skipped.")
+        return decision
+    except Exception as e:
+        logger.error(f"Swarm validation error (non-critical): {e}")
+        return decision
+
