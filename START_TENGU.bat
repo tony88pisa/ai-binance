@@ -6,7 +6,7 @@ TITLE TENGU V11 - MICRO-CAPITAL SCALER
 CD /D "%~dp0"
 
 :: 2. Ripristino del PATH di sistema pulendo il registro corrotto
-SET "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0\;C:\Program Files\nodejs;C:\Users\tony1\.npm-global"
+SET "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0\;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Users\tony1\.npm-global"
 
 echo ============================================================
 echo   TENGU OS V11 - MICRO-CAPITAL SCALER AUTO-LAUNCHER
@@ -37,11 +37,11 @@ echo [TENGU] Attesa rilascio risorse (5s)...
 
 :: 6. Lancio AIRI Companion Bridge API
 echo [TENGU] Avvio Bridge API...
-start "Tengu Bridge API" cmd /k "title Tengu Bridge API && set AI_BINANCE_ROOT=%~dp0&& cd airi-trading-companion\bridge-api && python -m uvicorn main:app --host 0.0.0.0 --port 8090"
+start "Tengu Bridge API" cmd /k "title Tengu Bridge API && set AI_BINANCE_ROOT=%~dp0&& cd airi-trading-companion\bridge-api && "%~dp0.venv\Scripts\python.exe" -m uvicorn main:app --host 0.0.0.0 --port 8090"
 
 :: 7. Lancio AIRI Companion UI (Tamagotchi Mode)
 echo [TENGU] Avvio AIRI 3D Companion...
-start "Tengu AIRI Companion" cmd /k "title Tengu AIRI Companion && cd airi-trading-companion\airi && pnpm dev:tamagotchi"
+start "Tengu AIRI Companion" cmd /k "title Tengu AIRI Companion && set "PATH=%SystemRoot%\System32;%SystemRoot%;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Users\tony1\.npm-global" && cd airi-trading-companion\airi && "C:\Users\tony1\.npm-global\pnpm.cmd" dev:tamagotchi"
 
 :: 8. Lancio Orchestratore V3 (Full Brain)
 echo [TENGU] Lancio Orchestratore V3 (Full Brain)...

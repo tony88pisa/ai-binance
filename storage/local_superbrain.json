@@ -1333,5 +1333,49 @@
       "asset": "WIF",
       "confidence": 35
     }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:13:00.465875+00:00",
+    "content": "WIF: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.",
+    "payload": "[2026-04-05T19:13:00.465875+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "WIF",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:28:22.507635+00:00",
+    "content": "PEPE: Decision: hold (conf: 45%) — Consolidating near neutral levels; await clearer momentum.",
+    "payload": "[2026-04-05T19:28:22.507635+00:00] [Category: market]\nPEPE: Decision: hold (conf: 45%) — Consolidating near neutral levels; await clearer momentum.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 45}",
+    "metadata": {
+      "asset": "PEPE",
+      "confidence": 45
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:28:44.570383+00:00",
+    "content": "WIF: Decision: hold (conf: 50%) — Neutral signals; awaiting trend confirmation despite bullish MACD.",
+    "payload": "[2026-04-05T19:28:44.570383+00:00] [Category: market]\nWIF: Decision: hold (conf: 50%) — Neutral signals; awaiting trend confirmation despite bullish MACD.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "WIF",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:29:08.196776+00:00",
+    "content": "WIF: Decision: hold (conf: 45%) — Neutral signals conflict with prevailing downtrend; wait for confirmation.",
+    "payload": "[2026-04-05T19:29:08.196776+00:00] [Category: market]\nWIF: Decision: hold (conf: 45%) — Neutral signals conflict with prevailing downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 45}",
+    "metadata": {
+      "asset": "WIF",
+      "confidence": 45
+    }
   }
 ]
