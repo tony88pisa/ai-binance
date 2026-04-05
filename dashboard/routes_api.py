@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 from fastapi import APIRouter
 from config.settings import get_settings
 from storage.repository import Repository
-from scheduler.session_manager import current_mode
 from services.exchange_executor import ExchangeExecutor
 
 # Global config
@@ -102,7 +101,7 @@ def get_state():
     ex_orders = executor.get_open_orders()
 
     return {
-        "mode": sj.get("mode", current_mode()),
+        "mode": sj.get("mode", settings.exchange.mode),
         "hb": state.get("last_heartbeat", "N/A"),
         "status": "ONLINE" if state.get("last_heartbeat", "N/A") != "N/A" else "OFFLINE",
         "wallet_initial": initial_budget,
@@ -487,17 +486,25 @@ def get_agent_status():
     
     return agents_info
 
-try:
-    from supermemory import Supermemory
-    sm_client = Supermemory(api_key=os.getenv("SUPERMEMORY_API_KEY"))
-except:
-    sm_client = None
-
 @router.get("/supermemory")
 def get_supermemory_api():
     """Restituisce il contenuto della supermemoria"""
-    if not sm_client:
-        return {"status": "offline", "data": "Supermemory non configurata o python package mancante."}
-    
-    memories = []
-    return {"status": "online", "data": "Memoria attiva", "memories": memories}
+    try:
+        from storage.superbrain import get_superbrain
+        brain = get_superbrain()
+        
+        if not brain.enabled:
+            return {"status": "offline", "data": "SuperBrain (Supermemory API Key) non configurata in .env"}
+        
+        # Recupera le ultime strategie generate e il contesto di mercato recente come demo
+        recent_strategies = brain.recall("strategy", category="strategies", limit=3)
+        recent_feedbacks = brain.recall("error anomaly", category="feedback", limit=3)
+        
+        memories = [
+            {"type": "strategies", "content": recent_strategies},
+            {"type": "feedback", "content": recent_feedbacks}
+        ]
+        
+        return {"status": "online", "data": "SuperBrain attivo e sincronizzato.", "memories": memories}
+    except Exception as e:
+        return {"status": "error", "data": f"Errore interno SuperBrain: {str(e)}"}
