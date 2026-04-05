@@ -33,6 +33,7 @@ class SuperBrain:
         "skills": "tengu-skills",
         "market": "tengu-market",
         "reports": "tengu-reports",
+        "rules": "tengu-rules",
     }
 
     def __init__(self):
@@ -138,6 +139,14 @@ class SuperBrain:
     def get_market_context(self, asset: str) -> str:
         """Recupera il contesto di mercato per un asset specifico."""
         return self.recall_context(f"trading context, patterns and signals for {asset}", "market", limit=3)
+
+    def remember_rule(self, rule_text: str) -> bool:
+        """Salva una Regola d'Oro distillata dagli errori passati."""
+        return self.remember("rules", rule_text, {"type": "golden_rule"})
+
+    def get_core_rules(self) -> str:
+        """Recupera le Regole d'Oro per non ripetere gli errori vecchi."""
+        return self.recall_context("golden rules, do not repeat mistakes, core directives", "rules", limit=5)
 
 
 # Singleton

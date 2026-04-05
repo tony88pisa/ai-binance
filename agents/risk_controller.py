@@ -198,23 +198,51 @@ def job_supervise(repo):
             for insight in new_insights:
                 insight_str = f"RISK_INSIGHT: {insight}"
                 if sm_client:
-                    sm_client.add(content=insight_str)
-                    logger.info(f"Appended new insight to Supermemory: {insight}")
+                    try:
+                        sm_client.add(content=insight_str)
+                        logger.info(f"Appended new insight to Supermemory: {insight}")
+                    except Exception as e:
+                        logger.warning(f"Supermemory add failed (API Key missing/invalid?): {e}")
                 else:
                     logger.info(f"(Simulated) Appended new insight: {insight}")
             
-            initial_budget = settings.trading.wallet_size
-            emergency_limit = initial_budget * 0.90
-            wallet = context.get('wallet', initial_budget)
-            currency = context.get('currency', 'USDT')
+            wallet = context.get('wallet', settings.trading.wallet_size) # Default to 100
+            currency = context.get('currency', settings.trading.stake_currency)
             
-            e_stop = 1 if (advice.get("emergency_stop") and wallet < emergency_limit) else 0
+            # --- TAX-AWARE AUTO-COMPOUNDING (Paper: Sezione 8) ---
+            CRYPTO_TAX_RATE = 0.33  # Tassazione crypto italiana 2026
+            initial_capital = settings.trading.wallet_size
+            
+            if settings.trading.auto_compound:
+                gross_profit = max(0, wallet - initial_capital)
+                tax_reserve = gross_profit * CRYPTO_TAX_RATE
+                net_equity = wallet - tax_reserve  # Equity netta dopo accantonamento fiscale
+                
+                if net_equity >= settings.trading.global_take_profit:
+                    logger.warning(f"🎯 GLOBAL TP RAGGIUNTO (net_equity={net_equity:.2f}€ >= {settings.trading.global_take_profit}€). Modalità Conservativa.")
+                    position_size_usdt = net_equity * 0.05
+                else:
+                    # Fractional Kelly dal Brute Force se disponibile, altrimenti config default
+                    kelly_f = settings.trading.risk_per_trade_pct
+                    position_size_usdt = net_equity * kelly_f
+                
+                logger.info(f"📊 Compound: Wallet={wallet:.2f}, Profit Lordo={gross_profit:.2f}, Riserva Fiscale 33%={tax_reserve:.2f}, Equity Netta={net_equity:.2f}, Position Size={position_size_usdt:.2f}")
+            else:
+                position_size_usdt = wallet * settings.trading.default_position_size
+            
+            # Futures Leverage Logic: stop loss at 3% max drop to prevent 10x liquidation.
+            emergency_limit = wallet * 0.70
+            
+            e_stop = 1 if (advice.get("emergency_stop") and wallet <= emergency_limit) else 0
             raw_conf = advice.get("min_confidence", 70)
             final_conf = max(68, min(raw_conf, 75))
             
             repo.update_supervisor_controls({
-                "emergency_stop": e_stop, "max_open_trades": 3, "min_confidence": final_conf,
-                "close_losers_threshold": advice.get("close_losers_threshold", -5.0),
+                "emergency_stop": e_stop, "max_open_trades": 2, "min_confidence": final_conf,
+                "close_losers_threshold": -3.0,
+                "max_leverage": 10,
+                "position_size_usdt": round(position_size_usdt, 2),
+                "tax_reserve_usdt": round(tax_reserve if settings.trading.auto_compound else 0, 2),
                 "ai_reasoning": advice.get("assessment", "")
             })
             repo.add_supervisor_log(

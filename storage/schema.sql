@@ -103,3 +103,19 @@ CREATE TABLE IF NOT EXISTS market_history (
     confidence INTEGER,
     timestamp TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS fiscal_snapshots (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    snapshot_date TEXT NOT NULL,
+    snapshot_type TEXT NOT NULL,
+    portfolio_value_eur REAL NOT NULL,
+    initial_capital_eur REAL NOT NULL,
+    gross_profit_eur REAL NOT NULL,
+    tax_reserve_33pct REAL NOT NULL,
+    ivafe_due REAL NOT NULL,
+    ivafe_exempt INTEGER NOT NULL,
+    net_equity_eur REAL NOT NULL,
+    open_positions_json TEXT,
+    exchange_name TEXT,
+    created_at TEXT NOT NULL
+);

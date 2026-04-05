@@ -85,8 +85,15 @@ class Coordinator:
                 logger.info("Emergency Stop activated globally.")
                 self.notifier.broadcast(f"CIRCUIT BREAKER TRIGGERED: {'; '.join(reasons)}", level="ERROR")
         else:
-            # Auto-resume if only 1 agent was stale and now is OK? (Maybe not, keep it manual for safety)
-            pass
+            # Auto-resume: se nessun motivo di allarme, sblocca l'emergency stop
+            controls = self.repo.get_supervisor_controls()
+            if controls.get("emergency_stop"):
+                self.repo.update_supervisor_controls({
+                    **controls,
+                    "emergency_stop": 0,
+                    "ai_reasoning": "COORDINATOR: All systems healthy. Auto-resuming trading."
+                })
+                logger.info("✅ Emergency Stop DISATTIVATO automaticamente — tutti i sistemi sani.")
 
     def generate_synthesis(self, health: dict, costs: dict) -> str:
         """Uses LLM to synthesize a daily project report."""

@@ -26,24 +26,50 @@ from ai.cache import get_cached_decision, save_decision_to_cache
 
 logger = logging.getLogger("ai.decision_engine")
 
-# System prompt: brief, structural, no roleplay
-SYSTEM_PROMPT = """You are a quantitative trading evaluator. You receive market data and return a JSON decision.
+# ── System Prompt V3: Structured Output Enforcement ──
+# Ispirato al pattern "Structured Output + Retry" di Claude Code (QueryEngine.ts)
+# Key techniques:
+#   1. JSON-only enforcement con example esplicito
+#   2. Thinking separation: <think> tag per reasoning, JSON fuori
+#   3. Reward signal: "confidence bonus" per output ben formattato
+SYSTEM_PROMPT = """You are a quantitative crypto trading evaluator for high-volatility memecoins.
+You receive technical market data and MUST return a single valid JSON object.
 
-RULES:
-- Output ONLY a valid JSON object. No markdown, no explanation, no text outside JSON.
-- Format:
-{"decision":"buy","confidence":75,"thesis":"one line reason","inner_monologue":"detailed multi-step reasoning","technical_basis":["RSI at 28"],"news_basis":["ETF rumor"],"risk_flags":["extreme_fear"]}
-- decision: only "buy" or "hold"
-- confidence: integer 0-100
-- thesis: max 80 chars, ASCII only
-- inner_monologue: detailed strategic reflexion (the 'why' behind everything)
-- technical_basis: array of strings (may be empty)
-- news_basis: array of strings (may be empty)
-- risk_flags: array of strings (may be empty)
-- If uncertain, output hold with low confidence.
-- In TREND_UP with neutral RSI, favor buying for momentum.
-- Never fabricate data. If information is missing, say so.
-- BE HONEST about risks in the inner_monologue."""
+CRITICAL FORMATTING RULES:
+1. You MAY use <think>...</think> tags for internal reasoning BEFORE the JSON.
+2. After </think>, output ONLY the JSON object. Nothing else.
+3. If you don't want to think, just output the JSON directly.
+4. NEVER wrap JSON in markdown code blocks (no ```json).
+
+JSON SCHEMA (strict — every field required):
+{
+  "decision": "buy" | "hold",
+  "confidence": <integer 0-100>,
+  "thesis": "<max 80 chars, ASCII only, one line>",
+  "inner_monologue": "<your step-by-step reasoning>",
+  "technical_basis": ["<indicator detail>", ...],
+  "news_basis": ["<news detail>", ...],
+  "risk_flags": ["<risk>", ...]
+}
+
+DECISION GUIDELINES:
+- RSI < 30 on 5m AND MACD turning positive → strong BUY signal (confidence 70+)
+- RSI < 25 → extreme oversold, BUY with confidence 75+
+- RSI 30-45 with MACD bullish crossover → moderate BUY (55-70)
+- RSI 45-55, MACD flat → HOLD (confidence 30-50)
+- RSI > 70 → overbought, HOLD or caution
+- In TREND_UP with RSI 40-60, favor momentum BUY with moderate confidence
+- When uncertain, output HOLD with confidence < 40
+- Never fabricate data. If data is missing, lower confidence and flag in risk_flags.
+- Be aggressive on oversold bounces — these are memecoins, volatility IS the edge."""
+
+# Retry prompt quando il parse fallisce (pattern "Structured Output Retry" da Claude Code)
+RETRY_PROMPT_TEMPLATE = """Your previous response was not valid JSON. Error: {error}
+
+You MUST respond with ONLY a valid JSON object matching this schema:
+{{"decision":"buy","confidence":75,"thesis":"reason","inner_monologue":"reasoning","technical_basis":[],"news_basis":[],"risk_flags":[]}}
+
+Respond with the JSON NOW:"""
 
 
 def evaluate(intelligence: MarketIntelligence, repo=None) -> TradeDecision:
@@ -147,13 +173,33 @@ def _evaluate_mock(intel: MarketIntelligence) -> TradeDecision:
     )
 
 
+def _estimate_tokens(text: str, bytes_per_token: int = 4) -> int:
+    """Rough token estimation (pattern from tokenEstimation.ts).
+    JSON-like content uses ~2 bytes/token, prose ~4 bytes/token."""
+    return max(1, len(text) // bytes_per_token)
+
+
 def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
-    """Build structured, concise input for the model. No prose."""
+    """Build structured, concise input for the model.
+    
+    V3: Token Budget Guard (pattern da tokenEstimation.ts di Claude Code).
+    Stima i token del prompt e tronca intelligentemente se supera il 80%
+    della context window di Gemma (8192 token).
+    
+    Memory Drift Caveat (pattern da memoryTypes.ts):
+    Le regole di SuperBrain possono diventare stale. Aggiungiamo un warning
+    se i dati sono vecchi, così Gemma non li segue ciecamente.
+    """
     settings = get_settings()
     trend_5m = "bullish" if intel.macd_5m > 0 else "bearish"
     trend_1h = "bullish" if intel.macd_1h > 0 else "bearish"
 
-    # Technical block
+    # ── Token Budget: contesto Gemma = ~8192 token ──
+    # System prompt ≈ 400 token, riserviamo 1000 per output
+    # Budget prompt utente = 8192 - 400 - 1000 = 6792 token ≈ 27168 chars
+    MAX_PROMPT_CHARS = 27000  # ~6750 token a 4 byte/token
+    
+    # Technical block (priorità ALTA — sempre incluso)
     lines = [
         f"ASSET: {intel.asset}",
         f"PRICE: {intel.close_price:.2f}",
@@ -161,7 +207,7 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
         f"RSI_1h: {intel.rsi_1h:.1f} | MACD_1h: {intel.macd_1h:.4f} ({trend_1h})",
     ]
 
-    # Sentiment block
+    # Sentiment block (priorità ALTA)
     lines.append(f"FEAR_GREED: {intel.fear_and_greed_value}/100 ({intel.market_regime})")
     lines.append(f"NEWS_SENTIMENT: {intel.news_sentiment_score:+.2f} ({intel.news_count} items)")
     lines.append(f"MACRO_RISK: {intel.macro_risk_level:.2f}")
@@ -170,27 +216,56 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
         lines.append(f"RISK_FLAGS: {', '.join(intel.macro_risk_flags[:3])}")
 
     if intel.top_headlines:
-        lines.append("HEADLINES: " + " | ".join(intel.top_headlines[:3]))
+        lines.append("HEADLINES: " + " | ".join(intel.top_headlines[:2]))  # Max 2 headlines (token saving)
 
     if intel.historical_lessons:
-        lines.append(f"SHORT-TERM DB MEMORY: {intel.historical_lessons[:200]}")
+        lines.append(f"SHORT-TERM DB MEMORY: {intel.historical_lessons[:150]}")  # Ridotto da 200
 
-    # --- SuperBrain Context Retrieval (Supermemory-First) ---
+    # ── SuperBrain Context con Memory Drift Caveat ──
+    # Pattern da memoryTypes.ts: "Memory records can become stale.
+    # Before acting on memory, verify against current state."
     try:
         from storage.superbrain import get_superbrain
         brain = get_superbrain()
 
-        # Semantic market context for this asset
-        market_ctx = brain.get_market_context(intel.asset)
-        if market_ctx:
-            lines.append("\n" + market_ctx)
+        # Token budget tracking per sezioni opzionali
+        core_chars = len("\n".join(lines))
+        remaining_budget = MAX_PROMPT_CHARS - core_chars
 
-        # Current tactical strategy from Dream Agent
-        strategy = brain.get_current_strategy()
-        if strategy:
-            lines.append("\n=== TACTICAL STRATEGY (Dream Agent) ===")
-            lines.append(strategy[:400])
-            lines.append("========================================")
+        # Semantic market context for this asset (priorità MEDIA)
+        if remaining_budget > 2000:
+            market_ctx = brain.get_market_context(intel.asset)
+            if market_ctx:
+                # Memory Drift: tronca contesto troppo lungo
+                ctx_truncated = market_ctx[:min(800, remaining_budget // 4)]
+                lines.append("\n" + ctx_truncated)
+                remaining_budget -= len(ctx_truncated)
+
+        # Golden Rules con Drift Warning (priorità ALTA)
+        if remaining_budget > 1500:
+            core_rules = brain.get_core_rules()
+            if core_rules:
+                # Memory Drift Caveat: avvisa se le regole potrebbero essere stale
+                drift_warning = ""
+                if intel.research_staleness_seconds > 1800:  # > 30 min
+                    drift_warning = "\n⚠️ DRIFT WARNING: rules may be stale (>30min old). Verify against current RSI/MACD before following."
+                
+                rules_truncated = core_rules[:min(600, remaining_budget // 3)]
+                lines.append("\n=== GOLDEN RULES (from past experience) ===")
+                lines.append(rules_truncated)
+                if drift_warning:
+                    lines.append(drift_warning)
+                lines.append("==========================================")
+                remaining_budget -= len(rules_truncated)
+
+        # Tactical strategy (priorità BASSA — tagliata per prima se budget stretto)
+        if remaining_budget > 1000:
+            strategy = brain.get_current_strategy()
+            if strategy:
+                strat_budget = min(300, remaining_budget // 3)
+                lines.append("\n=== TACTICAL STRATEGY (Dream Agent) ===")
+                lines.append(strategy[:strat_budget])
+                lines.append("========================================")
     except Exception as e:
         logger.error(f"SuperBrain context retrieval failed: {e}")
 
@@ -216,7 +291,10 @@ def _build_user_message(intel: MarketIntelligence, repo=None) -> str:
 
 def _call_model(user_msg: str, model: str, base_url: str,
                 timeout: int, max_retries: int) -> Optional[str]:
-    """Call Ollama and return raw response text, executing any tools via Agentic Loop."""
+    """Call Ollama with Structured Output Retry Loop.
+    Pattern: se il modello non produce JSON valido, ri-prova con feedback
+    esatto dell'errore (ispirato a QueryEngine.ts MAX_STRUCTURED_OUTPUT_RETRIES).
+    """
     url = f"{base_url}/api/chat"
     
     try:
@@ -233,6 +311,8 @@ def _call_model(user_msg: str, model: str, base_url: str,
         {"role": "user", "content": user_msg}
     ]
 
+    MAX_STRUCTURED_RETRIES = 3  # Retry con feedback se JSON non valido
+
     for attempt in range(max_retries):
         try:
             # Active Agentic Loop (supports up to 3 tool calls per evaluation)
@@ -242,7 +322,12 @@ def _call_model(user_msg: str, model: str, base_url: str,
                     "model": model,
                     "messages": messages,
                     "stream": False,
-                    "options": {"temperature": 0.1, "num_predict": 1000},
+                    "options": {
+                        "temperature": 0.1,
+                        "num_predict": 1000,
+                        # Forza la generazione a iniziare con { (JSON Prefill technique)
+                        "stop": ["\n\n\n"],
+                    },
                 }
                 if tools_schema:
                     payload["tools"] = tools_schema
@@ -270,25 +355,65 @@ def _call_model(user_msg: str, model: str, base_url: str,
                 
                 # Check for tool_calls
                 if "tool_calls" in message and message["tool_calls"] and mcp:
-                    messages.append(message) # Add AI request to history
+                    messages.append(message)
                     for tool_call in message["tool_calls"]:
                         tool_name = tool_call["function"]["name"]
                         args = tool_call["function"].get("arguments", {})
-                        
-                        # Esegui il tool locamente
                         tool_response = mcp.execute_tool(tool_name, args)
-                        
-                        # Aggiungi l'esito alla conversazione
-                        messages.append({
-                            "role": "tool",
-                            "name": tool_name,
-                            "content": tool_response
-                        })
-                    # Loop back to Ollama with the new context
+                        messages.append({"role": "tool", "name": tool_name, "content": tool_response})
                     continue
                 else:
-                    # Final response given
-                    return message.get("content", "")
+                    raw_content = message.get("content", "")
+                    
+                    # ── Structured Output Retry Loop ──
+                    # Se il contenuto non è JSON valido, ri-prova con feedback
+                    for retry_idx in range(MAX_STRUCTURED_RETRIES):
+                        # Quick validation: can we extract JSON?
+                        test_content = raw_content.strip()
+                        if "</think>" in test_content:
+                            test_content = test_content.split("</think>")[-1].strip()
+                        test_content = re.sub(r'^```(?:json)?\s*', '', test_content)
+                        test_content = re.sub(r'\s*```$', '', test_content)
+                        
+                        # Try direct parse
+                        try:
+                            json.loads(test_content)
+                            logger.debug(f"JSON valido al tentativo {retry_idx + 1}")
+                            return raw_content  # JSON valido!
+                        except json.JSONDecodeError as je:
+                            pass
+                        
+                        # Try regex extraction
+                        json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', test_content)
+                        if json_match:
+                            try:
+                                json.loads(json_match.group())
+                                return raw_content  # JSON estraibile
+                            except json.JSONDecodeError:
+                                pass
+                        
+                        if retry_idx < MAX_STRUCTURED_RETRIES - 1:
+                            # Feedback retry: invia all'AI l'errore esatto
+                            error_detail = f"Could not parse JSON from: {test_content[:100]}..."
+                            retry_msg = RETRY_PROMPT_TEMPLATE.format(error=error_detail)
+                            messages.append({"role": "assistant", "content": raw_content})
+                            messages.append({"role": "user", "content": retry_msg})
+                            
+                            logger.info(f"Structured Output Retry {retry_idx + 1}/{MAX_STRUCTURED_RETRIES}")
+                            
+                            # Re-call the model
+                            retry_payload = {
+                                "model": model, "messages": messages,
+                                "stream": False,
+                                "options": {"temperature": 0.05, "num_predict": 500},
+                            }
+                            retry_resp = requests.post(url, json=retry_payload, timeout=timeout)
+                            retry_resp.raise_for_status()
+                            raw_content = retry_resp.json().get("message", {}).get("content", "")
+                        else:
+                            logger.warning(f"Structured output failed after {MAX_STRUCTURED_RETRIES} retries")
+                    
+                    return raw_content
 
         except requests.exceptions.Timeout:
             logger.warning(f"Model timeout (attempt {attempt + 1}/{max_retries})")
@@ -302,11 +427,18 @@ def _call_model(user_msg: str, model: str, base_url: str,
 
 
 def _parse_response(raw: str, intel: MarketIntelligence) -> TradeDecision:
-    """Parse model response into TradeDecision. Multi-stage with fallback."""
+    """Parse model response into TradeDecision.
+    V3: Thinking/Output separation (ispirato da thinking.ts di Claude Code).
+    Il tag <think> viene estratto e usato come inner_monologue.
+    """
     cleaned = raw.strip()
+    thinking_content = ""
 
-    # Strip thinking blocks
-    if "</think>" in cleaned:
+    # ── Thinking Separation (pattern da thinking.ts) ──
+    # Estrai il contenuto di <think>...</think> come monologue bonus
+    think_match = re.search(r'<think>(.*?)</think>', cleaned, re.DOTALL)
+    if think_match:
+        thinking_content = think_match.group(1).strip()[:500]
         cleaned = cleaned.split("</think>")[-1].strip()
 
     # Strip markdown fences
@@ -317,14 +449,21 @@ def _parse_response(raw: str, intel: MarketIntelligence) -> TradeDecision:
     # Stage 1: Direct JSON parse
     parsed = _try_json_parse(cleaned)
     if parsed:
-        return _validate_parsed(parsed, intel.asset)
+        decision = _validate_parsed(parsed, intel.asset)
+        # Arricchisci con il thinking content se il modello non ha scritto monologue
+        if thinking_content and not decision.inner_monologue:
+            decision.inner_monologue = thinking_content
+        return decision
 
-    # Stage 2: Extract first JSON object from text
-    match = re.search(r'\{[^{}]+\}', cleaned)
+    # Stage 2: Extract JSON object (supporta nested objects)
+    match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', cleaned)
     if match:
         parsed = _try_json_parse(match.group())
         if parsed:
-            return _validate_parsed(parsed, intel.asset)
+            decision = _validate_parsed(parsed, intel.asset)
+            if thinking_content and not decision.inner_monologue:
+                decision.inner_monologue = thinking_content
+            return decision
 
     # Stage 3: Legacy text format fallback
     action_match = re.search(r'(?:ACTION|decision)[:\s]*(BUY|HOLD)', cleaned, re.IGNORECASE)
@@ -335,6 +474,7 @@ def _parse_response(raw: str, intel: MarketIntelligence) -> TradeDecision:
             decision=Action.BUY if action_match.group(1).upper() == "BUY" else Action.HOLD,
             confidence=min(100, max(0, int(conf_match.group(1)))),
             thesis=f"Legacy format parse: {cleaned[:60]}",
+            inner_monologue=thinking_content or ""
         )
 
     # Stage 4: Total parse failure
@@ -379,6 +519,7 @@ def _validate_parsed(data: dict, asset: str) -> TradeDecision:
         technical_basis=technical_basis,
         news_basis=news_basis,
         risk_flags=risk_flags,
+        requires_human_verification="meme" in asset.lower() or "low-cap" in " ".join(risk_flags).lower()
     )
 
 

@@ -1,6 +1,6 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
-TITLE TENGU V10 - FULL BRAIN ORCHESTRATOR
+TITLE TENGU V11 - MICRO-CAPITAL SCALER
 
 :: 1. Forza la directory di lavoro sulla posizione dello script
 CD /D "%~dp0"
@@ -9,9 +9,9 @@ CD /D "%~dp0"
 SET "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0\;%PATH%"
 
 echo ============================================================
-echo   TENGU OS V10 - FULL BRAIN V3 AUTO-LAUNCHER
-echo   "Nuclear Reset" + "4-Phase Smart Init" (Aprile 2026)
-echo   8 Agenti + Swarm Consensus + SuperBrain
+echo   TENGU OS V11 - MICRO-CAPITAL SCALER AUTO-LAUNCHER
+echo   "Grid Trading" + "Sortino/Kelly Math" + 33%% Tax
+echo   8 Agenti + Swarm Consensus + SuperBrain (Aprile 2026)
 echo ============================================================
 
 :: 3. Controllo Privilegi

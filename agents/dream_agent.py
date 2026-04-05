@@ -96,8 +96,8 @@ class DreamAgent:
         if existing_strategy:
             logger.info(f"Current strategy found ({len(existing_strategy)} chars). Will update, not duplicate.")
         
-        # === PHASE 2: GATHER ===
-        logger.info("[Phase 2/4] Gather — Collecting recent signal...")
+        # === PHASE 2: GATHER (Enhanced with real trade outcomes) ===
+        logger.info("[Phase 2/4] Gather — Collecting recent signal + trade outcomes...")
         
         # Read feedback from SuperBrain first, fallback to local files
         feedback = brain.get_recent_feedback()
@@ -112,6 +112,49 @@ class DreamAgent:
             "recent trading signals, news sentiment, and market patterns",
             "market", limit=5
         )
+        
+        # ── NEW: Real Trade Outcome Analysis ──
+        # Pattern: Structured Feedback with Rule/Why/How (memoryTypes.ts)
+        outcomes = self.repo.get_outcomes_with_details(days=3)
+        
+        # Compute win rates per asset
+        asset_stats = {}
+        for o in outcomes:
+            asset = o.get("asset", "unknown")
+            if asset not in asset_stats:
+                asset_stats[asset] = {"wins": 0, "losses": 0, "total_pnl": 0.0}
+            if o.get("was_profitable"):
+                asset_stats[asset]["wins"] += 1
+            else:
+                asset_stats[asset]["losses"] += 1
+            asset_stats[asset]["total_pnl"] += (o.get("realized_pnl_pct") or 0.0)
+        
+        # Compute win rates per strategy source
+        source_stats = {}
+        for o in outcomes:
+            source = (o.get("agent_name") or "unknown").split("/")[-1]
+            if source not in source_stats:
+                source_stats[source] = {"wins": 0, "losses": 0}
+            if o.get("was_profitable"):
+                source_stats[source]["wins"] += 1
+            else:
+                source_stats[source]["losses"] += 1
+        
+        # Format outcome analysis
+        outcome_report = f"Total closed trades: {len(outcomes)}\n"
+        if asset_stats:
+            outcome_report += "\nPER-ASSET PERFORMANCE (last 3 days):\n"
+            for asset, stats in asset_stats.items():
+                total = stats["wins"] + stats["losses"]
+                wr = (stats["wins"] / total * 100) if total > 0 else 0
+                outcome_report += f"  - {asset}: {stats['wins']}W/{stats['losses']}L (WR: {wr:.0f}%) PnL: {stats['total_pnl']:+.2f}%\n"
+        
+        if source_stats:
+            outcome_report += "\nPER-STRATEGY PERFORMANCE:\n"
+            for source, stats in source_stats.items():
+                total = stats["wins"] + stats["losses"]
+                wr = (stats["wins"] / total * 100) if total > 0 else 0
+                outcome_report += f"  - {source}: {stats['wins']}W/{stats['losses']}L (WR: {wr:.0f}%)\n"
             
         # === PHASE 3: CONSOLIDATE via LLM ===
         logger.info("[Phase 3/4] Consolidate — Synthesizing tactical strategy via LLM...")
@@ -121,8 +164,10 @@ class DreamAgent:
         
         prompt = f"""# Dream: Memory Consolidation & Tactical Strategy
 
-You are the 'Auto-Dream' consolidation layer for the Tengu V10 autonomous trading swarm.
+You are the 'Auto-Dream' consolidation layer for the Tengu V11 Micro-Capital autonomous trading swarm.
 You wake up every 30 minutes to consolidate recent memories and generate a tactical strategy.
+The system operates with a micro-capital budget (50-100 EUR) and uses COMPOUND GROWTH.
+The system supports BOTH 'Grid Trading' (for sideways markets) and 'Momentum Trading' (for trending).
 
 ## Phase 1 — Current State
 
@@ -130,6 +175,9 @@ PAST 24H PERFORMANCE:
 - Total Trades: {perf['total_trades']}
 - Wins/Losses: {perf['wins']}/{perf['losses']}
 - Net PnL: {perf['net_pnl_pct']:.2f}%
+
+DETAILED TRADE OUTCOMES (last 3 days):
+{outcome_report}
 
 EXISTING STRATEGY (to update, not duplicate):
 {existing_strategy[:300] if existing_strategy else 'No previous strategy.'}
@@ -148,23 +196,36 @@ Do the following:
 1. Identify contradictions between the existing strategy and new data. Resolve them.
 2. Convert any relative dates to absolute dates.
 3. If the previous strategy worked (positive PnL), refine it. If it failed, change approach.
-4. Focus on concrete, actionable rules (e.g., "avoid BTC breakouts due to chop", "increase min confidence to 80%").
+4. Focus on concrete, actionable rules (e.g., "avoid BTC breakouts due to chop").
+5. Extract 'Golden Rules' from recent losses to prevent repeating mistakes.
+
+IMPORTANT — Each Golden Rule MUST follow this structure:
+  Rule: [the actionable rule]
+  Why: [the evidence — what trade or pattern proved this]
+  How to apply: [when and how the squad should use this rule]
+
+Example:
+  Rule: Do not buy BONK in TREND_DOWN regime
+  Why: 3 consecutive losses totaling -4.2% during March 2026 bearish phase
+  How to apply: When regime=TREND_DOWN, skip BONK even if RSI < 25
 
 ## Phase 4 — Output
 
-Write a concise 4-to-6 bullet point "Tactical Strategy" for the NEXT 30 MINUTES.
-Be aggressive in adapting to rapidly changing conditions.
-Each bullet must be specific and actionable — no vague advice like "be careful".
-
-Do NOT write code. Output only the plain Markdown bullet points."""
+You MUST output exactly valid JSON with the following structure:
+{{
+  "tactical_strategy": "A concise 4-to-6 bullet point string for the NEXT 30 MINUTES.\\n- Be aggressive\\n- Specific actions",
+  "golden_rules": ["Rule: X | Why: Y | How to apply: Z", "Rule: A | Why: B | How to apply: C"]
+}}
+Do NOT wrap in markdown code blocks. Output raw JSON only."""
         
         try:
             t_start = time.time()
             res = requests.post(url, json={
                 "model": model,
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": 0.3,
-                "max_tokens": 400
+                "temperature": 0.2,
+                "max_tokens": 600,
+                "response_format": {"type": "json_object"}
             }, headers={"Authorization": f"Bearer {api_key}"}, timeout=60)
             res.raise_for_status()
             duration_ms = int((time.time() - t_start) * 1000)
@@ -183,18 +244,32 @@ Do NOT write code. Output only the plain Markdown bullet points."""
                 )
             except Exception:
                 pass
+            # Parse JSON
+            try:
+                import json
+                # Handle possible markdown wrap
+                clean_json = strategy_content.replace('```json', '').replace('```', '').strip()
+                parsed = json.loads(clean_json)
+                strat_text = parsed.get("tactical_strategy", strategy_content)
+                golden_rules = parsed.get("golden_rules", [])
+            except Exception:
+                strat_text = strategy_content
+                golden_rules = []
             
             # Save to SuperBrain (primary)
-            brain.remember_strategy(strategy_content)
+            brain.remember_strategy(strat_text)
+            for rule in golden_rules:
+                if type(rule) == str and len(rule) > 5:
+                    brain.remember_rule(rule)
             
             # Save to local files (fallback)
             self.mm.save_typed_memory(
                 category="project",
                 name="current_strategy",
-                content=strategy_content,
+                content=strat_text,
                 description="Rolling 30-min tactical strategy generated by Dream Agent V2."
             )
-            logger.info(f"[Phase 3/4] Strategy consolidated ({len(strategy_content)} chars, {duration_ms}ms).")
+            logger.info(f"[Phase 3/4] Strategy and {len(golden_rules)} rules consolidated ({duration_ms}ms).")
             
         except Exception as e:
             logger.error(f"Dream LLM synthesis failed: {e}")

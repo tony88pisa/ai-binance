@@ -41,6 +41,8 @@ class NewsTrader:
         self.repo = Repository()
         self.brain = get_superbrain()
         self.seen_hashes: set = set()
+        from ai.mcp_client import MCPClient
+        self.mcp = MCPClient()
 
     def analyze_sentiment(self):
         """Fetch notizie REALI, analizza sentiment, e salva segnali."""
@@ -69,6 +71,23 @@ class NewsTrader:
 
             normalized = normalize_news(raw_items, self.seen_hashes)
             logger.info(f"Processate {len(normalized)} notizie ({len(raw_items)} raw, {len(raw_items) - len(normalized)} duplicati rimossi)")
+            
+            # --- GEM HUNTER MODULE (Low-Cap Search) ---
+            logger.info("Avvio ricerca proattiva Web Search per Gem/Meme (MCP DuckDuckGo)...")
+            gem_search_query = "top trending meme coins low cap breakout crypto today"
+            gem_results = self.mcp.search_web(gem_search_query)
+            if "Errore" not in gem_results and "non disponibile" not in gem_results and len(gem_results) > 20:
+                logger.info(f"Gem Hunter ha rilevato esplosioni in rete. Salvataggio su SuperBrain...")
+                self.brain.remember_market_signal(
+                    "LOW-CAP ALERT",
+                    f"Risultati Web LIVE: {gem_results}",
+                    confidence=80
+                )
+                self.brain.remember_feedback(
+                    f"Trovate gemme speculative dalla rete (Risk On!):\n{gem_results[:200]}...",
+                    agent="gem_hunter"
+                )
+            # -------------------------------------------
 
             # 2. Analizza ogni notizia normalizzata
             bullish_count = 0

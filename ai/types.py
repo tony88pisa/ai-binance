@@ -156,6 +156,7 @@ class TradeDecision:
     data_quality: DataQuality = DataQuality.LOW
     staleness_seconds: float = 0.0
     requires_risk_review: bool = True
+    requires_human_verification: bool = False
     timestamp_utc: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     def to_dict(self) -> dict:

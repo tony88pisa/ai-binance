@@ -99,16 +99,31 @@ def job_ai_analysis(repo, executor):
                 
             if ai_decision.decision.value == "buy" and ai_decision.confidence >= min_conf:
                 if snap.get("regime") not in ["TREND_DOWN", "HIGH_VOL_CHAOS"]:
-                    size_pct = settings.trading.default_position_size
-                    # [SQUAD EQUITY] - Operazioni Esclusive per Azioni / Materie Prime.
+                    # --- HUMAN VERIFICATION GATE ---
+                    if getattr(ai_decision, 'requires_human_verification', False):
+                        logger.warning(f"🚦 HUMAN VERIFICATION REQUIRED per {asset}. Trade in coda.")
+                        repo.log_activity("squad_equity", "HUMAN_GATE", f"{asset}: requires manual approval")
+                        continue
+                    
+                    # Dynamic Kelly Sizing (stesso della squad_crypto)
+                    dynamic_size = controls.get("position_size_usdt", None)
                     ep = EquityProvider()
                     equity_assets = ep.get_market_list("ALL")
                     
                     if asset in equity_assets:
                         equity_broker = MockEquityBroker()
                         wallet_eq = equity_broker.get_balance()
-                        pos_value = wallet_eq * size_pct
-                        logger.info(f"[EQUITY_SQUAD] PLACING BUY: {asset} for ${pos_value:.2f}")
+                        
+                        if dynamic_size and dynamic_size > 0:
+                            pos_value = min(dynamic_size, wallet_eq * 0.30)
+                        else:
+                            pos_value = wallet_eq * 0.02  # Regola 1-2%
+                        
+                        if pos_value < 5.0:
+                            pos_value = min(5.0, wallet_eq * 0.50)
+                        
+                        logger.info(f"[EQUITY_SQUAD] PLACING BUY: {asset} for ${pos_value:.2f} (Kelly/Dynamic)")
+                        size_pct = pos_value / wallet_eq if wallet_eq > 0 else 0.10
                         
                         success = equity_broker.open_position(asset, snap["price"], pos_value)
                         target_ex_id = f"EQ-{uuid.uuid4().hex[:8]}" if success else None

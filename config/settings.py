@@ -104,6 +104,9 @@ class TradingSettings:
         "LINK/USDT", "DOT/USDT"
     ])
     default_position_size: float = 0.10  # 10% del wallet per trade
+    auto_compound: bool = True
+    risk_per_trade_pct: float = 0.15     # Rischia il 15% del compound
+    global_take_profit: float = 500.0    # TP globale a cui ci si quieta
 
 
 @dataclass(frozen=True)
@@ -173,8 +176,11 @@ def load_settings() -> Settings:
         risk=RiskSettings(),
         trading=TradingSettings(
             dry_run=os.getenv("DRY_RUN", "true").lower() == "true",
-            wallet_size=float(os.getenv("INITIAL_CAPITAL", "10000.0")),
+            wallet_size=float(os.getenv("INITIAL_CAPITAL", "100.0")),
             stake_currency=os.getenv("CAPITAL_CURRENCY", "USDT"),
+            auto_compound=os.getenv("AUTO_COMPOUND", "true").lower() == "true",
+            risk_per_trade_pct=float(os.getenv("RISK_PER_TRADE_PCT", "0.15")),
+            global_take_profit=float(os.getenv("GLOBAL_TAKE_PROFIT", "500.0"))
         ),
         news=NewsSettings(),
         paths=PathSettings(),

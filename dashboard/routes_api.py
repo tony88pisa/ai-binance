@@ -116,7 +116,11 @@ def get_state():
         "closed_trades": closed_cnt,
         "total_outcomes_incl_test": total_outcomes,
         "total_decisions": total_decisions,
-        "open_orders_exchange": ex_orders
+        "open_orders_exchange": ex_orders,
+        # V11 — Micro-Cap Scaler fields
+        "auto_compound": settings.trading.auto_compound,
+        "risk_per_trade_pct": settings.trading.risk_per_trade_pct,
+        "global_take_profit": settings.trading.global_take_profit,
     }
 
 
@@ -337,7 +341,8 @@ def get_logs(source: str = "daemon", lines: int = 40):
         "controller": "controller.log",
         "squad_crypto": "squad_crypto.log",
         "squad_equity": "squad_equity.log",
-        "news_trader": "news_trader.log"
+        "news_trader": "news_trader.log",
+        "brute_force": "brute_force.log",
     }
     fname = allowed.get(source)
     if not fname:
@@ -508,3 +513,48 @@ def get_supermemory_api():
         return {"status": "online", "data": "SuperBrain attivo e sincronizzato.", "memories": memories}
     except Exception as e:
         return {"status": "error", "data": f"Errore interno SuperBrain: {str(e)}"}
+
+
+@router.get("/v11-status")
+def get_v11_status():
+    """V11 Micro-Cap Scaler: Tax Reserve, Kelly Sizing, Grid Assessment, Fiscal Report."""
+    repo = Repository()
+    controls = repo.get_supervisor_controls()
+    
+    # Tax Reserve e Position Size dal Risk Controller
+    position_size = controls.get("position_size_usdt", 0)
+    tax_reserve = controls.get("tax_reserve_usdt", 0)
+    max_leverage = controls.get("max_leverage", 1)
+    
+    # Fiscal Reporter: ultimo snapshot
+    fiscal_summary = {}
+    try:
+        from modules.fiscal_reporter import FiscalReporter
+        fr = FiscalReporter()
+        fiscal_summary = fr.get_year_summary()
+    except Exception as e:
+        fiscal_summary = {"error": str(e)}
+    
+    # Grid Engine: valutazione rapida
+    grid_status = {}
+    try:
+        from ai.grid_engine import AdaptiveGridEngine, GridConfig
+        grid_cfg = GridConfig(symbol="BTC/USDT", total_budget_usdt=50.0, grid_levels=5)
+        engine = AdaptiveGridEngine(grid_cfg)
+        grid_status = {"engine": "ready", "levels": grid_cfg.grid_levels, "budget_per_cell": round(50.0 / 5, 2)}
+    except Exception as e:
+        grid_status = {"engine": "error", "detail": str(e)}
+    
+    return {
+        "version": "V11 Micro-Cap Scaler",
+        "auto_compound": settings.trading.auto_compound,
+        "position_size_usdt": position_size,
+        "tax_reserve_33pct_usdt": tax_reserve,
+        "max_leverage": max_leverage,
+        "kelly_risk_pct": settings.trading.risk_per_trade_pct * 100,
+        "global_take_profit": settings.trading.global_take_profit,
+        "fiscal_summary": fiscal_summary,
+        "grid_engine": grid_status,
+        "exchanges_available": ["binance", "mexc", "bybit", "kucoin"]
+    }
+

@@ -64,14 +64,18 @@ class NvidiaTeacher:
 
             # Estraiamo i suggerimenti JSON che l'LLM ha creato (candidate_strategies, risk_notes)
             new_rules = llm_response.get("rule_corrections", [])
+            if not isinstance(new_rules, list):
+                new_rules = [new_rules] if new_rules else []
             strategies = llm_response.get("candidate_strategies", {})
             risk_notes = llm_response.get("risk_notes", "Nessuna nota di rischio specifica.")
+            recommended_engine = llm_response.get("recommended_engine", "momentum")
             
             # Adattiamo l'output LLM al nostro formato finding
             for rule in new_rules:
                 findings.append({
                     "issue": "NVIDIA Insight",
                     "suggested_regime": strategies.get("regime", "general"),
+                    "recommended_engine": recommended_engine,
                     "edge": rule,
                     "ai_assessment": risk_notes,
                     "suggested_controls": {

@@ -207,6 +207,35 @@ class Repository:
             conn.execute("UPDATE decisions SET status = 'CLOSED' WHERE id = ?", (outcome_data["decision_id"],))
             conn.commit()
 
+    def save_trade_outcome(self, data: Dict[str, Any]):
+        """Standalone outcome save (called by squad_crypto compound wallet).
+        Creates a synthetic decision_id if none exists."""
+        import uuid as _uuid
+        outcome_id = f"OUT-{_uuid.uuid4().hex[:8]}"
+        decision_id = data.get("decision_id", f"SYNTH-{_uuid.uuid4().hex[:8]}")
+        with self._conn() as conn:
+            conn.execute("""
+                INSERT OR IGNORE INTO trade_outcomes (id, decision_id, realized_pnl_pct, was_profitable, closed_at)
+                VALUES (?, ?, ?, ?, ?)
+            """, (outcome_id, decision_id, data.get("pnl_pct", 0.0),
+                  1 if data.get("was_profitable") else 0,
+                  datetime.now(timezone.utc).isoformat()))
+            conn.commit()
+
+    def get_outcomes_with_details(self, days: int = 7) -> List[Dict[str, Any]]:
+        """Get recent outcomes with decision details for Dream Agent analysis."""
+        with self._conn() as conn:
+            rows = conn.execute(f"""
+                SELECT o.realized_pnl_pct, o.was_profitable, o.closed_at,
+                       d.asset, d.action, d.entry_price, d.confidence, d.regime,
+                       d.agent_name, d.thesis, d.size_pct
+                FROM trade_outcomes o
+                LEFT JOIN decisions d ON o.decision_id = d.id
+                WHERE o.closed_at > datetime('now', '-{days} day')
+                ORDER BY o.closed_at DESC
+            """).fetchall()
+            return [dict(r) for r in rows]
+
     def save_skill_candidate(self, skill: Dict[str, Any]):
         with self._conn() as conn:
             conn.execute("""

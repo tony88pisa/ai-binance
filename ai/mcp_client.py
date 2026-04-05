@@ -8,6 +8,11 @@ import logging
 import json
 from datetime import datetime
 
+try:
+    from duckduckgo_search import DDGS
+except ImportError:
+    DDGS = None
+
 logger = logging.getLogger("ai.mcp_client")
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
@@ -129,6 +134,22 @@ class TenguMCPClient:
         except Exception as e:
             return f"F&G unavailable: {e}"
 
+    def search_web(self, query: str) -> str:
+        """Esegue una ricerca web live usando DuckDuckGo e condensa i risultati."""
+        if not DDGS:
+            return "Web search non disponibile (duckduckgo-search non installato)."
+        try:
+            results = DDGS().text(query, max_results=3)
+            if not results:
+                return "Nessun risultato trovato."
+            
+            lines = [f"WEB SEARCH: '{query}'"]
+            for r in results:
+                lines.append(f"- {r.get('title', '')}: {r.get('body', '')}")
+            return "\n".join(lines)
+        except Exception as e:
+            return f"Errore ricerca web: {str(e)}"
+
     # =========================================
     # TOOL EXECUTOR (called by decision_engine)
     # =========================================
@@ -138,6 +159,7 @@ class TenguMCPClient:
             "get_trending_coins": lambda _: self.get_trending_coins(),
             "get_global_market_data": lambda _: self.get_global_market_data(),
             "get_fear_greed": lambda _: self.get_fear_greed(),
+            "search_web": lambda args: self.search_web(args.get("query", "")),
         }
         fn = dispatch.get(tool_name)
         if fn:
@@ -175,6 +197,23 @@ class TenguMCPClient:
                     "name": "get_fear_greed",
                     "description": "Get the Crypto Fear and Greed Index for the last 3 days",
                     "parameters": {"type": "object", "properties": {}, "required": []}
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "search_web",
+                    "description": "Search the live web for recent crypto news, specific coin updates, or general queries using DuckDuckGo",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "The exact search query to look up on the web"
+                            }
+                        },
+                        "required": ["query"]
+                    }
                 }
             },
         ]

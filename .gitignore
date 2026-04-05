@@ -7,11 +7,11 @@ __pycache__/
 # Secrets
 .env
 
-# Database
-*.sqlite
-*.sqlite-wal
-*.sqlite-shm
-*.sqlite.bak
+# Database (runtime generated)
+storage/*.sqlite
+storage/*.sqlite-wal
+storage/*.sqlite-shm
+storage/*.sqlite.bak
 
 # Logs
 logs/
@@ -33,6 +33,9 @@ Thumbs.db
 *.zip
 *.tar.gz
 *.7z
+*.whl
+*.dll
+*.pyd
 
 # Node (not used)
 node_modules/
@@ -40,7 +43,23 @@ node_modules/
 # Cache
 .pytest_cache/
 .wwebjs_cache/
+user_data/inference_cache.json
 
 # Temporary
 tmp/
 tmp_*.py
+
+# ═══ PROJECT-SPECIFIC EXCLUSIONS ═══
+
+# src/ = Claude Code source (TypeScript) — NOT our code, just reference
+# 29 MB of files we don't want to publish
+src/
+
+# Old legacy folders that may reappear
+ai binance/
+bin/
+
+# Runtime/generated data
+ai_memory/
+memory/
+reports/

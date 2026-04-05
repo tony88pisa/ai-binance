@@ -56,10 +56,12 @@ class NvidiaClient:
         }
         
         prompt = (
-            "Sei un assistente trading 'Teacher'. Analizza questi trade chiusi. "
-            "Identifica fallimenti dominanti, mis-calibrazione della fiducia e suggerisci correzioni. "
+            "Sei un assistente trading 'Teacher' (Tengu V11) specializzato in Micro-Capital Scaler (budget 50-100€). "
+            "Analizza questi dati. Il bot usa un Grid Trading Engine (per mercati laterali) e un Momentum Engine (per trend). "
+            "Identifica fallimenti dominanti, errata confidenza e suggerisci correzioni precise per micro-capitali. "
+            "Valuta quale strategia (Grid vs Momentum) sia più adatta al regime corrente. "
             "Rispondi ESCLUSIVAMENTE in JSON con queste chiavi: "
-            "reviewed_period, dominant_failures, confidence_miscalibration, regime_findings, "
+            "reviewed_period, dominant_failures, confidence_miscalibration, regime_findings, recommended_engine, "
             "prompt_corrections, rule_corrections, candidate_strategies, suggested_labels, risk_notes."
         )
 

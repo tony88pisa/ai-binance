@@ -70,6 +70,38 @@ class BruteForceEngine:
             avg = np.mean(volumes[i-period:i])
             ratio[i] = volumes[i] / avg if avg > 0 else 1.0
         return ratio
+
+    def _compute_sortino_ratio(self, returns: list, target: float = 0.0) -> float:
+        """Sortino Ratio: penalizza solo le escursioni NEGATIVE.
+        Il paper prescrive di ottimizzare per avversione al ribasso, non rendimento lordo."""
+        if not returns:
+            return 0.0
+        excess = [r - target for r in returns]
+        mean_excess = np.mean(excess)
+        downside = [min(0, r - target) ** 2 for r in returns]
+        downside_dev = np.sqrt(np.mean(downside)) if downside else 1.0
+        if downside_dev == 0:
+            return mean_excess * 10  # Nessun ribasso: score altissimo
+        return mean_excess / downside_dev
+
+    def _compute_fractional_kelly(self, returns: list, fraction: float = 0.25) -> float:
+        """Fractional Kelly Criterion: calcola la dimensione ottimale della scommessa.
+        f* = (p * b - q) / b   con p=prob vittoria, b=rapporto vincita/perdita, q=1-p
+        Usiamo una frazione conservativa (25%) come suggerisce il paper."""
+        if not returns:
+            return 0.0
+        wins = [r for r in returns if r > 0]
+        losses = [abs(r) for r in returns if r < 0]
+        if not wins or not losses:
+            return 0.05  # Fallback minimo
+        p = len(wins) / len(returns)
+        q = 1 - p
+        avg_win = np.mean(wins)
+        avg_loss = np.mean(losses)
+        b = avg_win / avg_loss if avg_loss > 0 else 1.0
+        kelly_full = (p * b - q) / b if b > 0 else 0.0
+        kelly_frac = max(0.01, min(kelly_full * fraction, 0.30))  # Clamp 1%-30%
+        return kelly_frac
             
     def evaluate_variants(self, klines: list, base_skill: dict) -> dict:
         """
@@ -178,10 +210,13 @@ class BruteForceEngine:
             if true_max_dd < self.max_drawdown_limit:
                 continue
                 
-            # Se passa il filtro del drawdown, valutiamo quanto è profittevole la variante.
-            # Objective: Massimizzare PnL puro, con boost se win_rate e numero trade > 3
+            # Se passa il filtro del drawdown, valutiamo con SORTINO + FRACTIONAL KELLY
+            # Il paper prescrive: NON massimizzare rendimento lordo, ma Sortino Ratio
+            sortino = self._compute_sortino_ratio(pnl_pct_history)
+            kelly_f = self._compute_fractional_kelly(pnl_pct_history)
+            
             if total_trades > 3 and win_rate > 50:
-                objective = cum_pnl * (win_rate / 100.0) 
+                objective = sortino * (win_rate / 100.0)
             else:
                 objective = -1.0
                 
@@ -194,11 +229,14 @@ class BruteForceEngine:
                     "take_profit_pct": tp_pct,
                     "volume_min_ratio": vol_min,
                     "ema_filter": True,
+                    "kelly_fraction": round(kelly_f, 4),
                     "metrics": {
                         "total_trades": total_trades,
                         "win_rate": round(win_rate, 2),
                         "net_pnl_pct": round(cum_pnl * 100, 2),
                         "max_drawdown_pct": round(true_max_dd * 100, 2),
+                        "sortino_ratio": round(sortino, 4),
+                        "kelly_optimal_size": round(kelly_f * 100, 2),
                         "objective_score": round(objective, 4)
                     }
                 }

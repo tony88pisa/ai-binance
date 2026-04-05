@@ -15,11 +15,11 @@ class SkillGenerator:
                 "entry_conditions": [f"regime == '{regime}'", "consensus_score > 0.70"],
                 "exit_conditions": ["pnl <= -0.02"],
                 "risk_rules": ["daily_loss_limit = -0.03"],
-                "position_sizing_rules": ["size_pct <= 0.15"],
+                "position_sizing_rules": ["size_pct <= 0.02"],  # V11 Micro-Cap Rule: Max 1-2% del wallet
                 "block_conditions": [f"regime == '{regime}' and atr_5m > avg_atr"],
                 "expected_edge": f["edge"],
                 "validation_status": "candidate",
-                "prompt_rule": f"RULE: In {regime} regime, apply strict entry: {f['edge']}",
+                "prompt_rule": f"RULE: In {regime} regime, apply strict entry: {f['edge']}. Recommended tactical engine: {f.get('recommended_engine', 'momentum').upper()}. Limit risk to 1-2% of total capital.",
                 "created_at": datetime.now(timezone.utc).isoformat()
             }
             candidates.append(skill)

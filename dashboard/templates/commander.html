@@ -3,720 +3,583 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tengu Commander V10 | AI Trading HQ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Tengu V11 Commander | Micro-Cap Scaler</title>
+    <!-- Premium Web Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #06090f;
-            --bg-card: rgba(14, 20, 33, 0.85);
-            --bg-card-hover: rgba(20, 28, 45, 0.95);
-            --border: rgba(255,255,255,0.06);
-            --border-active: rgba(0, 200, 255, 0.25);
-            --cyan: #00d4ff;
-            --green: #00e676;
-            --red: #ff3d57;
-            --amber: #ffab00;
-            --purple: #a78bfa;
-            --text-primary: #e8edf5;
-            --text-secondary: #7a8ba7;
-            --text-muted: #4a5568;
+            /* V11 Obsidian Neon Palette */
+            --bg-obsidian: #09090b;
+            --bg-glass: rgba(18, 20, 28, 0.65);
+            --bg-glass-hover: rgba(28, 30, 42, 0.85);
+            --border-glass: rgba(0, 212, 255, 0.15);
+            --border-glow: rgba(0, 212, 255, 0.5);
+            --neon-cyan: #00f0ff;
+            --neon-purple: #b026ff;
+            --neon-green: #00ff66;
+            --neon-red: #ff3366;
+            --neon-amber: #ffb800;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-obsidian);
+            color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
+            /* Animated Background Gradient */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(176, 38, 255, 0.05) 0%, transparent 40%);
+            background-attachment: fixed;
         }
-        body::before {
-            content: ''; position: fixed; inset: 0; z-index: -1;
-            background: radial-gradient(ellipse at 20% 0%, rgba(0,180,255,0.04) 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 100%, rgba(120,80,255,0.03) 0%, transparent 60%);
-        }
+
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-
-        /* === TOP BAR === */
-        .top-bar {
-            display: flex; align-items: center; justify-content: space-between; gap: 16px;
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
-            padding: 16px 24px; flex-wrap: wrap;
-        }
-        .brand { display: flex; align-items: center; gap: 12px; }
-        .brand-icon {
-            width: 40px; height: 40px; border-radius: 12px;
-            background: linear-gradient(135deg, var(--cyan), var(--purple));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; font-weight: 800; color: #fff;
-        }
-        .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
-        .brand small { font-size: 9px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
-        .wallet-display { text-align: right; }
-        .wallet-balance { font-size: 28px; font-weight: 700; }
-        .wallet-pnl {
-            display: inline-block; padding: 3px 10px; border-radius: 20px;
-            font-size: 11px; font-weight: 700; margin-left: 8px;
-        }
-        .wallet-pnl.pos { background: rgba(0,230,118,0.12); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
-        .wallet-pnl.neg { background: rgba(255,61,87,0.12); color: var(--red); border: 1px solid rgba(255,61,87,0.2); }
-        .status-dots { display: flex; gap: 16px; align-items: center; }
-        .status-dot { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot.on { background: var(--green); box-shadow: 0 0 8px rgba(0,230,118,0.5); }
-        .dot.off { background: var(--red); box-shadow: 0 0 8px rgba(255,61,87,0.4); }
-        .dot.warn { background: var(--amber); }
-
-        /* === STATS ROW === */
-        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        .stat-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-            padding: 14px 16px; text-align: center;
-        }
-        .stat-card .label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 6px; }
-        .stat-card .value { font-size: 20px; font-weight: 700; }
-
-        /* === MAIN GRID === */
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
-
-        /* === CARD === */
-        .card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
-            padding: 16px; display: flex; flex-direction: column; gap: 10px;
-        }
-        .card-title {
-            font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
-            color: var(--text-muted); font-weight: 600;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .card-title .badge {
-            font-size: 9px; padding: 2px 8px; border-radius: 6px;
-            background: rgba(0,212,255,0.1); color: var(--cyan); font-weight: 700;
+        
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        /* === POSITIONS TABLE === */
-        .positions-table { width: 100%; border-collapse: collapse; }
-        .positions-table th {
-            font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--text-muted); text-align: left; padding: 6px 8px;
-            border-bottom: 1px solid var(--border);
-        }
-        .positions-table td { padding: 10px 8px; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .positions-table tr:hover { background: rgba(255,255,255,0.02); }
-        .pnl-up { color: var(--green); font-weight: 600; }
-        .pnl-down { color: var(--red); font-weight: 600; }
-        .asset-tag {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-weight: 600; font-size: 13px;
-        }
-        .asset-icon {
-            width: 22px; height: 22px; border-radius: 6px; font-size: 10px;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(0,212,255,0.1); color: var(--cyan);
-        }
-        .empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-size: 12px; }
-
-        /* === ACTIVITY FEED === */
-        .feed { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-        .feed::-webkit-scrollbar { width: 3px; }
-        .feed::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 10px; }
-        .feed-item {
-            display: flex; align-items: flex-start; gap: 10px;
-            padding: 8px 10px; border-radius: 8px; font-size: 11px;
-            background: rgba(255,255,255,0.015); border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-        .feed-item:hover { background: rgba(255,255,255,0.03); border-color: var(--border); }
-        .feed-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-        .feed-text { color: var(--text-secondary); line-height: 1.5; }
-        .feed-text strong { color: var(--text-primary); }
-        .feed-time { font-size: 9px; color: var(--text-muted); margin-left: auto; flex-shrink: 0; white-space: nowrap; }
-
-        /* === ASSET GRID === */
-        .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 8px; max-height: 400px; overflow-y: auto; }
-        .asset-grid::-webkit-scrollbar { width: 3px; }
-        .asset-grid::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.15); border-radius: 10px; }
-        .asset-chip {
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-            border-radius: 10px; padding: 10px; cursor: default;
-            transition: all 0.2s; position: relative; overflow: hidden;
-        }
-        .asset-chip:hover { background: var(--bg-card-hover); border-color: var(--border-active); }
-        .asset-chip .name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
-        .asset-chip .price { font-size: 11px; color: var(--text-secondary); }
-        .asset-chip .decision {
-            font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-            margin-top: 6px; display: flex; align-items: center; gap: 4px;
-        }
-        .decision-buy { color: var(--green); }
-        .decision-hold { color: var(--text-muted); }
-        .decision-sell { color: var(--red); }
-        .conf-bar {
-            position: absolute; bottom: 0; left: 0; height: 2px;
-            background: linear-gradient(90deg, var(--cyan), var(--green));
-            transition: width 0.5s;
+        /* Nav Menu */
+        .glass-nav {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
         }
 
-        /* === AGENT STATUS === */
-        .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
-        .agent-chip {
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-            border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px;
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            color: var(--text-dim);
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 13px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .nav-item.active {
+            color: #fff;
+            border: 1px solid var(--border-glow);
+            background: rgba(0, 240, 255, 0.08);
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.1), 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+
+        /* Top Meta Bar */
+        .hero-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 24px 32px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ai-core-icon {
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #fff;
+            box-shadow: 0 0 30px rgba(176, 38, 255, 0.4);
+            animation: pulse-glow 3s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 15px rgba(0, 240, 255, 0.3); }
+            to { box-shadow: 0 0 35px rgba(176, 38, 255, 0.6); }
+        }
+
+        .brand-text h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #fff, var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text small {
+            font-size: 11px;
+            color: var(--neon-amber);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 184, 0, 0.3);
+            background: rgba(255, 184, 0, 0.05);
+        }
+
+        /* V11 Core Metrics */
+        .core-metrics {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .metric-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .metric-block.left { align-items: flex-start; }
+
+        .metric-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .accent-green { color: var(--neon-green); text-shadow: 0 0 15px rgba(0,255,102,0.4); }
+        .accent-cyan { color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0,240,255,0.4); }
+        .accent-amber { color: var(--neon-amber); text-shadow: 0 0 15px rgba(255,184,0,0.4); }
+
+        /* Secondary Stats Flexbox */
+        .v11-stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: var(--text-dim);
+        }
+
+        .card-value { font-size: 24px; font-weight: 700; }
+
+        /* Tax Card Special Styling */
+        .tax-card {
+            border: 1px solid rgba(255, 51, 102, 0.2);
+            background: linear-gradient(180deg, rgba(255, 51, 102, 0.05) 0%, rgba(0,0,0,0) 100%);
+        }
+
+        /* 3-Col Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.2fr;
+            gap: 24px;
+        }
+        @media (max-width: 1100px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Data Tables */
+        .aesthetic-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin-top: 10px;
+        }
+
+        .aesthetic-table th {
+            text-align: left;
+            padding: 0 16px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .aesthetic-table td {
+            padding: 16px;
+            background: rgba(255,255,255,0.02);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .aesthetic-table tr {
             transition: all 0.3s;
         }
-        .agent-chip:hover { background: var(--bg-card-hover); border-color: var(--border-active); transform: translateY(-1px); }
-        .agent-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; transition: all 0.3s; }
-        .agent-dot.active { background: var(--green); box-shadow: 0 0 10px rgba(0,230,118,0.4); animation: pulse 2s infinite; }
-        .agent-dot.thinking { background: var(--amber); animation: pulse 1s infinite; }
-        .agent-dot.idle { background: var(--text-muted); }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .agent-name { font-size: 11px; font-weight: 600; }
-        .agent-role { font-size: 9px; color: var(--text-muted); }
-        .agent-elapsed { font-size: 8px; color: var(--cyan); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
 
-        /* === TRADING HEATMAP === */
-        .heatmap-container { display: flex; gap: 3px; flex-wrap: wrap; }
-        .heatmap-cell {
-            width: 18px; height: 18px; border-radius: 3px;
-            transition: all 0.3s; cursor: default; position: relative;
-        }
-        .heatmap-cell:hover { transform: scale(1.4); z-index: 10; }
-        .heatmap-cell[title]:hover::after {
-            content: attr(title); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.9); color: #fff; padding: 4px 8px; border-radius: 4px;
-            font-size: 9px; white-space: nowrap; z-index: 20;
-        }
-        .heat-0 { background: rgba(255,255,255,0.03); }
-        .heat-1 { background: rgba(0,230,118,0.15); }
-        .heat-2 { background: rgba(0,230,118,0.35); }
-        .heat-3 { background: rgba(0,230,118,0.55); }
-        .heat-4 { background: rgba(0,230,118,0.8); }
-        .heat-neg { background: rgba(255,61,87,0.4); }
-        .heatmap-labels { display: flex; gap: 3px; margin-top: 6px; align-items: center; font-size: 9px; color: var(--text-muted); }
-        .heatmap-labels .heatmap-cell { width: 12px; height: 12px; }
-
-        /* === PROGRESS BARS === */
-        .progress-bar-container {
-            width: 100%; height: 6px; background: rgba(255,255,255,0.06);
-            border-radius: 3px; overflow: hidden; margin-top: 8px;
-        }
-        .progress-bar-fill {
-            height: 100%; border-radius: 3px; transition: width 1s ease-out;
-            background: linear-gradient(90deg, var(--cyan), var(--green));
-        }
-        .progress-bar-fill.negative {
-            background: linear-gradient(90deg, var(--red), var(--amber));
+        .aesthetic-table tr:hover td {
+            background: rgba(0, 240, 255, 0.05);
+            cursor: default;
         }
 
-        /* === SYSTEM HEALTH DIAGNOSTICS === */
-        .health-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-        .health-item {
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-            border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 12px;
-            transition: all 0.3s;
-        }
-        .health-item:hover { background: var(--bg-card-hover); }
-        .health-icon { font-size: 20px; }
-        .health-info { flex: 1; }
-        .health-name { font-size: 11px; font-weight: 600; }
-        .health-status { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
-        .health-status.ok { color: var(--green); }
-        .health-status.warn { color: var(--amber); }
-        .health-status.err { color: var(--red); }
-        .health-ping { font-size: 9px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
-        .health-dot {
-            width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-        }
-        .health-dot.ok { background: var(--green); box-shadow: 0 0 8px rgba(0,230,118,0.4); }
-        .health-dot.warn { background: var(--amber); }
-        .health-dot.err { background: var(--red); box-shadow: 0 0 8px rgba(255,61,87,0.4); }
+        .aesthetic-table td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        .aesthetic-table td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
-        /* === FOOTER === */
-        .footer {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; font-size: 9px; color: var(--text-muted);
-            letter-spacing: 1.5px; text-transform: uppercase; border-top: 1px solid var(--border);
+        .coin-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .coin-icon {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 0 10px rgba(0,240,255,0.2);
+        }
+
+        .pnl-pos { color: var(--neon-green); font-weight: 700; }
+        .pnl-neg { color: var(--neon-red); font-weight: 700; }
+
+        /* Elegant Feed */
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 8px;
+        }
+
+        .activity-feed::-webkit-scrollbar { width: 4px; }
+        .activity-feed::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 4px; }
+
+        .feed-row {
+            display: flex;
+            gap: 16px;
+            padding: 14px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border-left: 2px solid transparent;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+        .feed-row:hover { background: rgba(255,255,255,0.03); }
+
+        .feed-row.type-buy { border-left-color: var(--neon-green); }
+        .feed-row.type-sell { border-left-color: var(--neon-red); }
+        .feed-row.type-info { border-left-color: var(--neon-cyan); }
+
+        .feed-time { color: var(--text-dim); font-size: 10px; min-width: 65px; }
+        .feed-msg { color: #fff; line-height: 1.4; }
+        .feed-msg strong { color: var(--neon-cyan); }
+
+        /* Badge/Tags */
+        .chip {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chip-cyan { background: rgba(0, 240, 255, 0.1); color: var(--neon-cyan); border: 1px solid rgba(0, 240, 255, 0.2); }
+        .chip-amber { background: rgba(255, 184, 0, 0.1); color: var(--neon-amber); border: 1px solid rgba(255, 184, 0, 0.2); }
+
     </style>
 </head>
 <body>
+
 <div class="container">
-    
-    <div class="nav-bar" style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; width: 100%;">
-        <a href="/commander" class="nav-item active" style="flex: 1; text-align: center; color: var(--cyan); background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">📊 Commander HUD</a>
-        <a href="/trader" class="nav-item" style="flex: 1; text-align: center; color: var(--text-secondary); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-card-hover)'; this.style.color='white';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.color='var(--text-secondary)';">📈 Pro Trader</a>
-        <a href="/agents" class="nav-item" style="flex: 1; text-align: center; color: var(--text-secondary); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-card-hover)'; this.style.color='white';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.color='var(--text-secondary)';">🧬 Agent Swarm</a>
-        <a href="/memory" class="nav-item" style="flex: 1; text-align: center; color: var(--text-secondary); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-card-hover)'; this.style.color='white';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.color='var(--text-secondary)';">🧠 Semantic Memory</a>
-        <a href="/logs" class="nav-item" style="flex: 1; text-align: center; color: var(--text-secondary); background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-card-hover)'; this.style.color='white';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.color='var(--text-secondary)';">🕵️ System Logs</a>
-    </div>
+    <!-- NAVIGATION -->
+    <div class="glass-nav">
+        <a href="/commander" class="nav-item active">📊 COMMANDER HUD</a>
+        <a href="/trader" class="nav-item">📈 PRO TRADER</a>
+        <a href="/agents" class="nav-item">🧬 AGENT SWARM</a>
+        <a href="/memory" class="nav-item">🧠 SUPERMEMORY DB</a>
     </div>
 
-    <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="brand">
-            <div class="brand-icon">T</div>
-            <div>
-                <h1>Tengu Commander</h1>
-                <small>V10 — 34 Markets Active</small>
+    <!-- HERO HEADER -->
+    <div class="hero-header">
+        <div class="brand-cluster">
+            <div class="ai-core-icon">💎</div>
+            <div class="brand-text">
+                <h1>Tengu V11</h1>
+                <small id="testnet-badge">⚠️ MEXC DRY-RUN (SIMULATORE)</small>
             </div>
         </div>
-        <div class="status-dots">
-            <div class="status-dot"><div class="dot on" id="dot-ollama"></div>Gemma 4</div>
-            <div class="status-dot"><div class="dot on" id="dot-exchange"></div>Binance</div>
-            <div class="status-dot"><div class="dot on" id="dot-nvidia"></div>NVIDIA</div>
-            <div class="status-dot"><div class="dot" id="dot-supervisor"></div>Supervisor</div>
-        </div>
-        <div class="wallet-display">
-            <span class="mono wallet-balance" id="wallet-bal">10,000.00 <small style="font-size:14px;color:var(--text-muted)">USDT</small></span>
-            <span class="wallet-pnl pos" id="wallet-pnl">+0.00%</span>
+        
+        <div class="core-metrics">
+            <div class="metric-block">
+                <div class="metric-label">Simulated Capital</div>
+                <div class="metric-value mono accent-cyan" id="hero-wallet">100.00 $</div>
+            </div>
+            <div class="metric-block" style="border-left: 1px solid var(--border-glass); padding-left: 32px;">
+                <div class="metric-label">Global PnL</div>
+                <div class="metric-value mono accent-green" id="hero-pnl">0.00%</div>
+            </div>
         </div>
     </div>
 
-    <!-- STATS ROW -->
-    <div class="stats-row">
-        <div class="stat-card">
-            <div class="label">Open Trades</div>
-            <div class="value mono" id="stat-open" style="color:var(--cyan)">0</div>
+    <!-- V11 STATS BAR -->
+    <div class="v11-stats-bar">
+        <div class="glass-card">
+            <div class="card-header">
+                Grid Engine Status <span class="chip chip-cyan" id="grid-status-badge">READY</span>
+            </div>
+            <div class="card-value mono" id="grid-status-val">WAITING</div>
         </div>
-        <div class="stat-card">
-            <div class="label">Closed Trades</div>
-            <div class="value mono" id="stat-closed">0</div>
+        
+        <div class="glass-card tax-card">
+            <div class="card-header">
+                Tax Reserve (33%) <span class="chip chip-amber">LOCKED</span>
+            </div>
+            <div class="card-value mono accent-amber" id="tax-reserve-val">$0.00</div>
         </div>
-        <div class="stat-card">
-            <div class="label">Win Rate</div>
-            <div class="value mono" id="stat-winrate" style="color:var(--green)">0%</div>
+
+        <div class="glass-card">
+            <div class="card-header">
+                Kelly Position Sizing <span class="chip chip-cyan" id="kelly-badge">AUTO</span>
+            </div>
+            <div class="card-value mono accent-cyan" id="kelly-size-val">2.0%</div>
         </div>
-        <div class="stat-card">
-            <div class="label">AI Decisions</div>
-            <div class="value mono" id="stat-decisions">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">Assets Tracked</div>
-            <div class="value mono" id="stat-assets" style="color:var(--purple)">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">AI Confidence</div>
-            <div class="value mono" id="stat-conf">0%</div>
+
+        <div class="glass-card">
+            <div class="card-header">
+                AI Decisions <span class="chip chip-cyan">LIFETIME</span>
+            </div>
+            <div class="card-value mono" id="decisions-val">0</div>
         </div>
     </div>
 
-    <!-- TRADING HEATMAP -->
-    <div class="card">
-        <div class="card-title">
-            <span>📅 Trading Activity Heatmap</span>
-            <span class="badge" id="heatmap-period">Last 30 days</span>
-        </div>
-        <div id="heatmap-area" class="heatmap-container"></div>
-        <div class="heatmap-labels">
-            <span>Less</span>
-            <div class="heatmap-cell heat-0"></div>
-            <div class="heatmap-cell heat-1"></div>
-            <div class="heatmap-cell heat-2"></div>
-            <div class="heatmap-cell heat-3"></div>
-            <div class="heatmap-cell heat-4"></div>
-            <span>More</span>
-            <span style="margin-left:12px;">Loss</span>
-            <div class="heatmap-cell heat-neg"></div>
-        </div>
-    </div>
-
-    <!-- MAIN GRID: Positions + Activity Feed -->
-    <div class="main-grid">
-        <!-- ACTIVE POSITIONS -->
-        <div class="card">
-            <div class="card-title">
-                <span>📊 Active Positions</span>
-                <span class="badge" id="pos-count">0 open</span>
+    <!-- MAIN GRID -->
+    <div class="dashboard-grid">
+        <!-- LEFT COL: POSITIONS -->
+        <div class="glass-card" style="min-height: 400px;">
+            <div class="card-header" style="margin-bottom: 16px;">
+                <span>Active Micro-Cap Positions</span>
+                <span class="chip chip-cyan" id="pos-count">0 OPEN</span>
             </div>
-            <div id="positions-container" style="overflow-y:auto; max-height:300px;">
-                <div class="empty-state">Nessuna posizione aperta — gli agenti stanno analizzando...</div>
+            
+            <div id="positions-wrapper">
+                <table class="aesthetic-table" id="pos-table">
+                    <thead>
+                        <tr>
+                            <th>Asset</th>
+                            <th>Entry</th>
+                            <th>Current</th>
+                            <th>PnL</th>
+                            <th>Size</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pos-body">
+                        <!-- Filled via JS -->
+                    </tbody>
+                </table>
+                <div id="pos-empty" style="text-align: center; color: var(--text-dim); padding: 40px; font-size: 13px;">
+                    Nessuna posizione aperta. Il Gem Hunter sta scansionando i pattern.
+                </div>
             </div>
         </div>
 
-        <!-- LIVE ACTIVITY FEED -->
-        <div class="card">
-            <div class="card-title">
-                <span>⚡ Live Activity</span>
-                <span class="badge" style="animation: pulse 2s infinite;">LIVE</span>
+        <!-- RIGHT COL: ACTIVITY FEED -->
+        <div class="glass-card">
+            <div class="card-header" style="margin-bottom: 24px;">
+                <span>Live Swarm Intelligence</span>
+                <span class="chip chip-cyan pulse">LIVE</span>
             </div>
-            <div class="feed" id="feed-container">
-                <div class="feed-item">
-                    <span class="feed-icon">🔄</span>
-                    <span class="feed-text">Sistema in avvio... Connessione agli agenti in corso.</span>
+            
+            <div class="activity-feed" id="feed-container">
+                <div class="feed-row type-info">
+                    <div class="feed-time mono">00:00:00</div>
+                    <div class="feed-msg">Dashboard V11 caricata. Connessione all'Orchestratore completata.</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ASSET GRID: All 34 Markets -->
-    <div class="card">
-        <div class="card-title">
-            <span>🌍 Markets Under Analysis</span>
-            <span class="badge" id="market-count">0 assets</span>
-        </div>
-        <div class="asset-grid" id="asset-grid">
-            <div class="empty-state" style="grid-column: 1/-1;">Caricamento mercati...</div>
-        </div>
-    </div>
-
-    <!-- AGENT STATUS -->
-    <div class="card">
-        <div class="card-title">
-            <span>🤖 Agent Swarm Status</span>
-            <span class="badge" id="agent-count">15 agents</span>
-        </div>
-        <div class="agent-grid" id="agent-grid"></div>
-    </div>
-
-    <!-- SUPERVISOR PANEL -->
-    <div class="card" style="border-left: 3px solid var(--amber);">
-        <div class="card-title">
-            <span>🛡️ NVIDIA Supervisor</span>
-            <span class="badge" style="background:rgba(255,171,0,0.1);color:var(--amber);">NEMOTRON 120B</span>
-        </div>
-        <div id="supervisor-text" style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
-            Caricamento assessment...
-        </div>
-    </div>
-
-    <!-- SYSTEM HEALTH DIAGNOSTICS -->
-    <div class="card" style="border-left: 3px solid var(--cyan);">
-        <div class="card-title">
-            <span>🏥 System Health Diagnostics</span>
-            <span class="badge" id="health-badge">Checking...</span>
-        </div>
-        <div class="health-grid" id="health-grid"></div>
-    </div>
-
-    <div class="footer">
-        <div>Tengu OS © 2026 — <span id="clock"></span></div>
-        <div>RTX 5080 · Gemma 4 · 34 Markets · Always On</div>
-    </div>
 </div>
 
+<!-- DATA SCRIPT -->
 <script>
-// === FIXED AGENT LIST ===
-const AGENTS = [
-    { name: "Squad Crypto", role: "Binance 24/7 (Gemma 4)", icon: "₿", key: "squad_crypto" },
-    { name: "Squad Equity", role: "WallStreet / Asia", icon: "📈", key: "squad_equity" },
-    { name: "News Trader", role: "Llama 3.2 Sentiment", icon: "📰", key: "news_trader" },
-    { name: "Binance Executor", role: "Ordini live + SL/TP", icon: "⚡", key: "executor" },
-    { name: "Risk Controller", role: "Guardrail NVIDIA", icon: "🛡️", key: "risk_controller" },
-    { name: "Dream Agent", role: "Consolidamento memoria", icon: "🧠", key: "dream_agent" },
-    { name: "Coordinator", role: "Oversight globale", icon: "🎯", key: "coordinator" },
-    { name: "Evolution Loop", role: "NVIDIA Auto-Evolve", icon: "🧬", key: "evolution_loop" },
-    { name: "Equity Daemon", role: "Yahoo Finance sync", icon: "🌐", key: "equity_daemon" },
-    { name: "Freqtrade Engine", role: "Backtesting core", icon: "⚙️", key: null },
-    { name: "MCP Server", role: "Model Context Protocol", icon: "🔗", key: null },
-    { name: "Cloudflare Tunnel", role: "HTTPS proxy", icon: "☁️", key: null },
-    { name: "Ollama (Gemma 4)", role: "Local AI RTX 5080", icon: "🚀", key: null },
-    { name: "NVIDIA NIM", role: "Cloud strategy", icon: "💎", key: null }
-];
-
-// Render agent grid
-const agentGrid = document.getElementById('agent-grid');
-agentGrid.innerHTML = AGENTS.map(a => `
-    <div class="agent-chip" data-agent-key="${a.key || ''}">
-        <div class="agent-dot active"></div>
-        <div>
-            <div class="agent-name">${a.icon} ${a.name}</div>
-            <div class="agent-role">${a.role}</div>
-            <div class="agent-age" style="font-size:9px;color:var(--text-muted);margin-top:2px;"></div>
-        </div>
-    </div>
-`).join('');
-
-// === LIVE FEED ENGINE ===
-let feedLog = [];
-let lastActivityId = 0;
-
-function addFeedItem(icon, html, pushTop = true) {
-    const now = new Date().toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-    const item = { icon, html, time: now };
-    if (pushTop) feedLog.unshift(item); else feedLog.push(item);
-    if (feedLog.length > 50) feedLog.pop();
-    renderFeed();
-}
-
-function renderFeed() {
-    const el = document.getElementById('feed-container');
-    el.innerHTML = feedLog.map(f => `
-        <div class="feed-item">
-            <span class="feed-icon">${f.icon}</span>
-            <span class="feed-text">${f.html}</span>
-            <span class="feed-time mono">${f.time}</span>
-        </div>
-    `).join('');
-}
-
-// Clock
-setInterval(() => {
-    document.getElementById('clock').textContent = new Date().toLocaleString('it-IT');
-}, 1000);
-
-// === DATA POLLING ===
 async function fetchJSON(url) {
     try { const r = await fetch(url); return await r.json(); } catch { return null; }
 }
 
-let lastPositionIds = new Set();
-let lastDecisionCount = 0;
+let lastActivityId = 0;
+let feedLog = [
+    { type: 'type-info', time: new Date().toLocaleTimeString('it-IT'), msg: "Dashboard V11 caricata. Connessione all'Orchestratore completata." }
+];
 
-async function updateAll() {
-    // 1. STATE
-    const state = await fetchJSON('/api/state');
-    if (state) {
-        // Show honest wallet: budget + real PnL, NOT testnet balance
-        const walletVal = state.wallet_current;
-        document.getElementById('wallet-bal').innerHTML =
-            `${walletVal.toLocaleString('en-US', {minimumFractionDigits:2})} <small style="font-size:14px;color:var(--text-muted)">${state.currency}</small>`;
-        
-        const pnlEl = document.getElementById('wallet-pnl');
-        if (state.closed_trades === 0) {
-            pnlEl.textContent = 'NESSUN TRADE REALE';
-            pnlEl.className = 'wallet-pnl neg';
-        } else {
-            pnlEl.textContent = `${state.pnl_pct >= 0 ? '+' : ''}${state.pnl_pct.toFixed(2)}%`;
-            pnlEl.className = `wallet-pnl ${state.pnl_pct >= 0 ? 'pos' : 'neg'}`;
-        }
-        
-        // TESTNET badge
-        const brandSmall = document.querySelector('.brand small');
-        if (state.is_testnet) {
-            brandSmall.innerHTML = `⚠️ TESTNET — Paper Trading · ${state.total_decisions} decisioni AI`;
-            brandSmall.style.color = 'var(--amber)';
-        } else {
-            brandSmall.textContent = `LIVE · ${state.total_decisions} decisioni AI`;
-        }
-        
-        document.getElementById('stat-open').textContent = state.open_trades;
-        document.getElementById('stat-closed').textContent = state.closed_trades;
-        document.getElementById('stat-decisions').textContent = state.total_decisions;
-
-        if (lastDecisionCount > 0 && state.total_decisions > lastDecisionCount) {
-            addFeedItem('🧠', `<strong>Nuova decisione AI</strong> — Totale: ${state.total_decisions}`);
-        }
-        lastDecisionCount = state.total_decisions;
-    }
-
-    // 2. POSITIONS
-    const positions = await fetchJSON('/api/positions');
-    if (positions) {
-        document.getElementById('pos-count').textContent = `${positions.length} open`;
-        const container = document.getElementById('positions-container');
-        if (positions.length === 0) {
-            container.innerHTML = '<div class="empty-state">Nessuna posizione aperta — gli agenti stanno analizzando...</div>';
-        } else {
-            container.innerHTML = `<table class="positions-table"><thead><tr>
-                <th>Asset</th><th>Entry</th><th>Current</th><th>PnL</th><th>Size</th><th>Opened</th>
-            </tr></thead><tbody>${positions.map(p => {
-                const cls = p.pnl_pct >= 0 ? 'pnl-up' : 'pnl-down';
-                const arrow = p.pnl_pct >= 0 ? '▲' : '▼';
-                return `<tr title="${p.inner_monologue || ''}">
-                    <td><span class="asset-tag"><span class="asset-icon">₿</span>${p.asset}</span></td>
-                    <td class="mono">${p.entry_price.toFixed(2)}</td>
-                    <td class="mono">${p.current_price.toFixed(2)}</td>
-                    <td class="mono ${cls}">${arrow} ${p.pnl_pct.toFixed(2)}%</td>
-                    <td class="mono">${(p.size_pct * 100).toFixed(0)}%</td>
-                    <td style="font-size:10px;color:var(--text-muted)">${p.opened_at.substring(0,16)}</td>
-                </tr>`;
-            }).join('')}</tbody></table>`;
-
-            const currentIds = new Set(positions.map(p => p.id));
-            for (const p of positions) {
-                if (!lastPositionIds.has(p.id)) {
-                    addFeedItem('🟢', `<strong>BUY ${p.asset}</strong> @ ${p.entry_price.toFixed(2)} | Size: ${(p.size_pct*100).toFixed(0)}%`);
-                }
-            }
-            lastPositionIds = currentIds;
-        }
-    }
-
-    // 3. ASSETS
-    const assets = await fetchJSON('/api/assets');
-    if (assets && assets.length > 0) {
-        document.getElementById('stat-assets').textContent = assets.length;
-        document.getElementById('market-count').textContent = `${assets.length} assets`;
-        const grid = document.getElementById('asset-grid');
-        grid.innerHTML = assets.map(a => {
-            const dClass = a.decision === 'buy' ? 'decision-buy' : a.decision === 'sell' ? 'decision-sell' : 'decision-hold';
-            const dIcon = a.decision === 'buy' ? '📈' : a.decision === 'sell' ? '📉' : '⏸️';
-            return `<div class="asset-chip" title="RSI: ${a.rsi_5m?.toFixed(1)} | MACD: ${a.macd_5m?.toFixed(4)} | ${a.why_not_trade || ''}">
-                <div class="name">${a.asset}</div>
-                <div class="price mono">$${a.price?.toLocaleString('en-US', {minimumFractionDigits:2}) || '—'}</div>
-                <div class="decision ${dClass}">${dIcon} ${a.decision} <span style="color:var(--text-muted);margin-left:4px">${a.confidence}%</span></div>
-                <div class="conf-bar" style="width:${a.confidence}%"></div>
-            </div>`;
-        }).join('');
-    }
-
-    // 4. LEARNING + Progress Bar
-    const learning = await fetchJSON('/api/learning');
-    if (learning && !learning.error) {
-        const wr = learning.winrate || 0;
-        document.getElementById('stat-winrate').textContent = `${wr}%`;
-        // Color the win rate based on value
-        const wrEl = document.getElementById('stat-winrate');
-        wrEl.style.color = wr >= 60 ? 'var(--green)' : wr >= 40 ? 'var(--amber)' : 'var(--red)';
-    }
-
-    // 5. SUPERVISOR
-    const supervisor = await fetchJSON('/api/supervisor');
-    if (supervisor) {
-        const ctrl = supervisor.controls || {};
-        const logs = supervisor.recent_logs || [];
-        const lastLog = logs[0] || {};
-        const assessment = ctrl.ai_reasoning || lastLog.ai_assessment || 'Sistema in attesa di dati...';
-        document.getElementById('supervisor-text').innerHTML = `
-            <div style="margin-bottom:8px"><strong>Assessment:</strong> ${assessment}</div>
-            <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:11px;">
-                <span>🚨 Emergency: <strong style="color:${ctrl.emergency_stop ? 'var(--red)' : 'var(--green)'}">${ctrl.emergency_stop ? 'HALT' : 'OK'}</strong></span>
-                <span>🎯 Min Confidence: <strong>${ctrl.min_confidence || 70}%</strong></span>
-                <span>📊 Max Trades: <strong>${ctrl.max_open_trades || 3}</strong></span>
-                <span>🔻 Stop Loss: <strong>${ctrl.close_losers_threshold || -5}%</strong></span>
-            </div>
-        `;
-        document.getElementById('dot-supervisor').className = `dot ${ctrl.emergency_stop ? 'off' : 'on'}`;
-    }
+function updateFeedUI() {
+    const box = document.getElementById('feed-container');
+    box.innerHTML = feedLog.map(f => `
+        <div class="feed-row ${f.type}">
+            <div class="feed-time mono">${f.time}</div>
+            <div class="feed-msg">${f.msg}</div>
+        </div>
+    `).join('');
 }
 
-// 6. REAL-TIME ACTIVITY FEED (pulls from /api/activity)
-async function updateActivity() {
+async function loop() {
+    // 1. Fetch State (Wallet, PNL)
+    const state = await fetchJSON('/api/state');
+    if (state) {
+        document.getElementById('hero-wallet').textContent = `${state.wallet_current.toFixed(2)} $`;
+        const pnlStr = (state.pnl_pct >= 0 ? '+' : '') + state.pnl_pct.toFixed(2) + '%';
+        const pnlEl = document.getElementById('hero-pnl');
+        pnlEl.textContent = pnlStr;
+        pnlEl.className = 'metric-value mono ' + (state.pnl_pct >= 0 ? 'accent-green' : 'accent-red');
+        
+        document.getElementById('decisions-val').textContent = state.total_decisions || 0;
+    }
+
+    // 2. Fetch V11 Specifics (Tax, Grid, Kelly)
+    const v11 = await fetchJSON('/api/v11-status');
+    if (v11) {
+        document.getElementById('tax-reserve-val').textContent = `$${(v11.tax_reserve_33pct_usdt || 0).toFixed(2)}`;
+        
+        // Kelly
+        const kStr = v11.kelly_risk_pct ? `${v11.kelly_risk_pct.toFixed(2)}%` : '1-2%';
+        document.getElementById('kelly-size-val').textContent = kStr;
+        
+        // Grid Status
+        const gridState = v11.grid_engine?.engine || "IDLE";
+        document.getElementById('grid-status-val').textContent = gridState.toUpperCase();
+        if(gridState === "ready" || gridState === "active") {
+            document.getElementById('grid-status-badge').textContent = "ACTIVE";
+            document.getElementById('grid-status-badge').className = "chip chip-cyan";
+        } else {
+            document.getElementById('grid-status-badge').textContent = "WAIT";
+            document.getElementById('grid-status-badge').className = "chip chip-amber";
+        }
+    }
+
+    // 3. Fetch Positions
+    const pos = await fetchJSON('/api/positions');
+    if (pos) {
+        document.getElementById('pos-count').textContent = `${pos.length} OPEN`;
+        const tBody = document.getElementById('pos-body');
+        const emptyState = document.getElementById('pos-empty');
+        const table = document.getElementById('pos-table');
+        
+        if (pos.length === 0) {
+            emptyState.style.display = 'block';
+            table.style.display = 'none';
+        } else {
+            emptyState.style.display = 'none';
+            table.style.display = 'table';
+            tBody.innerHTML = pos.map(p => {
+                const cls = p.pnl_pct >= 0 ? 'pnl-pos' : 'pnl-neg';
+                const sign = p.pnl_pct >= 0 ? '+' : '';
+                // Dynamic Memecoin avatar logic based on name
+                const symbolChar = p.asset.replace('USDT', '').substring(0,2);
+                
+                return `
+                <tr>
+                    <td>
+                        <div class="coin-pill">
+                            <div class="coin-icon">${symbolChar}</div>
+                            <strong>${p.asset}</strong>
+                        </div>
+                    </td>
+                    <td class="mono">${p.entry_price.toFixed(4)}</td>
+                    <td class="mono">${p.current_price.toFixed(4)}</td>
+                    <td class="mono ${cls}">${sign}${p.pnl_pct.toFixed(2)}%</td>
+                    <td class="mono">${(p.size_pct * 100).toFixed(1)}%</td>
+                </tr>`;
+            }).join('');
+        }
+    }
+
+    // 4. Feeds
     const activities = await fetchJSON('/api/activity');
     if (activities && activities.length > 0) {
         const newItems = activities.filter(a => a.id > lastActivityId);
         if (newItems.length > 0) {
             lastActivityId = Math.max(...activities.map(a => a.id));
             for (const act of newItems.reverse()) {
-                const icons = {
-                    'squad_crypto': '₿', 'squad_equity': '📈', 'news_trader': '📰',
-                    'executor': '⚡', 'risk_controller': '🛡️', 'evolution_loop': '🧬',
-                    'dream_agent': '🧠', 'coordinator': '🎯', 'nvidia': '💎'
-                };
-                const icon = icons[act.agent] || '🔵';
-                const actionColor = act.action === 'BUY' ? 'color:var(--green)' : 
-                                    act.action === 'SELL' ? 'color:var(--red)' : 
-                                    act.action === 'BLOCKED' ? 'color:var(--red)' : '';
-                addFeedItem(icon, `<strong style="${actionColor}">[${act.action}]</strong> <span style="color:var(--text-muted)">${act.agent}</span> — ${act.detail}`);
+                const timeStr = act.timestamp.substring(11, 19);
+                let typeClass = 'type-info';
+                let msgHtml = `<strong>[${act.agent}]</strong> ${act.detail || act.action}`;
+                
+                if (act.action === 'BUY' || act.action === 'GRID_BUY') {
+                    typeClass = 'type-buy';
+                    msgHtml = `🟢 <strong>BUY</strong> by ${act.agent} — ${act.detail}`;
+                } else if (act.action === 'SELL' || act.action === 'GRID_SELL' || act.action === 'STOP_LOSS') {
+                    typeClass = 'type-sell';
+                    msgHtml = `🔴 <strong>${act.action}</strong> by ${act.agent} — ${act.detail}`;
+                }
+                
+                feedLog.unshift({ type: typeClass, time: timeStr, msg: msgHtml });
+                if (feedLog.length > 30) feedLog.pop();
             }
+            updateFeedUI();
         }
     }
 }
 
-// 7. AGENT STATUS (heartbeats + age)
-async function updateAgentStatus() {
-    const status = await fetchJSON('/api/agent-status');
-    if (!status) return;
+// Initial Call & Loops
+loop();
+setInterval(loop, 3000);
 
-    const health = await fetchJSON('/api/health');
-    if (health) {
-        document.getElementById('dot-ollama').className = `dot ${health.ollama ? 'on' : 'off'}`;
-        document.getElementById('dot-nvidia').className = `dot ${health.nvidia_api ? 'on' : 'warn'}`;
-        document.getElementById('dot-exchange').className = `dot ${health.exchange ? 'on' : 'off'}`;
-    }
-
-    const chips = document.querySelectorAll('.agent-chip');
-    chips.forEach(chip => {
-        const key = chip.dataset.agentKey;
-        if (!key || !status[key]) return;
-        
-        const info = status[key];
-        const dot = chip.querySelector('.agent-dot');
-        const ageEl = chip.querySelector('.agent-age');
-        
-        if (dot) {
-            dot.className = `agent-dot ${info.status === 'active' ? 'active' : info.status === 'stale' ? 'thinking' : 'idle'}`;
-        }
-        if (ageEl && info.age_seconds !== null) {
-            if (info.age_seconds < 60) ageEl.textContent = `${info.age_seconds}s ago`;
-            else if (info.age_seconds < 3600) ageEl.textContent = `${Math.floor(info.age_seconds/60)}m ago`;
-            else ageEl.textContent = `${Math.floor(info.age_seconds/3600)}h ago`;
-        } else if (ageEl) {
-            ageEl.textContent = info.status === 'offline' ? 'offline' : '';
-        }
-    });
-}
-
-// === INIT & POLLING ===
-updateAll();
-updateActivity(); 
-updateAgentStatus();
-addFeedItem('🚀', '<strong>Tengu Commander V10</strong> — Multi-Market Swarm attivo. Polling live ogni 3s.');
-
-// === TRADING HEATMAP ===
-function renderHeatmap() {
-    const area = document.getElementById('heatmap-area');
-    const today = new Date();
-    let cells = '';
-    for (let i = 29; i >= 0; i--) {
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        const dateStr = d.toISOString().split('T')[0];
-        const dayName = d.toLocaleDateString('it-IT', { weekday: 'short' });
-        // Simulate activity based on day (will be replaced by real API data)
-        const rand = Math.random();
-        let heatClass = 'heat-0';
-        let label = 'No trades';
-        if (rand > 0.8) { heatClass = 'heat-4'; label = '5+ trades'; }
-        else if (rand > 0.6) { heatClass = 'heat-3'; label = '3-4 trades'; }
-        else if (rand > 0.4) { heatClass = 'heat-2'; label = '2 trades'; }
-        else if (rand > 0.25) { heatClass = 'heat-1'; label = '1 trade'; }
-        else if (rand < 0.1) { heatClass = 'heat-neg'; label = 'Loss day'; }
-        cells += `<div class="heatmap-cell ${heatClass}" title="${dayName} ${dateStr}: ${label}"></div>`;
-    }
-    area.innerHTML = cells;
-}
-renderHeatmap();
-
-// === SYSTEM HEALTH DIAGNOSTICS ===
-const HEALTH_SERVICES = [
-    { name: 'Ollama (Gemma 4)', icon: '🚀', url: 'http://127.0.0.1:11434/api/tags', key: 'ollama' },
-    { name: 'Dashboard API', icon: '📊', url: '/api/state', key: 'dashboard' },
-    { name: 'WhatsApp MCP', icon: '📱', url: 'http://127.0.0.1:8099/health', key: 'whatsapp' },
-    { name: 'SQLite Database', icon: '🗄️', url: '/api/learning', key: 'sqlite' },
-];
-
-async function checkHealth() {
-    const grid = document.getElementById('health-grid');
-    let allOk = true;
-    let html = '';
-    
-    for (const svc of HEALTH_SERVICES) {
-        const start = performance.now();
-        let status = 'ok', statusText = 'ONLINE', ping = '—';
-        try {
-            const resp = await fetch(svc.url, { signal: AbortSignal.timeout(3000) });
-            ping = Math.round(performance.now() - start) + 'ms';
-            if (!resp.ok) { status = 'warn'; statusText = `HTTP ${resp.status}`; allOk = false; }
-        } catch (e) {
-            ping = 'timeout';
-            status = 'err'; statusText = 'OFFLINE'; allOk = false;
-        }
-        html += `
-            <div class="health-item">
-                <span class="health-icon">${svc.icon}</span>
-                <div class="health-info">
-                    <div class="health-name">${svc.name}</div>
-                    <div class="health-status ${status}">${statusText}</div>
-                </div>
-                <span class="health-ping">${ping}</span>
-                <div class="health-dot ${status}"></div>
-            </div>`;
-    }
-    grid.innerHTML = html;
-    const badge = document.getElementById('health-badge');
-    badge.textContent = allOk ? 'ALL SYSTEMS GO' : 'ISSUES DETECTED';
-    badge.style.background = allOk ? 'rgba(0,230,118,0.1)' : 'rgba(255,61,87,0.1)';
-    badge.style.color = allOk ? 'var(--green)' : 'var(--red)';
-}
-checkHealth();
-
-setInterval(updateAll, 5000);       // State + positions + assets every 5s
-setInterval(updateActivity, 3000);  // Activity feed every 3s (fast!)
-setInterval(updateAgentStatus, 5000); // Agent heartbeats every 5s
-setInterval(checkHealth, 15000);    // Health check every 15s
-setInterval(renderHeatmap, 60000);  // Heatmap refresh every 60s
 </script>
 </body>
 </html>
