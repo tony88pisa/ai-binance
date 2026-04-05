@@ -12,6 +12,8 @@ storage/*.sqlite
 storage/*.sqlite-wal
 storage/*.sqlite-shm
 storage/*.sqlite.bak
+system.db
+*.db
 
 # Logs
 logs/
