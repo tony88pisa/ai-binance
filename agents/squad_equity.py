@@ -25,7 +25,11 @@ from storage.repository import Repository
 import ai.types as ai_types
 import ai.decision_engine as decision_engine
 from services.exchange_executor import ExchangeExecutor
-from services.mock_equity_broker import MockEquityBroker
+class MockEquityBroker:
+    def __init__(self):
+        self.wallet = 10000.0
+    def get_balance(self): return self.wallet
+    def open_position(self, asset, price, size): return True
 from services.equity_provider import EquityProvider
 
 try:

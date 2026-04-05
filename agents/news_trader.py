@@ -41,8 +41,8 @@ class NewsTrader:
         self.repo = Repository()
         self.brain = get_superbrain()
         self.seen_hashes: set = set()
-        from ai.mcp_client import MCPClient
-        self.mcp = MCPClient()
+        from ai.mcp_client import TenguMCPClient
+        self.mcp = TenguMCPClient()
 
     def analyze_sentiment(self):
         """Fetch notizie REALI, analizza sentiment, e salva segnali."""

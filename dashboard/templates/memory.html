@@ -115,12 +115,15 @@
             </div>
         </aside>
         
-        <section class="chat-container">
-            <div id="loader" class="memory-loader">
-                <div class="spinner"></div>
-                <div style="font-size: 11px; font-family: 'JetBrains Mono'; color: var(--cyan);">CONNETTENDO AL SEMANTIC HUB...</div>
-            </div>
-            <iframe src="https://app.supermemory.ai/?chat=true" onload="document.getElementById('loader').style.opacity='0'; setTimeout(()=>document.getElementById('loader').style.display='none', 500)"></iframe>
+        <section class="chat-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px;">
+            <div style="font-size: 48px; margin-bottom: 20px;">🧠</div>
+            <h2 style="font-family: 'JetBrains Mono'; font-size: 18px; margin-bottom: 15px;">SUPERMEMORY CLOUD</h2>
+            <p style="color: var(--text-secondary); font-size: 13px; max-width: 400px; margin-bottom: 30px; line-height: 1.6;">
+                La piattaforma Supermemory utilizza l'autenticazione tramite GitHub, che per sicurezza impedisce l'incorporamento via iframe.
+            </p>
+            <a href="https://app.supermemory.ai" target="_blank" style="background: rgba(0, 212, 255, 0.1); border: 1px solid var(--cyan); color: var(--cyan); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 12px; letter-spacing: 1px; transition: 0.2s;">
+                APRI SUPERMEMORY IN UNA NUOVA SCHEDA ↗
+            </a>
         </section>
     </main>
 

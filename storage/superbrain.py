@@ -37,18 +37,36 @@ class SuperBrain:
     }
 
     def __init__(self):
+        self.local_file = os.path.join(os.path.dirname(__file__), "local_superbrain.json")
+        self.local_memories = []
+        if os.path.exists(self.local_file):
+            try:
+                with open(self.local_file, "r", encoding="utf-8") as f:
+                    self.local_memories = json.load(f)
+            except Exception:
+                pass
+
         api_key = os.getenv("SUPERMEMORY_API_KEY", "").strip()
         if Supermemory and api_key and api_key.startswith("sm_"):
             self.client = Supermemory(api_key=api_key)
+            self.cloud_active = True
             self.enabled = True
             logger.info("🧠 SuperBrain inizializzato (Supermemory Cloud attivo).")
         else:
             self.client = None
-            self.enabled = False
-            logger.warning("⚠️ SuperBrain offline (SUPERMEMORY_API_KEY assente).")
+            self.cloud_active = False
+            self.enabled = True # Always enabled due to local fallback
+            logger.warning("⚠️ SuperBrain Cloud offline (API Key assente). Fallback su file locale attivo.")
+
+    def _save_local(self):
+        try:
+            with open(self.local_file, "w", encoding="utf-8") as f:
+                json.dump(self.local_memories, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            logger.error(f"Errore al salvataggio locale di SuperBrain: {e}")
 
     def remember(self, category: str, content: str, metadata: Optional[Dict] = None) -> bool:
-        """Salva un ricordo in Supermemory con il container tag corretto."""
+        """Salva un ricordo in Supermemory e/o nel fallback locale."""
         if not self.enabled:
             return False
 
@@ -60,38 +78,66 @@ class SuperBrain:
         if metadata:
             payload += f"\n\nMetadata: {json.dumps(metadata, ensure_ascii=False)}"
 
-        try:
-            self.client.add(content=payload, containerTag=container)
-            logger.debug(f"Ricordo salvato in {container}: {content[:80]}...")
-            return True
-        except Exception as e:
-            logger.error(f"SuperBrain.remember failed ({container}): {e}")
-            return False
+        if self.cloud_active:
+            try:
+                self.client.add(content=payload, container_tags=[container])
+                logger.debug(f"Ricordo salvato cloud ({category}): {content[:80]}...")
+            except Exception as e:
+                logger.error(f"SuperBrain.remember failed cloud ({container}): {e}")
+        
+        # Local fallback execution
+        self.local_memories.append({
+            "category": category,
+            "container": container,
+            "timestamp": timestamp,
+            "content": content,
+            "payload": payload,
+            "metadata": metadata or {}
+        })
+        if len(self.local_memories) > 1000:
+            self.local_memories = self.local_memories[-1000:]
+        self._save_local()
+        return True
 
     def recall(self, query: str, category: Optional[str] = None, limit: int = 5) -> List[str]:
         """Ricerca semantica nella memoria. Ritorna lista di ricordi rilevanti."""
         if not self.enabled:
             return []
 
+        if not self.cloud_active:
+            # LOCAL FALLBACK
+            results = sorted(self.local_memories, key=lambda x: x["timestamp"], reverse=True)
+            if category:
+                results = [r for r in results if r["category"] == category]
+            
+            query_lower = query.lower()
+            matching = [r for r in results if query_lower in r["payload"].lower()]
+            if not matching:
+                matching = results
+                
+            return [str(r["payload"])[:500] for r in matching[:limit]]
+
+        # CLOUD RECALL
         try:
-            url = "https://api.supermemory.ai/v4/search"
-            headers = {
-                "Authorization": f"Bearer {self.client.api_key}",
-                "Content-Type": "application/json"
-            }
-            payload = {"q": query, "limit": limit}
-            res = requests.post(url, json=payload, headers=headers, timeout=10)
-            res.raise_for_status()
-            result = res.json()
-
+            container = self.CONTAINERS.get(category, f"tengu-{category}") if category else None
+            if container:
+                response = self.client.search.documents(q=query, container_tags=[container])
+            else:
+                response = self.client.search.documents(q=query)
+                
             memories = []
-            if isinstance(result, dict) and "results" in result:
-                for r in result["results"]:
-                    memories.append(str(r.get("content", r.get("memory", r)))[:500])
-
-            return memories
+            if hasattr(response, "results"):
+                for r in response.results:
+                    if hasattr(r, "content"):
+                        memories.append(str(r.content)[:500])
+                    elif isinstance(r, dict):
+                        memories.append(str(r.get("content", r.get("memory", r)))[:500])
+                    else:
+                        memories.append(str(r)[:500])
+                        
+            return memories[:limit]
         except Exception as e:
-            logger.error(f"SuperBrain.recall failed: {e}")
+            logger.error(f"SuperBrain.recall failed cloud: {e}")
             return []
 
     def recall_context(self, query: str, category: Optional[str] = None, limit: int = 3) -> str:

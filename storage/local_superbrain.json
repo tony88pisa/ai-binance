@@ -1,0 +1,35 @@
+[
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:55.315148+00:00",
+    "content": "PEPE: Decision: hold (conf: 30%) — Mixed signals; low data quality warrants caution.",
+    "payload": "[2026-04-05T17:06:55.315148+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Mixed signals; low data quality warrants caution.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "PEPE",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:07:33.804044+00:00",
+    "content": "WIF: Decision: hold (conf: 35%) — Bearish MACD and DOWN trend suggest waiting for reversal confirmation.",
+    "payload": "[2026-04-05T17:07:33.804044+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Bearish MACD and DOWN trend suggest waiting for reversal confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "WIF",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:08:08.282263+00:00",
+    "content": "BONK: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation on trend reversal.",
+    "payload": "[2026-04-05T17:08:08.282263+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation on trend reversal.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BONK",
+      "confidence": 30
+    }
+  }
+]

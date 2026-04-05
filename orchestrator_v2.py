@@ -54,8 +54,8 @@ def start_service(name, cmd, wait_port=None, timeout=40):
             cmd, 
             stdout=open(log_file, "w"), 
             stderr=subprocess.STDOUT, 
-            shell=True, 
-            creationflags=subprocess.CREATE_NEW_CONSOLE if "agents" in name.lower() else 0
+            shell=True,
+            creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
         )
     except Exception as e:
         print(f"[ERROR] Impossibile avviare {name}: {e}")
@@ -109,42 +109,41 @@ def main():
     start_service("Dashboard", f'"{PYTHON_EXE}" -m dashboard.app', wait_port=8088)
 
     # ═══════════════════════════════════════════
-    # FASE 3: CERVELLO OPERATIVO (AGENTI CORE)
+    # FASE 3: CERVELLO OPERATIVO E SICUREZZA (V11.5)
     # ═══════════════════════════════════════════
-    print("\n[FASE 3] Cervello Operativo (Agenti Core)...")
+    print("\n[FASE 3] Boot Sequence V11.5...")
     
-    # 3.1 Squad Crypto — Analista di mercato principale
-    start_service("Agents_Squad", f'"{PYTHON_EXE}" -m agents.squad_crypto')
-    time.sleep(2)
-    
-    # 3.2 Squad Equity — Analisi azioni e materie prime  
-    start_service("Agents_Equity", f'"{PYTHON_EXE}" -m agents.squad_equity')
-    time.sleep(2)
-    
-    # 3.3 Risk Controller — Supervisor Nemotron 120B
+    # 3.1 Risk Controller (Deve essere primo - imposta wallet)
     start_service("Agents_Risk", f'"{PYTHON_EXE}" -m agents.risk_controller')
     time.sleep(2)
-
-    # ═══════════════════════════════════════════
-    # FASE 4: INTELLIGENZA AVANZATA
-    # ═══════════════════════════════════════════
-    print("\n[FASE 4] Intelligenza Avanzata...")
     
-    # 4.1 Dream Agent — Consolidamento memoria ogni 30 min
-    #     + Skill Generator: auto-genera nuove strategie da NVIDIA Teacher
-    #     + 4-Phase Prompt: Orient → Gather → Consolidate → Prune
-    start_service("Agents_Dream", f'"{PYTHON_EXE}" -m agents.dream_agent')
-    time.sleep(2)
-    
-    # 4.2 Coordinator — Supervisore globale con circuit breaker
+    # 3.2 Coordinator (Deve essere secondo - monitora tutti)
     start_service("Agents_Coordinator", f'"{PYTHON_EXE}" -m agents.coordinator')
     time.sleep(2)
     
-    # 4.3 News Trader V2 — Sentiment reale da RSS + Fear & Greed
+    # 3.3 Dream Agent (Sintesi e memoria)
+    start_service("Agents_Dream", f'"{PYTHON_EXE}" -m agents.dream_agent')
+    time.sleep(2)
+    
+    # 3.4 Squad Crypto (Decisionale)
+    start_service("Agents_Squad", f'"{PYTHON_EXE}" -m agents.squad_crypto')
+    time.sleep(2)
+    
+    # 3.5 Binance Executor (Braccio armato per acquisto/vendita)
+    start_service("Agents_Executor", f'"{PYTHON_EXE}" -m agents.binance_executor')
+    time.sleep(2)
+
+    # ═══════════════════════════════════════════
+    # FASE 4: SERVIZI SECONDARI
+    # ═══════════════════════════════════════════
+    print("\n[FASE 4] Servizi Secondari...")
+    
+    start_service("Agents_Equity", f'"{PYTHON_EXE}" -m agents.squad_equity')
+    time.sleep(2)
+    
     start_service("Agents_News", f'"{PYTHON_EXE}" -m agents.news_trader')
     time.sleep(2)
 
-    # 4.4 Auto Optimizer — Brute Force offline
     start_service("Auto_Optimizer", f'"{PYTHON_EXE}" -m ai.auto_optimizer')
 
     # ═══════════════════════════════════════════
