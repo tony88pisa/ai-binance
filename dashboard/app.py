@@ -131,6 +131,12 @@ if WEB_DIST_DIR.exists():
     app.mount("/", StaticFiles(directory=str(WEB_DIST_DIR), html=True), name="frontend")
 else:
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+    
+    # Se il frontend Node.js non esiste, il sistema deve reindirizzare alla dashboard python (Jinja2) predefinita
+    from fastapi.responses import RedirectResponse
+    @app.get("/", include_in_schema=False)
+    def root_redirect():
+        return RedirectResponse(url="/commander")
 
 if __name__ == "__main__":
     import uvicorn
