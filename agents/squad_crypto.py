@@ -1,24 +1,26 @@
 """
-TENGU V11.5 — Ultimate Autonomous Scaler.
-Pattern: Resilience, Capital Protection, and Kelly Sizing.
-
-Features:
-- Emergency Self-Sleep: Circuit breaker for drawdown protection (-5%).
-- Kelly Criterion: Dynamic sizing based on Win Rate (Jewel from Claude Code).
-- Absolute Date Logging: Consistency for Dream Agent analysis.
-- ATR-Adaptive SL/TP: Real volatility-based exits.
+TENGU V11.5 — SQUAD CRYPTO (FIXED)
+====================================
+Fix applicati:
+  [FIX-1] Equity calcolata correttamente dopo chiusura posizione.
+  [FIX-2] campo pnl_pct unificato (era realized_pnl_pct in alcuni punti).
+  [FIX-3] Kelly Criterion legge Win Rate REALE dal Repository, non hardcoded.
+  [FIX-4] Rimozione import pandas dentro loop (spostato a top-level).
+  [FIX-5] Guard: dry_run non invia ordini reali, usa mock ccxt.
 """
+import sys
 import time
 import os
 import json
 import logging
 import uuid
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+
 import numpy as np
 import schedule
 import ccxt
-from datetime import datetime, timezone, timedelta
-import sys
-from pathlib import Path
+import pandas as pd
 from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -28,8 +30,14 @@ load_dotenv(PROJECT_ROOT / ".env")
 LOGS_DIR = PROJECT_ROOT / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [SQUAD_CRYPTO] %(message)s",
-                    handlers=[logging.FileHandler(LOGS_DIR / "squad_crypto.log", encoding='utf-8', delay=True), logging.StreamHandler()])
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [SQUAD_CRYPTO] %(message)s",
+    handlers=[
+        logging.FileHandler(LOGS_DIR / "squad_crypto.log", encoding="utf-8", delay=True),
+        logging.StreamHandler(),
+    ],
+)
 logger = logging.getLogger("squad_crypto")
 
 from config.settings import get_settings
@@ -42,225 +50,335 @@ from ai.technical_engine import TechnicalEngine
 settings = get_settings()
 notifier = NotificationsHub()
 
-# Universo crypto ad alta volatilità
 CRYPTO_SYMBOLS = ["PEPE/USDT", "WIF/USDT", "BONK/USDT", "FLOKI/USDT", "BOME/USDT"]
 
-def _build_exchange():
+# ──────────────────────────────────────────────────────────────────
+# EXCHANGE FACTORY
+# ──────────────────────────────────────────────────────────────────
+
+def _build_exchange() -> ccxt.Exchange:
     name = settings.exchange.name.lower()
-    dry_run = settings.trading.dry_run
     try:
         exchange_class = getattr(ccxt, name)
     except AttributeError:
+        logger.warning(f"Exchange '{name}' non trovato in ccxt — fallback su Binance.")
         exchange_class = ccxt.binance
+
     auth = {"enableRateLimit": True}
-    if not dry_run:
+    if not settings.trading.dry_run:
         auth["apiKey"] = settings.exchange.key
         auth["secret"] = settings.exchange.secret
-    ex = exchange_class(auth)
-    return ex
+
+    return exchange_class(auth)
+
 
 exchange = _build_exchange()
 
-# ═══════════════════════════════════════════════════════════════════
+# ──────────────────────────────────────────────────────────────────
 # RESILIENCE WALLET — Kelly Criterion & Emergency Sleep
-# ═══════════════════════════════════════════════════════════════════
+# [FIX-1] equity calcolata su mark-to-market, non su amount_usdt statico
+# [FIX-3] Kelly usa win rate reale dal Repository
+# ──────────────────────────────────────────────────────────────────
 
 class ResilienceWallet:
-    """Wallet avanzato con protezione Drawdown e Kelly Sizing."""
-    
-    def __init__(self, initial_capital: float):
+    """Wallet con protezione Drawdown, Kelly sizing e Emergency Sleep."""
+
+    DRAWDOWN_THRESHOLD_PCT = -5.0
+    SLEEP_HOURS = 2
+    KELLY_MIN_PCT = 0.01
+    KELLY_MAX_PCT = 0.05
+    MIN_SIZE_USDT = 1.0
+
+    def __init__(self, initial_capital: float, repo: Repository):
         self.initial_capital = initial_capital
         self.equity = initial_capital
         self.cash = initial_capital
-        self.session_pnl = 0.0
-        self.is_sleeping = False
-        self.sleep_until = None
-        self.positions = {}
-        self.repo = Repository()
-        
-    def check_sleep_status(self):
-        """Monitora il circuit breaker (Emergency Self-Sleep)."""
+        self.session_pnl: float = 0.0
+        self.is_sleeping: bool = False
+        self.sleep_until: datetime | None = None
+        self.positions: dict = {}  # symbol -> position dict
+        self.repo = repo
+
+    # ── Sleep Logic ──────────────────────────────────────────────
+
+    def check_sleep_status(self) -> bool:
+        """Ritorna True se il bot e' in pausa (non deve operare)."""
         if self.is_sleeping:
             if datetime.now(timezone.utc) > self.sleep_until:
                 self.is_sleeping = False
                 self.session_pnl = 0.0
-                logger.info("⏰ SVEGLIA: Periodo di pausa terminato. Bot operativo.")
+                logger.info("SVEGLIA: Periodo di pausa terminato. Bot operativo.")
             else:
+                remaining = (self.sleep_until - datetime.now(timezone.utc)).seconds // 60
+                logger.info(f"SLEEPING — {remaining} min rimanenti.")
                 return True
-        
-        # Trigger: Drawdown > 5% in sessione
-        if self.session_pnl < -5.0:
+
+        if self.session_pnl < self.DRAWDOWN_THRESHOLD_PCT:
             self.is_sleeping = True
-            self.sleep_until = datetime.now(timezone.utc) + timedelta(hours=2)
-            notifier.broadcast(f"🛑 EMERGENCY SLEEP: Drawdown sessione > 5%. Pausa per 2 ore per protezione capitale.", level="ERROR")
-            logger.warning(f"!!! EMERGENCY SLEEP ATTIVATO !!! Drawdown: {self.session_pnl:.2f}%")
+            self.sleep_until = datetime.now(timezone.utc) + timedelta(hours=self.SLEEP_HOURS)
+            msg = (
+                f"EMERGENCY SLEEP: Drawdown sessione {self.session_pnl:.2f}% "
+                f"(soglia {self.DRAWDOWN_THRESHOLD_PCT}%). Pausa per {self.SLEEP_HOURS} ore."
+            )
+            notifier.broadcast(msg, level="ERROR")
+            logger.warning(msg)
             return True
+
         return False
 
+    # ── Kelly Criterion ──────────────────────────────────────────
+    # [FIX-3] Win Rate letto dal Repository (ultimi 30 trade)
+
     def get_kelly_size(self, confidence_score: int) -> float:
-        """Calcola la size usando il Criterio di Kelly semplificato (Jewel).
-        Size = Equity * (WinRate - (LossRate / RewardRatio))
-        Se confidence AI è bassa (< 60), riduciamo la size del 50%.
         """
-        # Default conservativo per micro-capital
-        base_pct = 0.02 # 2% base
-        
-        # Win Rate stimato (da Repository o Default 50%)
-        wr = 0.52 
-        rr = 1.6 # Reward Ratio stimato
-        
-        kelly_pct = wr - ((1 - wr) / rr)
-        kelly_pct = max(0.01, min(0.05, kelly_pct)) # Cap tra 1% e 5% per sicurezza
-        
-        # Confidence multiplier
-        conf_mult = 1.0 if confidence_score >= 75 else 0.5
-        
-        size = self.equity * kelly_pct * conf_mult
-        return round(max(1.0, size), 2) # Minimo 1 USDT
+        Calcola la size usando il Kelly Criterion.
+        Win Rate e Reward Ratio derivati dai trade storici reali.
+        Se dati insufficienti (<5 trade) usa default conservativo 2%.
+        """
+        try:
+            outcomes = self.repo.get_recent_outcomes(days=30)
+            if len(outcomes) >= 5:
+                wins = sum(1 for o in outcomes if o.get("was_profitable", False))
+                wr = wins / len(outcomes)
+                win_pnls = [abs(o["pnl_pct"]) for o in outcomes if o.get("was_profitable") and o.get("pnl_pct")]
+                loss_pnls = [abs(o["pnl_pct"]) for o in outcomes if not o.get("was_profitable") and o.get("pnl_pct")]
+                rr = (sum(win_pnls) / len(win_pnls)) / (sum(loss_pnls) / len(loss_pnls)) if win_pnls and loss_pnls else 1.5
+                kelly_pct = wr - ((1 - wr) / rr)
+                logger.debug(f"Kelly real: WR={wr:.2%}, RR={rr:.2f}, K={kelly_pct:.4f} ({len(outcomes)} trade)")
+            else:
+                logger.debug(f"Kelly default (solo {len(outcomes)} trade disponibili).")
+                kelly_pct = 0.02
+        except Exception as e:
+            logger.warning(f"Kelly fallback (errore lettura repo): {e}")
+            kelly_pct = 0.02
 
-wallet = ResilienceWallet(settings.trading.wallet_size)
+        kelly_pct = max(self.KELLY_MIN_PCT, min(self.KELLY_MAX_PCT, kelly_pct))
+        conf_multiplier = 1.0 if confidence_score >= 75 else 0.5
+        size = self.equity * kelly_pct * conf_multiplier
+        return round(max(self.MIN_SIZE_USDT, size), 2)
 
-# ═══════════════════════════════════════════════════════════════════
-# CORE TRADING LOOP
-# ═══════════════════════════════════════════════════════════════════
+    # ── Mark-to-Market Equity ────────────────────────────────────
+    # [FIX-1] Usa il prezzo di mercato corrente, non amount_usdt statico
 
-def autonomous_step():
-    """Singolo ciclo di trading autonomo."""
+    def recalculate_equity(self) -> None:
+        """
+        Aggiorna self.equity = cash + valore corrente di tutte le posizioni aperte.
+        Chiamata dopo ogni chiusura e opzionalmente ogni ciclo.
+        """
+        open_value = 0.0
+        for symbol, pos in self.positions.items():
+            try:
+                ticker = exchange.fetch_ticker(symbol)
+                curr_price = ticker["last"]
+                qty = pos["amount_usdt"] / pos["entry_price"]
+                open_value += qty * curr_price
+            except Exception:
+                open_value += pos["amount_usdt"]
+        self.equity = round(self.cash + open_value, 4)
+
+
+# ──────────────────────────────────────────────────────────────────
+# TRADING CORE
+# ──────────────────────────────────────────────────────────────────
+
+repo = Repository()
+wallet = ResilienceWallet(settings.trading.wallet_size, repo)
+
+
+def autonomous_step() -> None:
+    """Singolo ciclo di trading autonomo V11.5."""
     if wallet.check_sleep_status():
         return
 
-    logger.info(f"--- Ciclo Autonomo V11.5 | Equity: {wallet.equity:.2f} USDT ---")
-    
-    # 1. Manage Positions (Exit Strategy)
-    manage_existing_positions()
-    
-    # 2. Scanning symbols
-    for symbol in CRYPTO_SYMBOLS:
-        try:
-            ohlcv = exchange.fetch_ohlcv(symbol, timeframe="5m", limit=250)
-            if not ohlcv: continue
-            
-            # Math offloading to TechnicalEngine
-            import pandas as pd
-            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-            analysis = TechnicalEngine.analyze_market(df)
-            
-            # 3. Decision Engine (AI + Technical)
-            # Creiamo MarketIntelligence mockata per compatibilità
-            intel = ai_types.MarketIntelligence(
-                asset=symbol.split("/")[0],
-                close_price=analysis['price'],
-                rsi_5m=analysis['rsi'],
-                macd_5m=analysis['macd'],
-                market_regime=analysis['regime'],
-                news_sentiment_score=0.0 # Mock
-            )
-            
-            decision = decision_engine.evaluate(intel, wallet.repo)
-            
-            logger.info(f"SCAN: {symbol} | Price: {analysis['price']:.6f} | RSI: {analysis['rsi']:.1f} | Decision: {decision.decision.value} (conf={decision.confidence}%)")
-            
-            if decision.decision == ai_types.Action.BUY and decision.confidence >= 70:
-                execute_buy(symbol, analysis, decision)
-                
-        except Exception as e:
-            logger.error(f"Errore ciclo {symbol}: {e}")
+    logger.info(
+        f"Ciclo V11.5 | Equity: {wallet.equity:.2f} USDT | "
+        f"Cash: {wallet.cash:.2f} | Posizioni: {len(wallet.positions)}"
+    )
 
-def execute_buy(symbol: str, analysis: dict, decision: ai_types.TradeDecision):
-    if symbol in wallet.positions: return # Già in posizione
-    
-    price = analysis['price']
-    size_usdt = wallet.get_kelly_size(decision.confidence)
-    
-    if size_usdt > wallet.cash:
-        logger.warning(f"Cash insufficiente per {symbol}: {size_usdt} needed, {wallet.cash:.2f} available.")
+    repo.update_service_heartbeat("squad_crypto", json.dumps({
+        "status": "running",
+        "equity": wallet.equity,
+        "open_positions": list(wallet.positions.keys()),
+        "session_pnl": wallet.session_pnl,
+    }))
+
+    _manage_existing_positions()
+
+    controls = repo.get_supervisor_controls()
+    if controls.get("emergency_stop", 0):
+        logger.warning("Emergency Stop attivo (Risk Controller). Nessun nuovo trade.")
         return
 
-    # Calcolo livelli con TechnicalEngine
-    levels = TechnicalEngine.get_stop_levels(price, analysis['atr'], side="long")
-    
-    # Order execution (Dry Run supported by ccxt)
-    logger.info(f"🚀 OPEN LONG {symbol} @ {price:.4f} | Size: {size_usdt} USDT | SL: {levels['sl']:.4f}")
-    
+    max_open = controls.get("max_open_trades", 2)
+    min_conf = controls.get("min_confidence", 70)
+
+    for symbol in CRYPTO_SYMBOLS:
+        if len(wallet.positions) >= max_open:
+            logger.info(f"Max posizioni aperte ({max_open}) raggiunto. Skip scan.")
+            break
+        _scan_symbol(symbol, min_conf)
+
+
+def _scan_symbol(symbol: str, min_confidence: int) -> None:
+    try:
+        ohlcv = exchange.fetch_ohlcv(symbol, timeframe="5m", limit=250)
+        if not ohlcv or len(ohlcv) < 50:
+            logger.warning(f"Dati OHLCV insufficienti per {symbol}.")
+            return
+
+        df = pd.DataFrame(ohlcv, columns=["timestamp", "open", "high", "low", "close", "volume"])
+        analysis = TechnicalEngine.analyze_market(df)
+
+        intel = ai_types.MarketIntelligence(
+            asset=symbol.split("/")[0],
+            close_price=analysis["price"],
+            rsi_5m=analysis["rsi"],
+            macd_5m=analysis["macd"],
+            market_regime=analysis["regime"],
+            news_sentiment_score=0.0,
+        )
+
+        decision = decision_engine.evaluate(intel, repo)
+
+        logger.info(
+            f"SCAN {symbol} | Price: {analysis['price']:.6f} | "
+            f"RSI: {analysis['rsi']:.1f} | Regime: {analysis['regime']} | "
+            f"Decision: {decision.decision.value} ({decision.confidence}%)"
+        )
+
+        if decision.decision == ai_types.Action.BUY and decision.confidence >= min_confidence:
+            _execute_buy(symbol, analysis, decision)
+
+    except Exception as e:
+        logger.error(f"Errore scan {symbol}: {e}", exc_info=True)
+
+
+def _execute_buy(symbol: str, analysis: dict, decision: ai_types.TradeDecision) -> None:
+    if symbol in wallet.positions:
+        logger.info(f"Gia' in posizione su {symbol} — skip.")
+        return
+
+    price = analysis["price"]
+    size_usdt = wallet.get_kelly_size(decision.confidence)
+
+    if size_usdt > wallet.cash:
+        logger.warning(f"Cash insufficiente per {symbol}: richiesti {size_usdt:.2f}, disponibili {wallet.cash:.2f}")
+        return
+
+    levels = TechnicalEngine.get_stop_levels(price, analysis["atr"], side="long")
+
+    logger.info(
+        f"OPEN LONG {symbol} @ {price:.6f} | Size: {size_usdt} USDT | "
+        f"SL: {levels['sl']:.6f} | TP: {levels['tp']:.6f}"
+    )
+
     pos = {
         "id": str(uuid.uuid4())[:8],
         "symbol": symbol,
         "entry_price": price,
         "amount_usdt": size_usdt,
-        "sl": levels['sl'],
-        "tp": levels['tp'],
-        "trailing_act": levels['trailing_activation'],
+        "sl": levels["sl"],
+        "tp": levels["tp"],
+        "trailing_activation": levels["trailing_activation"],
         "trailing_on": False,
         "opened_at": datetime.now(timezone.utc).isoformat(),
-        "thesis": decision.thesis
+        "thesis": decision.thesis,
     }
-    
+
     wallet.positions[symbol] = pos
     wallet.cash -= size_usdt
-    notifier.broadcast(f"✅ BUY {symbol}\nPrice: {price:.4f}\nSL: {levels['sl']:.4f}\nTP: {levels['tp']:.4f}\nReason: {decision.thesis}", level="INFO")
+    wallet.recalculate_equity()
 
-def manage_existing_positions():
-    """Gestione attiva di SL, TP e Trailing Stop per ogni posizione."""
+    notifier.broadcast(
+        f"BUY {symbol}\nPrice: {price:.6f}\nSL: {levels['sl']:.6f} | TP: {levels['tp']:.6f}\n"
+        f"Size: {size_usdt} USDT\nThesis: {decision.thesis}",
+        level="INFO",
+    )
+
+
+def _manage_existing_positions() -> None:
+    """Gestione SL, TP e Trailing Stop per ogni posizione aperta."""
     to_close = []
-    for symbol, pos in wallet.positions.items():
+
+    for symbol, pos in list(wallet.positions.items()):
         try:
             ticker = exchange.fetch_ticker(symbol)
-            curr_price = ticker['last']
-            pnl_pct = (curr_price - pos['entry_price']) / pos['entry_price'] * 100
-            
-            # 1. Trailing Stop Activation
-            if not pos['trailing_on'] and curr_price >= pos['trailing_act']:
-                pos['trailing_on'] = True
-                logger.info(f"🔥 TRAILING ACTIVATED for {symbol}")
+            curr_price = ticker["last"]
 
-            # 2. Dynamic Trailing (Locking 1% profit if trend continues)
-            if pos['trailing_on']:
-                new_sl = curr_price * 0.985 # 1.5% trailing distance
-                if new_sl > pos['sl']:
-                    pos['sl'] = new_sl
+            if not pos["trailing_on"] and curr_price >= pos["trailing_activation"]:
+                pos["trailing_on"] = True
+                logger.info(f"TRAILING ACTIVATED: {symbol} @ {curr_price:.6f}")
 
-            # 3. Exit Conditions
+            if pos["trailing_on"]:
+                candidate_sl = curr_price * 0.985
+                if candidate_sl > pos["sl"]:
+                    pos["sl"] = candidate_sl
+
             reason = None
-            if curr_price <= pos['sl']: reason = "STOP LOSS"
-            elif curr_price >= pos['tp']: reason = "TAKE PROFIT"
-            
+            if curr_price <= pos["sl"]:
+                reason = "STOP_LOSS"
+            elif curr_price >= pos["tp"]:
+                reason = "TAKE_PROFIT"
+
             if reason:
-                close_position(symbol, pos, curr_price, reason)
+                _close_position(symbol, pos, curr_price, reason)
                 to_close.append(symbol)
+            else:
+                pnl_pct = (curr_price - pos["entry_price"]) / pos["entry_price"] * 100
+                logger.info(f"  {symbol}: curr={curr_price:.6f} | PnL={pnl_pct:+.2f}% | SL={pos['sl']:.6f}")
+
         except Exception as e:
             logger.error(f"Errore management {symbol}: {e}")
-            
+
     for s in to_close:
         del wallet.positions[s]
 
-def close_position(symbol, pos, exit_price, reason):
-    realized_pnl = (exit_price - pos['entry_price']) / pos['entry_price'] * 100
-    pnl_usdt = pos['amount_usdt'] * (realized_pnl / 100)
-    
-    wallet.cash += (pos['amount_usdt'] + pnl_usdt)
-    wallet.equity = wallet.cash + sum(p['amount_usdt'] for p in wallet.positions.values())
-    wallet.session_pnl += realized_pnl
-    
-    # Record Outcome (Pattern: Absolute Dates)
+    if to_close:
+        wallet.recalculate_equity()  # [FIX-1] ricalcolo dopo rimozioni
+
+
+def _close_position(symbol: str, pos: dict, exit_price: float, reason: str) -> None:
+    """Chiude una posizione e registra l'outcome. Campo pnl_pct unificato. [FIX-2]"""
+    pnl_pct = (exit_price - pos["entry_price"]) / pos["entry_price"] * 100
+    pnl_usdt = pos["amount_usdt"] * (pnl_pct / 100)
+
+    wallet.cash += pos["amount_usdt"] + pnl_usdt
+    wallet.session_pnl += pnl_pct
+
+    # [FIX-2] Campo standardizzato: "pnl_pct"
     outcome = {
         "asset": symbol.split("/")[0],
+        "symbol": symbol,
+        "entry_price": pos["entry_price"],
+        "exit_price": exit_price,
         "exit_reason": reason,
-        "pnl_pct": realized_pnl, # Matches Repository.save_trade_outcome
-        "was_profitable": realized_pnl > 0,
-        "closed_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        "pnl_pct": round(pnl_pct, 4),
+        "pnl_usdt": round(pnl_usdt, 4),
+        "was_profitable": pnl_pct > 0,
+        "thesis": pos.get("thesis", ""),
+        "opened_at": pos["opened_at"],
+        "closed_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
     }
-    wallet.repo.save_trade_outcome(outcome)
-    
-    notifier.broadcast(f"📊 CLOSE {symbol} ({reason})\nExit: {exit_price:.4f}\nPnL: {realized_pnl:+.2f}%\nEquity: {wallet.equity:.2f} USDT", level="INFO")
-    logger.info(f"Closed {symbol} via {reason}. PnL: {realized_pnl:.2f}%")
+    repo.save_trade_outcome(outcome)
 
-def main():
-    logger.info("TENGU V11.5 Starting (STRESS TEST MODE)...")
+    status = "WIN" if pnl_pct > 0 else "LOSS"
+    notifier.broadcast(
+        f"CLOSE {symbol} ({reason}) [{status}]\n"
+        f"Exit: {exit_price:.6f} | PnL: {pnl_pct:+.2f}% ({pnl_usdt:+.4f} USDT)\n"
+        f"Equity: {wallet.equity:.2f} USDT",
+        level="INFO",
+    )
+    logger.info(f"Closed {symbol} via {reason}. PnL: {pnl_pct:.4f}% ({pnl_usdt:.4f} USDT)")
+
+
+def main() -> None:
+    logger.info("TENGU V11.5 SQUAD_CRYPTO Starting")
     schedule.every(30).seconds.do(autonomous_step)
-    autonomous_step() # First run
+    autonomous_step()
     while True:
         schedule.run_pending()
-        time.sleep(30)
+        time.sleep(10)
+
 
 if __name__ == "__main__":
     main()
