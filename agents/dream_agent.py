@@ -24,7 +24,7 @@ settings = get_settings()
 # Logging setup
 LOGS_DIR = PROJECT_ROOT / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
-log_path = LOG_DIR / "dream_agent.log" if 'LOG_DIR' in locals() else LOGS_DIR / "dream_agent.log"
+log_path = LOGS_DIR / "dream_agent.log"
 
 logging.basicConfig(
     level=logging.INFO,

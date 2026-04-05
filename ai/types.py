@@ -111,6 +111,7 @@ class MarketIntelligence:
     top_headlines: list[str] = field(default_factory=list)
     macro_risk_level: float = 0.5
     macro_risk_flags: list[str] = field(default_factory=list)
+    pnl_24h: float = 0.0  # Added for Cost-Aware Guard
 
     # Memory
     historical_lessons: str = ""
