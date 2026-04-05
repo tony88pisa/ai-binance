@@ -332,7 +332,11 @@ def get_logs(source: str = "daemon", lines: int = 40):
         "evolution_error": "evolution_loop_error.log",
         "cloudflare": "cloudflared.log",
         "supervisor": "supervisor.log",
-        "analyzer": "analyzer.log"
+        "analyzer": "analyzer.log",
+        "dream_agent": "dream_agent.log",
+        "coordinator": "coordinator.log",
+        "controller": "controller.log",
+        "squad_crypto": "squad_crypto.log"
     }
     fname = allowed.get(source)
     if not fname:

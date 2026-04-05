@@ -1,10 +1,10 @@
 {
   "session_start": "2026-04-03T17:58:21.455447+00:00",
-  "total_calls": 433,
-  "total_input_tokens": 1550332,
-  "total_output_tokens": 113729,
-  "total_cost_usd": 0.55646,
-  "total_duration_ms": 12350817,
+  "total_calls": 438,
+  "total_input_tokens": 1556124,
+  "total_output_tokens": 115398,
+  "total_cost_usd": 0.560358,
+  "total_duration_ms": 12406012,
   "calls_by_model": {
     "qwen3:8b": {
       "calls": 160,
@@ -19,16 +19,16 @@
       "cost_usd": 0.00021
     },
     "nvidia/nemotron-3-super-120b-a12b": {
-      "calls": 10,
-      "input_tokens": 25950,
-      "output_tokens": 3233,
-      "cost_usd": 0.014913
+      "calls": 11,
+      "input_tokens": 28710,
+      "output_tokens": 3579,
+      "cost_usd": 0.016501
     },
     "gemma4:e4b": {
-      "calls": 197,
-      "input_tokens": 763518,
-      "output_tokens": 92115,
-      "cost_usd": 0.437023
+      "calls": 201,
+      "input_tokens": 766550,
+      "output_tokens": 93438,
+      "cost_usd": 0.439333
     },
     "llama3.2": {
       "calls": 64,
@@ -39,10 +39,10 @@
   },
   "calls_by_caller": {
     "decision_engine": {
-      "calls": 421,
-      "input_tokens": 1524082,
-      "output_tokens": 110396,
-      "cost_usd": 0.541337
+      "calls": 425,
+      "input_tokens": 1527114,
+      "output_tokens": 111719,
+      "cost_usd": 0.543647
     },
     "sim_test": {
       "calls": 2,
@@ -57,68 +57,13 @@
       "cost_usd": 0.00208
     },
     "risk_controller": {
-      "calls": 9,
-      "input_tokens": 22149,
-      "output_tokens": 2933,
-      "cost_usd": 0.012833
+      "calls": 10,
+      "input_tokens": 24909,
+      "output_tokens": 3279,
+      "cost_usd": 0.014421
     }
   },
   "recent_calls": [
-    {
-      "timestamp": "2026-04-04T22:31:31.728263+00:00",
-      "model": "gemma4:e4b",
-      "caller": "decision_engine",
-      "input_tokens": 4096,
-      "output_tokens": 505,
-      "duration_ms": 31715,
-      "cost_usd": 0.002351,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-04T22:31:58.748497+00:00",
-      "model": "gemma4:e4b",
-      "caller": "decision_engine",
-      "input_tokens": 4096,
-      "output_tokens": 365,
-      "duration_ms": 26663,
-      "cost_usd": 0.002267,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-04T22:33:03.433055+00:00",
-      "model": "gemma4:e4b",
-      "caller": "decision_engine",
-      "input_tokens": 4096,
-      "output_tokens": 398,
-      "duration_ms": 64065,
-      "cost_usd": 0.002287,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-04T22:34:19.648240+00:00",
-      "model": "gemma4:e4b",
-      "caller": "decision_engine",
-      "input_tokens": 4096,
-      "output_tokens": 518,
-      "duration_ms": 75738,
-      "cost_usd": 0.002359,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-04T22:35:27.526232+00:00",
-      "model": "gemma4:e4b",
-      "caller": "decision_engine",
-      "input_tokens": 4096,
-      "output_tokens": 513,
-      "duration_ms": 67419,
-      "cost_usd": 0.002356,
-      "success": true,
-      "error": null
-    },
     {
       "timestamp": "2026-04-04T22:36:25.089795+00:00",
       "model": "gemma4:e4b",
@@ -611,6 +556,61 @@
       "output_tokens": 314,
       "duration_ms": 10629,
       "cost_usd": 0.000567,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T00:29:10.281957+00:00",
+      "model": "gemma4:e4b",
+      "caller": "decision_engine",
+      "input_tokens": 758,
+      "output_tokens": 323,
+      "duration_ms": 11028,
+      "cost_usd": 0.000573,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T00:30:28.072986+00:00",
+      "model": "gemma4:e4b",
+      "caller": "decision_engine",
+      "input_tokens": 758,
+      "output_tokens": 325,
+      "duration_ms": 11227,
+      "cost_usd": 0.000574,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T00:31:43.855385+00:00",
+      "model": "gemma4:e4b",
+      "caller": "decision_engine",
+      "input_tokens": 758,
+      "output_tokens": 328,
+      "duration_ms": 9620,
+      "cost_usd": 0.000576,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T00:32:49.306556+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 2760,
+      "output_tokens": 346,
+      "duration_ms": 13239,
+      "cost_usd": 0.001588,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T00:32:51.574141+00:00",
+      "model": "gemma4:e4b",
+      "caller": "decision_engine",
+      "input_tokens": 758,
+      "output_tokens": 347,
+      "duration_ms": 10081,
+      "cost_usd": 0.000587,
       "success": true,
       "error": null
     }

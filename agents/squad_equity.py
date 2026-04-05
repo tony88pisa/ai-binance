@@ -4,6 +4,7 @@ import logging
 import uuid
 import schedule
 from datetime import datetime, timezone
+import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
@@ -15,9 +16,9 @@ load_dotenv(PROJECT_ROOT / ".env")
 LOGS_DIR = PROJECT_ROOT / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [ANALYZER] %(message)s",
-                    handlers=[logging.FileHandler(LOGS_DIR / "analyzer.log", encoding='utf-8'), logging.StreamHandler()])
-logger = logging.getLogger("analyzer")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [SQUAD_EQUITY] %(message)s",
+                    handlers=[logging.FileHandler(LOGS_DIR / "squad_equity.log", encoding='utf-8', delay=True), logging.StreamHandler()])
+logger = logging.getLogger("squad_equity")
 
 from config.settings import get_settings
 from storage.repository import Repository

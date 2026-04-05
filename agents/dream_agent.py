@@ -13,6 +13,10 @@ from config.settings import get_settings
 from storage.repository import Repository
 from storage.memory_manager import MemoryManager
 from telemetry.cost_tracker import get_cost_tracker
+from ai.skill_generator import SkillGenerator
+from ai.skill_validator import SkillValidator
+from ai.promotion_gate import PromotionGate
+from ai.nvidia_teacher import NvidiaTeacher
 
 settings = get_settings()
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -94,7 +98,7 @@ class DreamAgent:
         
         prompt = f"""
         You are the 'Auto-Dream' consolidation layer for an autonomous crypto trading bot.
-        You wake up every 2 hours to process recent memories and synthesize a tactical strategy.
+        You wake up every 30 minutes to process recent memories and synthesize a tactical strategy.
         
         PAST 24H PERFORMANCE:
         - Trades: {perf['total_trades']}
@@ -105,8 +109,9 @@ class DreamAgent:
         {feedback}
         
         TASK:
-        Write a concise, 3-to-4 bullet point "Tactical Strategy" for the next 2 hours.
+        Write a concise, 3-to-4 bullet point "Tactical Strategy" for the next 30 minutes.
         Resolve any contradictions in the raw feedback. Focus on what the Analyzer agent should look for right now (e.g., "avoid breakouts due to chop", "increase confidence threshold", "favor small pullbacks on SOL").
+        Be aggressive in adapting to rapidly changing conditions.
         
         Do NOT write code. Output only the plain Markdown bullet points.
         """
@@ -149,13 +154,38 @@ class DreamAgent:
         except Exception as e:
             logger.error(f"Dream LLM synthesis failed: {e}")
             
-        # 4. Prune
+        # 4. Skill Generation (Auto-Evolve)
+        try:
+            logger.info("Running Skill Generation pipeline...")
+            teacher = NvidiaTeacher(self.repo)
+            analysis = teacher.analyze()
+            if analysis.get("findings"):
+                gen = SkillGenerator()
+                candidates = gen.generate_from_findings(analysis)
+                validator = SkillValidator(self.repo)
+                gate = PromotionGate(self.repo)
+                for skill in candidates:
+                    val_result = validator.validate(skill)
+                    if gate.evaluate(skill["skill_id"], val_result):
+                        self.repo.save_skill_candidate(skill, status="approved")
+                        logger.info(f"✅ New Skill promoted: {skill['name']} (edge: {skill['expected_edge'][:60]})")
+                    else:
+                        self.repo.save_skill_candidate(skill, status="candidate")
+                        logger.info(f"📋 Skill candidate saved: {skill['name']} (reason: {val_result.get('reason', 'N/A')})")
+                logger.info(f"Skill pipeline complete: {len(candidates)} candidates processed.")
+            else:
+                logger.info("No findings from NVIDIA Teacher. Skill generation skipped.")
+        except Exception as e:
+            logger.error(f"Skill generation failed (non-critical): {e}")
+        
+        # 5. Prune old feedback
         self.prune_old_feedback()
         
-        # Heartbeat
+        # 6. Heartbeat
         self.repo.update_service_heartbeat("dream_agent", json.dumps({
             "status": "sleeping",
-            "last_dream": datetime.now(timezone.utc).isoformat()
+            "last_dream": datetime.now(timezone.utc).isoformat(),
+            "cycle_interval": "30min"
         }))
 
 if __name__ == "__main__":
@@ -171,7 +201,7 @@ if __name__ == "__main__":
     logger.info("Dream Agent active. Scheduled to run every 2 hours.")
     
     # Schedule every 2 hours
-    schedule.every(2).hours.do(da.run_dream_cycle)
+    schedule.every(30).minutes.do(da.run_dream_cycle)
     
     # Run once on startup
     da.run_dream_cycle()
