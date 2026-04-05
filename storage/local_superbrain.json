@@ -2,9 +2,842 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:06:55.315148+00:00",
-    "content": "PEPE: Decision: hold (conf: 30%) — Mixed signals; low data quality warrants caution.",
-    "payload": "[2026-04-05T17:06:55.315148+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Mixed signals; low data quality warrants caution.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T17:06:25.453901+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T17:06:25.453901+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:30.474871+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:06:30.474871+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:31.667455+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:06:31.667455+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:33.319075+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T17:06:33.319075+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:06:34.478034+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish",
+    "payload": "[2026-04-05T17:06:34.478034+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:36.732731+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T17:06:36.732731+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:37.908970+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T17:06:37.908970+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:06:38.928074+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T17:06:38.928074+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:40.113077+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:06:40.113077+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:41.297715+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:06:41.297715+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:06:42.524581+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T17:06:42.524581+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:25.399923+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T17:21:25.399923+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:28.452278+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:21:28.452278+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:29.610931+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:21:29.610931+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:30.797062+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T17:21:30.797062+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:21:32.054518+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish",
+    "payload": "[2026-04-05T17:21:32.054518+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:33.293844+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T17:21:33.293844+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:34.425045+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T17:21:34.425045+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:21:35.539891+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T17:21:35.539891+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:36.844077+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:21:36.844077+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:37.911666+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:21:37.911666+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:21:39.042565+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T17:21:39.042565+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:41.359571+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T17:36:41.359571+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:44.326322+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:36:44.326322+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:45.537777+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:36:45.537777+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:47.884333+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T17:36:47.884333+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:36:49.451400+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish",
+    "payload": "[2026-04-05T17:36:49.451400+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:50.581047+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T17:36:50.581047+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:51.725106+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T17:36:51.725106+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:36:53.015238+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T17:36:53.015238+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:54.206038+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:36:54.206038+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:55.270781+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:36:55.270781+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:36:56.491566+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T17:36:56.491566+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:51:58.638205+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T17:51:58.638205+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:01.978315+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:52:01.978315+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:06.432906+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T17:52:06.432906+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:07.647083+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T17:52:07.647083+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:52:09.294996+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish",
+    "payload": "[2026-04-05T17:52:09.294996+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:10.484466+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T17:52:10.484466+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:12.614075+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T17:52:12.614075+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T17:52:13.822841+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T17:52:13.822841+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:14.970269+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:52:14.970269+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:16.374849+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T17:52:16.374849+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:52:18.301272+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T17:52:18.301272+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:22.368105+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T18:07:22.368105+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:25.533702+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:07:25.533702+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:26.683589+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:07:26.683589+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:27.992518+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T18:07:27.992518+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:07:29.872744+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish",
+    "payload": "[2026-04-05T18:07:29.872744+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:30.986232+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T18:07:30.986232+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:32.361204+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T18:07:32.361204+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:07:35.366441+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T18:07:35.366441+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:36.921719+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:07:36.921719+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:38.197294+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:07:38.197294+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:07:41.049649+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T18:07:41.049649+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:43.289365+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T18:22:43.289365+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:46.076254+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:22:46.076254+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:47.604709+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:22:47.604709+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:48.706072+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T18:22:48.706072+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:22:49.791576+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish",
+    "payload": "[2026-04-05T18:22:49.791576+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:50.942622+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T18:22:50.942622+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:52.129898+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T18:22:52.129898+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:22:53.373877+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T18:22:53.373877+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:54.485867+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:22:54.485867+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:58.025172+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:22:58.025172+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:22:59.323072+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T18:22:59.323072+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:21.903648+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T18:25:21.903648+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:24.672952+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:25:24.672952+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:25.833965+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:25:25.833965+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:26.882796+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T18:25:26.882796+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:25:28.102207+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish",
+    "payload": "[2026-04-05T18:25:28.102207+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:29.290853+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T18:25:29.290853+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:30.413091+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T18:25:30.413091+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:25:31.558424+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T18:25:31.558424+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:32.760440+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:25:32.760440+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:33.939415+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:25:33.939415+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:25:35.120401+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T18:25:35.120401+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:29:35.899578+00:00",
+    "content": "PEPE: Decision: hold (conf: 30%) — Neutral signals in a downtrend; await confirmation.",
+    "payload": "[2026-04-05T18:29:35.899578+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Neutral signals in a downtrend; await confirmation.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
     "metadata": {
       "asset": "PEPE",
       "confidence": 30
@@ -13,20 +846,324 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:07:33.804044+00:00",
-    "content": "WIF: Decision: hold (conf: 35%) — Bearish MACD and DOWN trend suggest waiting for reversal confirmation.",
-    "payload": "[2026-04-05T17:07:33.804044+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Bearish MACD and DOWN trend suggest waiting for reversal confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
+    "timestamp": "2026-04-05T18:29:58.310673+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals against a downtrend; wait for confirmation.",
+    "payload": "[2026-04-05T18:29:58.310673+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals against a downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
     "metadata": {
-      "asset": "WIF",
-      "confidence": 35
+      "asset": "FLOKI",
+      "confidence": 30
     }
   },
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:08:08.282263+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation on trend reversal.",
-    "payload": "[2026-04-05T17:08:08.282263+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation on trend reversal.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T18:30:33.107284+00:00",
+    "content": "PEPE: Decision: hold (conf: 30%) — Neutral indicators; await trend reversal confirmation.",
+    "payload": "[2026-04-05T18:30:33.107284+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Neutral indicators; await trend reversal confirmation.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "PEPE",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:33:32.886995+00:00",
+    "content": "PEPE: Decision: hold (conf: 30%) — Wait for trend confirmation despite bullish MACD signal.",
+    "payload": "[2026-04-05T18:33:32.886995+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Wait for trend confirmation despite bullish MACD signal.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "PEPE",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:33:53.828431+00:00",
+    "content": "BOME: Decision: hold (conf: 25%) — Mixed signals in a downtrend; low data quality mandates caution.",
+    "payload": "[2026-04-05T18:33:53.828431+00:00] [Category: market]\nBOME: Decision: hold (conf: 25%) — Mixed signals in a downtrend; low data quality mandates caution.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 25}",
+    "metadata": {
+      "asset": "BOME",
+      "confidence": 25
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:34:46.498280+00:00",
+    "content": "PEPE: Decision: hold (conf: 40%) — Wait for trend reversal confirmation despite bullish MACD.",
+    "payload": "[2026-04-05T18:34:46.498280+00:00] [Category: market]\nPEPE: Decision: hold (conf: 40%) — Wait for trend reversal confirmation despite bullish MACD.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 40}",
+    "metadata": {
+      "asset": "PEPE",
+      "confidence": 40
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:36:17.278625+00:00",
+    "content": "PEPE: Decision: hold (conf: 30%) — Conflicting signals; awaiting clearer trend confirmation.",
+    "payload": "[2026-04-05T18:36:17.278625+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Conflicting signals; awaiting clearer trend confirmation.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "PEPE",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:30.343845+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T18:37:30.343845+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:33.632335+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:37:33.632335+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:34.983584+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:37:34.983584+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:36.145768+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation: Blockworks exec (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T18:37:36.145768+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation: Blockworks exec (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:37:37.570724+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation: Blockworks exec — Sentiment: very_bullish",
+    "payload": "[2026-04-05T18:37:37.570724+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation: Blockworks exec — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:42.373662+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T18:37:42.373662+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:43.492470+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T18:37:43.492470+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:37:44.889616+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T18:37:44.889616+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:46.461270+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:37:46.461270+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:47.619897+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:37:47.619897+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:37:49.987610+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T18:37:49.987610+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:30.922507+00:00",
+    "content": "GLOBAL: Fear & Greed Index: 12/100 (extreme_fear)",
+    "payload": "[2026-04-05T18:52:30.922507+00:00] [Category: market]\nGLOBAL: Fear & Greed Index: 12/100 (extreme_fear)\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 12}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 12
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:33.950502+00:00",
+    "content": "BTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:52:33.950502+00:00] [Category: market]\nBTC: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:35.426982+00:00",
+    "content": "CRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)",
+    "payload": "[2026-04-05T18:52:35.426982+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: Here?s what happened in crypto today (score: -0.30, themes: regulation)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:36.651712+00:00",
+    "content": "CRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation: Blockworks exec (score: +0.50, themes: price_action)",
+    "payload": "[2026-04-05T18:52:36.651712+00:00] [Category: market]\nCRYPTO: News Sentiment very_bullish: ?Existential? token problem seen as supply outpaces value creation: Blockworks exec (score: +0.50, themes: price_action)\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:52:37.866814+00:00",
+    "content": "🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation: Blockworks exec — Sentiment: very_bullish",
+    "payload": "[2026-04-05T18:52:37.866814+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.9): ?Existential? token problem seen as supply outpaces value creation: Blockworks exec — Sentiment: very_bullish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:39.014565+00:00",
+    "content": "BTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)",
+    "payload": "[2026-04-05T18:52:39.014565+00:00] [Category: market]\nBTC: News Sentiment very_bullish: Bitcoin is now front-running the Fed rather than reacting to it. ETFs are the cause (score: +0.80, themes: macro)\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:40.129380+00:00",
+    "content": "CRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )",
+    "payload": "[2026-04-05T18:52:40.129380+00:00] [Category: market]\nCRYPTO: News Sentiment bearish: AI is making crypto's security problem even worse, Ledger CTO warns (score: -0.30, themes: )\n\nMetadata: {\"asset\": \"CRYPTO\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "CRYPTO",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "feedback",
+    "container": "tengu-feedback",
+    "timestamp": "2026-04-05T18:52:41.356555+00:00",
+    "content": "🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish",
+    "payload": "[2026-04-05T18:52:41.356555+00:00] [Category: feedback]\n🚨 URGENT NEWS (0.8): Drift says $270 million exploit was a six-month North Korean intelligence operation — Sentiment: very_bearish\n\nMetadata: {\"source_agent\": \"news_trader\"}",
+    "metadata": {
+      "source_agent": "news_trader"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:42.537818+00:00",
+    "content": "BTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:52:42.537818+00:00] [Category: market]\nBTC: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"BTC\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "BTC",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:43.672825+00:00",
+    "content": "ETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )",
+    "payload": "[2026-04-05T18:52:43.672825+00:00] [Category: market]\nETH: News Sentiment bullish: Charles Schwab Is Gearing Up to Offer Bitcoin, Ethereum Spot Trading (score: +0.20, themes: )\n\nMetadata: {\"asset\": \"ETH\", \"confidence\": 20}",
+    "metadata": {
+      "asset": "ETH",
+      "confidence": 20
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:52:44.973338+00:00",
+    "content": "GLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL",
+    "payload": "[2026-04-05T18:52:44.973338+00:00] [Category: market]\nGLOBAL: News Cycle Summary: 15 news analyzed. 3 bullish, 3 bearish. Overall mood: NEUTRAL\n\nMetadata: {\"asset\": \"GLOBAL\", \"confidence\": 70}",
+    "metadata": {
+      "asset": "GLOBAL",
+      "confidence": 70
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:53:57.129702+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals in downtrend; wait for confirmation.",
+    "payload": "[2026-04-05T18:53:57.129702+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals in downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T18:58:40.825635+00:00",
+    "content": "BONK: Decision: hold (conf: 30%) — Neutral indicators clash with downtrend; await confirmation.",
+    "payload": "[2026-04-05T18:58:40.825635+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Neutral indicators clash with downtrend; await confirmation.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
     "metadata": {
       "asset": "BONK",
       "confidence": 30
@@ -35,75 +1172,9 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:08:32.877804+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation; data quality is low.",
-    "payload": "[2026-04-05T17:08:32.877804+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation; data quality is low.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:08:58.096596+00:00",
-    "content": "BOME: Decision: hold (conf: 35%) — Bearish momentum noted; wait for trend confirmation.",
-    "payload": "[2026-04-05T17:08:58.096596+00:00] [Category: market]\nBOME: Decision: hold (conf: 35%) — Bearish momentum noted; wait for trend confirmation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:09:20.701611+00:00",
-    "content": "WIF: Decision: hold (conf: 35%) — Wait for trend confirmation or reversal signal.",
-    "payload": "[2026-04-05T17:09:20.701611+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Wait for trend confirmation or reversal signal.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:09:48.172879+00:00",
-    "content": "FLOKI: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T17:09:48.172879+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:10:43.579743+00:00",
-    "content": "WIF: Decision: hold (conf: 35%) — Mixed signals; awaiting trend reversal confirmation.",
-    "payload": "[2026-04-05T17:10:43.579743+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Mixed signals; awaiting trend reversal confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:11:08.342223+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.",
-    "payload": "[2026-04-05T17:11:08.342223+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:12:02.313490+00:00",
-    "content": "FLOKI: Decision: hold (conf: 25%) — Mixed signals; awaiting trend confirmation on higher timeframes.",
-    "payload": "[2026-04-05T17:12:02.313490+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 25%) — Mixed signals; awaiting trend confirmation on higher timeframes.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 25}",
+    "timestamp": "2026-04-05T19:00:36.839770+00:00",
+    "content": "FLOKI: Decision: hold (conf: 25%) — Wait for trend confirmation or clearer signals.",
+    "payload": "[2026-04-05T19:00:36.839770+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 25%) — Wait for trend confirmation or clearer signals.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 25}",
     "metadata": {
       "asset": "FLOKI",
       "confidence": 25
@@ -112,20 +1183,9 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:12:28.564091+00:00",
-    "content": "BOME: Decision: hold (conf: 30%) — Mixed signals; wait for trend confirmation or data improvement.",
-    "payload": "[2026-04-05T17:12:28.564091+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Mixed signals; wait for trend confirmation or data improvement.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:13:25.971690+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer signals.",
-    "payload": "[2026-04-05T17:13:25.971690+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer signals.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:01:28.584921+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals; caution due to low data quality.",
+    "payload": "[2026-04-05T19:01:28.584921+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals; caution due to low data quality.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
     "metadata": {
       "asset": "FLOKI",
       "confidence": 30
@@ -134,53 +1194,9 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:14:22.296161+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.",
-    "payload": "[2026-04-05T17:14:22.296161+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:15:31.461954+00:00",
-    "content": "FLOKI: Decision: hold (conf: 35%) — Mixed signals; trend is down despite neutral RSI.",
-    "payload": "[2026-04-05T17:15:31.461954+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 35%) — Mixed signals; trend is down despite neutral RSI.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:16:47.701337+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T17:16:47.701337+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:18:04.259957+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation or clearer signals.",
-    "payload": "[2026-04-05T17:18:04.259957+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation or clearer signals.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:18:59.719141+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Neutral signals in a downtrend; await clearer momentum.",
-    "payload": "[2026-04-05T17:18:59.719141+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Neutral signals in a downtrend; await clearer momentum.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:02:23.389662+00:00",
+    "content": "BONK: Decision: hold (conf: 30%) — Neutral signals combined with low data quality suggest caution.",
+    "payload": "[2026-04-05T19:02:23.389662+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Neutral signals combined with low data quality suggest caution.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
     "metadata": {
       "asset": "BONK",
       "confidence": 30
@@ -189,9 +1205,9 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:19:30.380137+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.",
-    "payload": "[2026-04-05T17:19:30.380137+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:02:43.297685+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Neutral indicators in a downtrend; await confirmation.",
+    "payload": "[2026-04-05T19:02:43.297685+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Neutral indicators in a downtrend; await confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
     "metadata": {
       "asset": "FLOKI",
       "confidence": 30
@@ -200,75 +1216,9 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:19:59.315446+00:00",
-    "content": "BOME: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T17:19:59.315446+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:20:59.619238+00:00",
-    "content": "PEPE: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T17:20:59.619238+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "PEPE",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:21:21.365131+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Neutral indicators clash with established downtrend.",
-    "payload": "[2026-04-05T17:21:21.365131+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Neutral indicators clash with established downtrend.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BONK",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:21:46.151623+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.",
-    "payload": "[2026-04-05T17:21:46.151623+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:22:16.191179+00:00",
-    "content": "BOME: Decision: hold (conf: 30%) — Downtrend persists; await reversal confirmation or consolidation.",
-    "payload": "[2026-04-05T17:22:16.191179+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Downtrend persists; await reversal confirmation or consolidation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:23:12.568612+00:00",
-    "content": "PEPE: Decision: hold (conf: 30%) — Mixed signals; downtrend noted despite neutral RSI.",
-    "payload": "[2026-04-05T17:23:12.568612+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Mixed signals; downtrend noted despite neutral RSI.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "PEPE",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:23:40.760634+00:00",
-    "content": "WIF: Decision: hold (conf: 30%) — Bearish momentum persists; awaiting trend reversal confirmation.",
-    "payload": "[2026-04-05T17:23:40.760634+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Bearish momentum persists; awaiting trend reversal confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:03:34.623603+00:00",
+    "content": "WIF: Decision: hold (conf: 30%) — Wait for trend confirmation or oversold bounce signal.",
+    "payload": "[2026-04-05T19:03:34.623603+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Wait for trend confirmation or oversold bounce signal.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
     "metadata": {
       "asset": "WIF",
       "confidence": 30
@@ -277,9 +1227,31 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:24:09.558219+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Mixed signals; awaiting confirmation in the current downtrend.",
-    "payload": "[2026-04-05T17:24:09.558219+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Mixed signals; awaiting confirmation in the current downtrend.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:03:59.268793+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals and low data quality mandate caution.",
+    "payload": "[2026-04-05T19:03:59.268793+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals and low data quality mandate caution.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:04:49.987404+00:00",
+    "content": "WIF: Decision: hold (conf: 30%) — Neutral reading; waiting for trend confirmation or reversal.",
+    "payload": "[2026-04-05T19:04:49.987404+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Neutral reading; waiting for trend confirmation or reversal.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "WIF",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:05:11.183461+00:00",
+    "content": "BONK: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer momentum shift.",
+    "payload": "[2026-04-05T19:05:11.183461+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer momentum shift.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
     "metadata": {
       "asset": "BONK",
       "confidence": 30
@@ -288,9 +1260,9 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:24:37.723668+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Wait for confirmation; indicators are mixed and data quality is low.",
-    "payload": "[2026-04-05T17:24:37.723668+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Wait for confirmation; indicators are mixed and data quality is low.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:05:31.864580+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals in a downtrend; awaiting confirmation.",
+    "payload": "[2026-04-05T19:05:31.864580+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals in a downtrend; awaiting confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
     "metadata": {
       "asset": "FLOKI",
       "confidence": 30
@@ -299,56 +1271,67 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:25:01.750824+00:00",
-    "content": "BOME: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T17:25:01.750824+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:06:39.333315+00:00",
+    "content": "WIF: Decision: hold (conf: 30%) — Bearish trend persists; await confirmation of reversal.",
+    "payload": "[2026-04-05T19:06:39.333315+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Bearish trend persists; await confirmation of reversal.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
     "metadata": {
-      "asset": "BOME",
+      "asset": "WIF",
       "confidence": 30
     }
   },
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:25:55.111900+00:00",
-    "content": "PEPE: Decision: hold (conf: 30%) — Neutral indicators in a downtrend; await confirmation.",
-    "payload": "[2026-04-05T17:25:55.111900+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Neutral indicators in a downtrend; await confirmation.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
+    "timestamp": "2026-04-05T19:07:02.323202+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for confirmation.",
+    "payload": "[2026-04-05T19:07:02.323202+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
     "metadata": {
-      "asset": "PEPE",
+      "asset": "FLOKI",
       "confidence": 30
     }
   },
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T17:26:23.615354+00:00",
-    "content": "WIF: Decision: hold (conf: 35%) — Bearish MACD and downtrend outweigh neutral RSI bounce.",
-    "payload": "[2026-04-05T17:26:23.615354+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Bearish MACD and downtrend outweigh neutral RSI bounce.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
+    "timestamp": "2026-04-05T19:08:55.038411+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Neutral indicators clash with bearish trend; low data quality.",
+    "payload": "[2026-04-05T19:08:55.038411+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Neutral indicators clash with bearish trend; low data quality.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:09:17.192412+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Downtrend persists; indicators neutral with low data quality.",
+    "payload": "[2026-04-05T19:09:17.192412+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Downtrend persists; indicators neutral with low data quality.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:10:09.782075+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation in downtrend.",
+    "payload": "[2026-04-05T19:10:09.782075+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation in downtrend.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T19:12:05.493461+00:00",
+    "content": "WIF: Decision: hold (conf: 35%) — Consolidating in a downtrend; wait for trend confirmation.",
+    "payload": "[2026-04-05T19:12:05.493461+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Consolidating in a downtrend; wait for trend confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
     "metadata": {
       "asset": "WIF",
       "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:26:49.703965+00:00",
-    "content": "FLOKI: Decision: hold (conf: 35%) — Wait for trend confirmation or clearer signals.",
-    "payload": "[2026-04-05T17:26:49.703965+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 35%) — Wait for trend confirmation or clearer signals.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T17:27:18.330558+00:00",
-    "content": "BOME: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T17:27:18.330558+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 30
     }
   }
 ]

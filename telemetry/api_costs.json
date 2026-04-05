@@ -1,10 +1,10 @@
 {
   "session_start": "2026-04-03T17:58:21.455447+00:00",
-  "total_calls": 630,
-  "total_input_tokens": 1964088,
-  "total_output_tokens": 207805,
-  "total_cost_usd": 0.819778,
-  "total_duration_ms": 14814310,
+  "total_calls": 652,
+  "total_input_tokens": 1973683,
+  "total_output_tokens": 218966,
+  "total_cost_usd": 0.831273,
+  "total_duration_ms": 15137720,
   "calls_by_model": {
     "qwen3:8b": {
       "calls": 160,
@@ -19,10 +19,10 @@
       "cost_usd": 0.00021
     },
     "nvidia/nemotron-3-super-120b-a12b": {
-      "calls": 191,
-      "input_tokens": 420266,
-      "output_tokens": 89820,
-      "cost_usd": 0.264018
+      "calls": 213,
+      "input_tokens": 429861,
+      "output_tokens": 100981,
+      "cost_usd": 0.275513
     },
     "gemma4:e4b": {
       "calls": 213,
@@ -57,255 +57,13 @@
       "cost_usd": 0.002654
     },
     "risk_controller": {
-      "calls": 189,
-      "input_tokens": 415797,
-      "output_tokens": 89120,
-      "cost_usd": 0.261364
+      "calls": 211,
+      "input_tokens": 425392,
+      "output_tokens": 100281,
+      "cost_usd": 0.272859
     }
   },
   "recent_calls": [
-    {
-      "timestamp": "2026-04-05T12:20:04.175414+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2861,
-      "output_tokens": 644,
-      "duration_ms": 13607,
-      "cost_usd": 0.001817,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:25:09.279715+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2861,
-      "output_tokens": 653,
-      "duration_ms": 18596,
-      "cost_usd": 0.001822,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:27:12.741178+00:00",
-      "model": "gemma4:e4b",
-      "caller": "decision_engine",
-      "input_tokens": 928,
-      "output_tokens": 843,
-      "duration_ms": 25846,
-      "cost_usd": 0.00097,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:27:13.094216+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2864,
-      "output_tokens": 693,
-      "duration_ms": 21408,
-      "cost_usd": 0.001848,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:32:18.377393+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2864,
-      "output_tokens": 966,
-      "duration_ms": 26672,
-      "cost_usd": 0.002012,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:37:08.185384+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2864,
-      "output_tokens": 816,
-      "duration_ms": 16480,
-      "cost_usd": 0.001922,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:42:04.285219+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2864,
-      "output_tokens": 612,
-      "duration_ms": 12316,
-      "cost_usd": 0.001799,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:47:16.432428+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2864,
-      "output_tokens": 757,
-      "duration_ms": 24314,
-      "cost_usd": 0.001886,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:52:07.344952+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 2864,
-      "output_tokens": 437,
-      "duration_ms": 15279,
-      "cost_usd": 0.001694,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T12:57:13.578403+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 826,
-      "duration_ms": 21265,
-      "cost_usd": 0.000744,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T13:02:05.137945+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 637,
-      "duration_ms": 12772,
-      "cost_usd": 0.000631,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T13:07:09.831481+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 408,
-      "duration_ms": 17322,
-      "cost_usd": 0.000493,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T13:12:04.707871+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 728,
-      "duration_ms": 12056,
-      "cost_usd": 0.000685,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:04:30.480832+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 564,
-      "duration_ms": 9663,
-      "cost_usd": 0.000587,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:09:49.773392+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "duration_ms": 0,
-      "cost_usd": 0.0,
-      "success": false,
-      "error": "HTTPSConnectionPool(host='integrate.api.nvidia.com', port=443): Read timed out. (read timeout=30)"
-    },
-    {
-      "timestamp": "2026-04-05T14:14:58.593287+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 358,
-      "duration_ms": 9421,
-      "cost_usd": 0.000463,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:20:05.973841+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 414,
-      "duration_ms": 16842,
-      "cost_usd": 0.000497,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:25:12.285530+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 766,
-      "duration_ms": 22992,
-      "cost_usd": 0.000708,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:30:10.766959+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 561,
-      "duration_ms": 21405,
-      "cost_usd": 0.000585,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:35:03.311522+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 626,
-      "duration_ms": 13531,
-      "cost_usd": 0.000624,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:39:58.949304+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 501,
-      "duration_ms": 8438,
-      "cost_usd": 0.000549,
-      "success": true,
-      "error": null
-    },
-    {
-      "timestamp": "2026-04-05T14:44:57.701093+00:00",
-      "model": "nvidia/nemotron-3-super-120b-a12b",
-      "caller": "risk_controller",
-      "input_tokens": 497,
-      "output_tokens": 479,
-      "duration_ms": 8069,
-      "cost_usd": 0.000536,
-      "success": true,
-      "error": null
-    },
     {
       "timestamp": "2026-04-05T14:50:15.640741+00:00",
       "model": "nvidia/nemotron-3-super-120b-a12b",
@@ -613,6 +371,248 @@
       "cost_usd": 0.0,
       "success": false,
       "error": "HTTPSConnectionPool(host='integrate.api.nvidia.com', port=443): Read timed out. (read timeout=30)"
+    },
+    {
+      "timestamp": "2026-04-05T17:31:15.374331+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 614,
+      "duration_ms": 13604,
+      "cost_usd": 0.000621,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T17:36:16.104375+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 554,
+      "duration_ms": 13667,
+      "cost_usd": 0.000585,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T17:41:18.416324+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 599,
+      "duration_ms": 15202,
+      "cost_usd": 0.000612,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T17:46:20.115305+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 629,
+      "duration_ms": 18027,
+      "cost_usd": 0.00063,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T17:51:15.538348+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 409,
+      "duration_ms": 13105,
+      "cost_usd": 0.000498,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T17:56:32.885186+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "success": false,
+      "error": "HTTPSConnectionPool(host='integrate.api.nvidia.com', port=443): Read timed out. (read timeout=30)"
+    },
+    {
+      "timestamp": "2026-04-05T18:01:29.674270+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 709,
+      "duration_ms": 26420,
+      "cost_usd": 0.000678,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:06:20.588579+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 601,
+      "duration_ms": 18051,
+      "cost_usd": 0.000613,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:11:13.353443+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 545,
+      "duration_ms": 10065,
+      "cost_usd": 0.000579,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:16:24.164753+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 623,
+      "duration_ms": 21321,
+      "cost_usd": 0.000626,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:21:26.267477+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 625,
+      "duration_ms": 23422,
+      "cost_usd": 0.000628,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:25:08.392935+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 460,
+      "duration_ms": 9902,
+      "cost_usd": 0.000528,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:29:05.952472+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 803,
+      "duration_ms": 15758,
+      "cost_usd": 0.000734,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:34:05.697918+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 485,
+      "duration_ms": 15033,
+      "cost_usd": 0.000544,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:37:36.943851+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "success": false,
+      "error": "HTTPSConnectionPool(host='integrate.api.nvidia.com', port=443): Read timed out. (read timeout=30)"
+    },
+    {
+      "timestamp": "2026-04-05T18:42:18.528989+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 550,
+      "duration_ms": 12031,
+      "cost_usd": 0.000583,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:47:24.369365+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 550,
+      "duration_ms": 14741,
+      "cost_usd": 0.000583,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:52:41.487228+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "success": false,
+      "error": "HTTPSConnectionPool(host='integrate.api.nvidia.com', port=443): Read timed out. (read timeout=30)"
+    },
+    {
+      "timestamp": "2026-04-05T18:53:46.439076+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 654,
+      "duration_ms": 22745,
+      "cost_usd": 0.000645,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T18:58:44.660665+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 526,
+      "duration_ms": 20219,
+      "cost_usd": 0.000568,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T19:03:54.354567+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 656,
+      "duration_ms": 29350,
+      "cost_usd": 0.000646,
+      "success": true,
+      "error": null
+    },
+    {
+      "timestamp": "2026-04-05T19:08:23.518911+00:00",
+      "model": "nvidia/nemotron-3-super-120b-a12b",
+      "caller": "risk_controller",
+      "input_tokens": 505,
+      "output_tokens": 569,
+      "duration_ms": 10747,
+      "cost_usd": 0.000594,
+      "success": true,
+      "error": null
     }
   ]
 }

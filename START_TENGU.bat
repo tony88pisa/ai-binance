@@ -5,8 +5,8 @@ TITLE TENGU V11 - MICRO-CAPITAL SCALER
 :: 1. Forza la directory di lavoro sulla posizione dello script
 CD /D "%~dp0"
 
-:: 2. Forza il PATH di sistema
-SET "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0\;%PATH%"
+:: 2. Ripristino del PATH di sistema pulendo il registro corrotto
+SET "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0\;C:\Program Files\nodejs;C:\Users\tony1\.npm-global"
 
 echo ============================================================
 echo   TENGU OS V11 - MICRO-CAPITAL SCALER AUTO-LAUNCHER
@@ -35,7 +35,15 @@ echo [TENGU] Resetting environment (Nuclear Reset)...
 echo [TENGU] Attesa rilascio risorse (5s)...
 "%SystemRoot%\System32\timeout.exe" /t 5 /nobreak > nul
 
-:: 6. Lancio Orchestratore V3 (Full Brain)
+:: 6. Lancio AIRI Companion Bridge API
+echo [TENGU] Avvio Bridge API...
+start "Tengu Bridge API" cmd /k "title Tengu Bridge API && set AI_BINANCE_ROOT=%~dp0&& cd airi-trading-companion\bridge-api && python -m uvicorn main:app --host 0.0.0.0 --port 8090"
+
+:: 7. Lancio AIRI Companion UI (Tamagotchi Mode)
+echo [TENGU] Avvio AIRI 3D Companion...
+start "Tengu AIRI Companion" cmd /k "title Tengu AIRI Companion && cd airi-trading-companion\airi && pnpm dev:tamagotchi"
+
+:: 8. Lancio Orchestratore V3 (Full Brain)
 echo [TENGU] Lancio Orchestratore V3 (Full Brain)...
 if exist .venv\Scripts\python.exe (
     .venv\Scripts\python.exe orchestrator_v2.py

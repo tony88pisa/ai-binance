@@ -1,7 +1,7 @@
-**Verdict: RED**
+**System Health (2026-04-05):**  
+The crypto squad is operating normally (OK), while the equity squad shows stale data (STALE). The news trader agent is functional (OK), but the dream agent is also stale (STALE). Half of the core squads require attention to refresh data feeds and restore full operability.
 
-**Performance & Health Report**
+**Trading Performance (2026-04-05):**  
+There are currently 2 open positions and no closed trades in the last 10‑trade window, resulting in a 0.0% win rate and net PnL of +0.00%. The lack of completed trades prevents any meaningful performance assessment at this time.
 
-The bot’s operational health is currently compromised, as all four agent squads—*squad_crypto*, *squad_equity*, *news_trader*, and *dream_agent*—are reporting a **STALE** status. This indicates that none of the agents are actively processing data or executing strategies, which raises concerns about the system’s responsiveness and ability to capture market opportunities. On the cost side, today’s API usage totals **$0.8018**, well below the $2.0 daily budget limit, leaving ample headroom before reaching the financial threshold.
-
-In terms of trading activity, there are **no open positions** and **no recently closed trades**, reflecting the idle state caused by the stale agents. Consequently, the bot has not generated any profit or loss during this period. To restore normal operation, a health check and potential restart or re‑initialization of the agent squads are recommended, followed by monitoring to ensure they transition from STALE to an active state before the budget limit becomes a concern.
+**Verdict: YELLOW**
