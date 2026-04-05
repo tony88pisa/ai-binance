@@ -42,6 +42,10 @@ settings = get_settings()
 
 def job_ai_analysis(repo, executor):
     try:
+        repo.update_service_heartbeat("squad_equity", json.dumps({
+            "mode": "ACTIVE", "last_run": datetime.now(timezone.utc).isoformat()
+        }))
+
         controls = repo.get_supervisor_controls()
         if controls.get("emergency_stop", 0):
             logger.warning("EMERGENCY_STOP ACTIVE. Skipping AI analysis.")
@@ -155,9 +159,6 @@ def job_ai_analysis(repo, executor):
                                 except Exception as sme:
                                     logger.error(f"Supermemory log failed: {sme}")
                             
-        repo.update_service_heartbeat("squad_equity", json.dumps({
-            "mode": "ACTIVE", "last_run": datetime.now(timezone.utc).isoformat()
-        }))
         logger.info(f"AI Analysis complete. Open trades: {len(open_trades)}")
     except Exception as e:
         logger.error(f"Error: {e}", exc_info=True)

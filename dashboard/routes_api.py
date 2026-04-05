@@ -90,23 +90,31 @@ def get_state():
         total_outcomes = conn.execute("SELECT COUNT(*) FROM trade_outcomes").fetchone()[0]
         total_decisions = conn.execute("SELECT COUNT(*) FROM decisions").fetchone()[0]
 
-    pnl_val_estimated = round(initial_budget * (bot_pnl_pct / 100.0), 2)
-    # Wallet value: prioritize REAL exchange balance if in REAL/TESTNET mode
-    if exchange_balance > 0:
-        wallet_display = round(exchange_balance, 2)
+    squad_crypto_state = repo.get_service_state("squad_crypto")
+    try:
+        sc_sj = json.loads(squad_crypto_state.get("state_json", "{}"))
+        wallet_display = round(float(sc_sj.get("equity", initial_budget)), 2)
+    except Exception:
+        wallet_display = round(float(initial_budget), 2)
+        
+    # Re-calculate real-time Global PNL: (Current Equity - Initial Budget) / Initial Budget
+    if initial_budget > 0:
+        bot_pnl_pct = ((wallet_display - initial_budget) / initial_budget) * 100.0
     else:
-        wallet_display = round(initial_budget + pnl_val_estimated, 2)
+        bot_pnl_pct = 0.0
+        
+    pnl_val_estimated = round(wallet_display - initial_budget, 2)
 
     # Open orders from exchange
     ex_orders = executor.get_open_orders()
 
     return {
         "mode": sj.get("mode", settings.exchange.mode),
-        "hb": state.get("last_heartbeat", "N/A"),
-        "status": "ONLINE" if state.get("last_heartbeat", "N/A") != "N/A" else "OFFLINE",
+        "hb": squad_crypto_state.get("last_heartbeat", state.get("last_heartbeat", "N/A")),
+        "status": "ONLINE" if squad_crypto_state.get("last_heartbeat", "N/A") != "N/A" else "OFFLINE",
         "wallet_initial": initial_budget,
         "wallet_current": wallet_display,
-        "exchange_balance": round(exchange_balance, 2),
+        "exchange_balance": round(wallet_display, 2), # align visual to equity
         "pnl_eur": pnl_val_estimated,
         "pnl_pct": round(bot_pnl_pct, 2),
         "currency": currency,

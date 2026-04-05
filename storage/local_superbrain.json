@@ -31,5 +31,170 @@
       "asset": "BONK",
       "confidence": 30
     }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:08:32.877804+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation; data quality is low.",
+    "payload": "[2026-04-05T17:08:32.877804+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation; data quality is low.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:08:58.096596+00:00",
+    "content": "BOME: Decision: hold (conf: 35%) — Bearish momentum noted; wait for trend confirmation.",
+    "payload": "[2026-04-05T17:08:58.096596+00:00] [Category: market]\nBOME: Decision: hold (conf: 35%) — Bearish momentum noted; wait for trend confirmation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "BOME",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:09:20.701611+00:00",
+    "content": "WIF: Decision: hold (conf: 35%) — Wait for trend confirmation or reversal signal.",
+    "payload": "[2026-04-05T17:09:20.701611+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Wait for trend confirmation or reversal signal.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "WIF",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:09:48.172879+00:00",
+    "content": "FLOKI: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.",
+    "payload": "[2026-04-05T17:09:48.172879+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:10:43.579743+00:00",
+    "content": "WIF: Decision: hold (conf: 35%) — Mixed signals; awaiting trend reversal confirmation.",
+    "payload": "[2026-04-05T17:10:43.579743+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Mixed signals; awaiting trend reversal confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "WIF",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:11:08.342223+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.",
+    "payload": "[2026-04-05T17:11:08.342223+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:12:02.313490+00:00",
+    "content": "FLOKI: Decision: hold (conf: 25%) — Mixed signals; awaiting trend confirmation on higher timeframes.",
+    "payload": "[2026-04-05T17:12:02.313490+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 25%) — Mixed signals; awaiting trend confirmation on higher timeframes.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 25}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 25
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:12:28.564091+00:00",
+    "content": "BOME: Decision: hold (conf: 30%) — Mixed signals; wait for trend confirmation or data improvement.",
+    "payload": "[2026-04-05T17:12:28.564091+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Mixed signals; wait for trend confirmation or data improvement.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BOME",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:13:25.971690+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer signals.",
+    "payload": "[2026-04-05T17:13:25.971690+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer signals.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:14:22.296161+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.",
+    "payload": "[2026-04-05T17:14:22.296161+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:15:31.461954+00:00",
+    "content": "FLOKI: Decision: hold (conf: 35%) — Mixed signals; trend is down despite neutral RSI.",
+    "payload": "[2026-04-05T17:15:31.461954+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 35%) — Mixed signals; trend is down despite neutral RSI.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:16:47.701337+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.",
+    "payload": "[2026-04-05T17:16:47.701337+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:18:04.259957+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation or clearer signals.",
+    "payload": "[2026-04-05T17:18:04.259957+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Wait for trend reversal confirmation or clearer signals.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:18:59.719141+00:00",
+    "content": "BONK: Decision: hold (conf: 30%) — Neutral signals in a downtrend; await clearer momentum.",
+    "payload": "[2026-04-05T17:18:59.719141+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Neutral signals in a downtrend; await clearer momentum.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "BONK",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-05T17:19:30.380137+00:00",
+    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.",
+    "payload": "[2026-04-05T17:19:30.380137+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for confirmation or reversal.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "FLOKI",
+      "confidence": 30
+    }
   }
 ]
