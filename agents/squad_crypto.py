@@ -158,6 +158,8 @@ def autonomous_step():
             
             decision = decision_engine.evaluate(intel, wallet.repo)
             
+            logger.info(f"SCAN: {symbol} | Price: {analysis['price']:.6f} | RSI: {analysis['rsi']:.1f} | Decision: {decision.decision.value} (conf={decision.confidence}%)")
+            
             if decision.decision == ai_types.Action.BUY and decision.confidence >= 70:
                 execute_buy(symbol, analysis, decision)
                 
