@@ -2,292 +2,6 @@
   {
     "category": "market",
     "container": "tengu-market",
-    "timestamp": "2026-04-05T19:07:02.323202+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for confirmation.",
-    "payload": "[2026-04-05T19:07:02.323202+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:08:55.038411+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Neutral indicators clash with bearish trend; low data quality.",
-    "payload": "[2026-04-05T19:08:55.038411+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Neutral indicators clash with bearish trend; low data quality.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:09:17.192412+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Downtrend persists; indicators neutral with low data quality.",
-    "payload": "[2026-04-05T19:09:17.192412+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Downtrend persists; indicators neutral with low data quality.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:10:09.782075+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation in downtrend.",
-    "payload": "[2026-04-05T19:10:09.782075+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals; wait for confirmation in downtrend.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:12:05.493461+00:00",
-    "content": "WIF: Decision: hold (conf: 35%) — Consolidating in a downtrend; wait for trend confirmation.",
-    "payload": "[2026-04-05T19:12:05.493461+00:00] [Category: market]\nWIF: Decision: hold (conf: 35%) — Consolidating in a downtrend; wait for trend confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:13:00.465875+00:00",
-    "content": "WIF: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.",
-    "payload": "[2026-04-05T19:13:00.465875+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:28:22.507635+00:00",
-    "content": "PEPE: Decision: hold (conf: 45%) — Consolidating near neutral levels; await clearer momentum.",
-    "payload": "[2026-04-05T19:28:22.507635+00:00] [Category: market]\nPEPE: Decision: hold (conf: 45%) — Consolidating near neutral levels; await clearer momentum.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 45}",
-    "metadata": {
-      "asset": "PEPE",
-      "confidence": 45
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:28:44.570383+00:00",
-    "content": "WIF: Decision: hold (conf: 50%) — Neutral signals; awaiting trend confirmation despite bullish MACD.",
-    "payload": "[2026-04-05T19:28:44.570383+00:00] [Category: market]\nWIF: Decision: hold (conf: 50%) — Neutral signals; awaiting trend confirmation despite bullish MACD.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 50}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 50
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:29:08.196776+00:00",
-    "content": "WIF: Decision: hold (conf: 45%) — Neutral signals conflict with prevailing downtrend; wait for confirmation.",
-    "payload": "[2026-04-05T19:29:08.196776+00:00] [Category: market]\nWIF: Decision: hold (conf: 45%) — Neutral signals conflict with prevailing downtrend; wait for confirmation.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 45}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 45
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:30:03.583099+00:00",
-    "content": "WIF: Decision: hold (conf: 40%) — Conflicting signals; wait for trend confirmation or pullback.",
-    "payload": "[2026-04-05T19:30:03.583099+00:00] [Category: market]\nWIF: Decision: hold (conf: 40%) — Conflicting signals; wait for trend confirmation or pullback.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 40}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 40
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:31:44.654762+00:00",
-    "content": "WIF: Decision: hold (conf: 30%) — Neutral signals conflict with downtrend and low data quality.",
-    "payload": "[2026-04-05T19:31:44.654762+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Neutral signals conflict with downtrend and low data quality.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:33:12.948680+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Neutral indicators in a downtrend; await confirmation.",
-    "payload": "[2026-04-05T19:33:12.948680+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Neutral indicators in a downtrend; await confirmation.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BONK",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:34:10.515425+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Bearish momentum clashes with downtrend structure.",
-    "payload": "[2026-04-05T19:34:10.515425+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Bearish momentum clashes with downtrend structure.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BONK",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:37:58.763100+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Mixed signals; awaiting confirmation in the current downtrend.",
-    "payload": "[2026-04-05T19:37:58.763100+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Mixed signals; awaiting confirmation in the current downtrend.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BONK",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:38:39.373327+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Mixed signals and low data quality mandate caution.",
-    "payload": "[2026-04-05T19:38:39.373327+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Mixed signals and low data quality mandate caution.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BONK",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:39:04.693741+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Mixed signals; awaiting confirmation in the prevailing downtrend.",
-    "payload": "[2026-04-05T19:39:04.693741+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Mixed signals; awaiting confirmation in the prevailing downtrend.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:39:30.203579+00:00",
-    "content": "BOME: Decision: hold (conf: 30%) — Downtrend confirmed; wait for MACD reversal or trend change.",
-    "payload": "[2026-04-05T19:39:30.203579+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Downtrend confirmed; wait for MACD reversal or trend change.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:40:23.116254+00:00",
-    "content": "PEPE: Decision: hold (conf: 30%) — Bearish MACD and down trend suggest caution; await confirmation.",
-    "payload": "[2026-04-05T19:40:23.116254+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Bearish MACD and down trend suggest caution; await confirmation.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "PEPE",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:40:48.396021+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for reversal.",
-    "payload": "[2026-04-05T19:40:48.396021+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for reversal.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BONK",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:41:12.845815+00:00",
-    "content": "FLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for trend reversal confirmation.",
-    "payload": "[2026-04-05T19:41:12.845815+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 30%) — Bearish trend dominates; wait for trend reversal confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:41:36.554846+00:00",
-    "content": "BOME: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T19:41:36.554846+00:00] [Category: market]\nBOME: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:42:36.569523+00:00",
-    "content": "PEPE: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for trend confirmation.",
-    "payload": "[2026-04-05T19:42:36.569523+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Mixed signals in a downtrend; wait for trend confirmation.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "PEPE",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:42:58.605824+00:00",
-    "content": "WIF: Decision: hold (conf: 30%) — Wait for trend confirmation or reversal signal.",
-    "payload": "[2026-04-05T19:42:58.605824+00:00] [Category: market]\nWIF: Decision: hold (conf: 30%) — Wait for trend confirmation or reversal signal.\n\nMetadata: {\"asset\": \"WIF\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "WIF",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:43:28.619840+00:00",
-    "content": "BONK: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T19:43:28.619840+00:00] [Category: market]\nBONK: Decision: hold (conf: 30%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"BONK\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BONK",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:43:55.231297+00:00",
-    "content": "FLOKI: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.",
-    "payload": "[2026-04-05T19:43:55.231297+00:00] [Category: market]\nFLOKI: Decision: hold (conf: 35%) — Bearish trend dominates; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"FLOKI\", \"confidence\": 35}",
-    "metadata": {
-      "asset": "FLOKI",
-      "confidence": 35
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
-    "timestamp": "2026-04-05T19:44:18.610945+00:00",
-    "content": "BOME: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for reversal confirmation.",
-    "payload": "[2026-04-05T19:44:18.610945+00:00] [Category: market]\nBOME: Decision: hold (conf: 30%) — Neutral indicators in a confirmed downtrend; wait for reversal confirmation.\n\nMetadata: {\"asset\": \"BOME\", \"confidence\": 30}",
-    "metadata": {
-      "asset": "BOME",
-      "confidence": 30
-    }
-  },
-  {
-    "category": "market",
-    "container": "tengu-market",
     "timestamp": "2026-04-05T19:45:13.194328+00:00",
     "content": "PEPE: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer signals.",
     "payload": "[2026-04-05T19:45:13.194328+00:00] [Category: market]\nPEPE: Decision: hold (conf: 30%) — Wait for trend confirmation or clearer signals.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 30}",
@@ -11009,6 +10723,308 @@
     "metadata": {
       "asset": "BEL",
       "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:19.517234+00:00",
+    "content": "GEM DISCOVERED: DOGE/USDT | Reason: volume_spike | Change: 3.08% | Vol: $14.34M",
+    "payload": "[2026-04-06T12:48:19.517234+00:00] [Category: market]\nGEM DISCOVERED: DOGE/USDT | Reason: volume_spike | Change: 3.08% | Vol: $14.34M\n\nMetadata: {\"symbol\": \"DOGE/USDT\", \"type\": \"gem_discovery\", \"reason\": \"volume_spike\"}",
+    "metadata": {
+      "symbol": "DOGE/USDT",
+      "type": "gem_discovery",
+      "reason": "volume_spike"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:21.177450+00:00",
+    "content": "GEM DISCOVERED: WXT/USDT | Reason: volume_spike | Change: 3.02% | Vol: $7.45M",
+    "payload": "[2026-04-06T12:48:21.177450+00:00] [Category: market]\nGEM DISCOVERED: WXT/USDT | Reason: volume_spike | Change: 3.02% | Vol: $7.45M\n\nMetadata: {\"symbol\": \"WXT/USDT\", \"type\": \"gem_discovery\", \"reason\": \"volume_spike\"}",
+    "metadata": {
+      "symbol": "WXT/USDT",
+      "type": "gem_discovery",
+      "reason": "volume_spike"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:22.343460+00:00",
+    "content": "GEM DISCOVERED: BULLA/USDT | Reason: top_gainer | Change: 44.86% | Vol: $3.85M",
+    "payload": "[2026-04-06T12:48:22.343460+00:00] [Category: market]\nGEM DISCOVERED: BULLA/USDT | Reason: top_gainer | Change: 44.86% | Vol: $3.85M\n\nMetadata: {\"symbol\": \"BULLA/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "BULLA/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:23.570669+00:00",
+    "content": "GEM DISCOVERED: SHIB/USDT | Reason: volume_spike | Change: 3.77% | Vol: $2.29M",
+    "payload": "[2026-04-06T12:48:23.570669+00:00] [Category: market]\nGEM DISCOVERED: SHIB/USDT | Reason: volume_spike | Change: 3.77% | Vol: $2.29M\n\nMetadata: {\"symbol\": \"SHIB/USDT\", \"type\": \"gem_discovery\", \"reason\": \"volume_spike\"}",
+    "metadata": {
+      "symbol": "SHIB/USDT",
+      "type": "gem_discovery",
+      "reason": "volume_spike"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:25.286796+00:00",
+    "content": "GEM DISCOVERED: BEL/USDT | Reason: top_gainer | Change: 36.79% | Vol: $2.02M",
+    "payload": "[2026-04-06T12:48:25.286796+00:00] [Category: market]\nGEM DISCOVERED: BEL/USDT | Reason: top_gainer | Change: 36.79% | Vol: $2.02M\n\nMetadata: {\"symbol\": \"BEL/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "BEL/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:26.494347+00:00",
+    "content": "GEM DISCOVERED: APR/USDT | Reason: top_gainer | Change: 38.33% | Vol: $0.65M",
+    "payload": "[2026-04-06T12:48:26.494347+00:00] [Category: market]\nGEM DISCOVERED: APR/USDT | Reason: top_gainer | Change: 38.33% | Vol: $0.65M\n\nMetadata: {\"symbol\": \"APR/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "APR/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:27.604711+00:00",
+    "content": "GEM DISCOVERED: SN3/USDT | Reason: top_gainer | Change: 58.46% | Vol: $0.18M",
+    "payload": "[2026-04-06T12:48:27.604711+00:00] [Category: market]\nGEM DISCOVERED: SN3/USDT | Reason: top_gainer | Change: 58.46% | Vol: $0.18M\n\nMetadata: {\"symbol\": \"SN3/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "SN3/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:48:28.691115+00:00",
+    "content": "GEM DISCOVERED: VRA/USDT | Reason: top_gainer | Change: 31.63% | Vol: $0.15M",
+    "payload": "[2026-04-06T12:48:28.691115+00:00] [Category: market]\nGEM DISCOVERED: VRA/USDT | Reason: top_gainer | Change: 31.63% | Vol: $0.15M\n\nMetadata: {\"symbol\": \"VRA/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "VRA/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:49:07.321197+00:00",
+    "content": "BULLA: Decision: hold (conf: 35%) — Trend up, but bearish MACD and low data quality warrant caution.",
+    "payload": "[2026-04-06T12:49:07.321197+00:00] [Category: market]\nBULLA: Decision: hold (conf: 35%) — Trend up, but bearish MACD and low data quality warrant caution.\n\nMetadata: {\"asset\": \"BULLA\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "BULLA",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:49:43.511318+00:00",
+    "content": "SHIB: Decision: hold (conf: 30%) — Neutral signals; awaiting confirmation on upward momentum.",
+    "payload": "[2026-04-06T12:49:43.511318+00:00] [Category: market]\nSHIB: Decision: hold (conf: 30%) — Neutral signals; awaiting confirmation on upward momentum.\n\nMetadata: {\"asset\": \"SHIB\", \"confidence\": 30}",
+    "metadata": {
+      "asset": "SHIB",
+      "confidence": 30
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:50:36.970809+00:00",
+    "content": "PEPE: Decision: hold (conf: 35%) — Mixed signals; wait for confirmation or higher conviction.",
+    "payload": "[2026-04-06T12:50:36.970809+00:00] [Category: market]\nPEPE: Decision: hold (conf: 35%) — Mixed signals; wait for confirmation or higher conviction.\n\nMetadata: {\"asset\": \"PEPE\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "PEPE",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:51:17.319408+00:00",
+    "content": "DOGE: Decision: hold (conf: 50%) — Oversold RSI suggests bounce, but MACD lacks reversal confirmation.",
+    "payload": "[2026-04-06T12:51:17.319408+00:00] [Category: market]\nDOGE: Decision: hold (conf: 50%) — Oversold RSI suggests bounce, but MACD lacks reversal confirmation.\n\nMetadata: {\"asset\": \"DOGE\", \"confidence\": 50}",
+    "metadata": {
+      "asset": "DOGE",
+      "confidence": 50
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:51:55.282839+00:00",
+    "content": "BULLA: Decision: hold (conf: 25%) — Mixed signals; awaiting high-conviction entry trigger.",
+    "payload": "[2026-04-06T12:51:55.282839+00:00] [Category: market]\nBULLA: Decision: hold (conf: 25%) — Mixed signals; awaiting high-conviction entry trigger.\n\nMetadata: {\"asset\": \"BULLA\", \"confidence\": 25}",
+    "metadata": {
+      "asset": "BULLA",
+      "confidence": 25
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:52:27.235973+00:00",
+    "content": "SHIB: Decision: hold (conf: 35%) — Mixed signals; await clearer directional confirmation.",
+    "payload": "[2026-04-06T12:52:27.235973+00:00] [Category: market]\nSHIB: Decision: hold (conf: 35%) — Mixed signals; await clearer directional confirmation.\n\nMetadata: {\"asset\": \"SHIB\", \"confidence\": 35}",
+    "metadata": {
+      "asset": "SHIB",
+      "confidence": 35
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:53:20.507306+00:00",
+    "content": "APR: Decision: buy (conf: 80%) — Momentum confirmed by multiple 'top_gainer' alerts in an uptrend. [Swarm validated: 2 BUY]",
+    "payload": "[2026-04-06T12:53:20.507306+00:00] [Category: market]\nAPR: Decision: buy (conf: 80%) — Momentum confirmed by multiple 'top_gainer' alerts in an uptrend. [Swarm validated: 2 BUY]\n\nMetadata: {\"asset\": \"APR\", \"confidence\": 80}",
+    "metadata": {
+      "asset": "APR",
+      "confidence": 80
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:33.960565+00:00",
+    "content": "GEM DISCOVERED: DOGE/USDT | Reason: volume_spike | Change: 2.64% | Vol: $14.30M",
+    "payload": "[2026-04-06T12:56:33.960565+00:00] [Category: market]\nGEM DISCOVERED: DOGE/USDT | Reason: volume_spike | Change: 2.64% | Vol: $14.30M\n\nMetadata: {\"symbol\": \"DOGE/USDT\", \"type\": \"gem_discovery\", \"reason\": \"volume_spike\"}",
+    "metadata": {
+      "symbol": "DOGE/USDT",
+      "type": "gem_discovery",
+      "reason": "volume_spike"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:35.404319+00:00",
+    "content": "GEM DISCOVERED: WXT/USDT | Reason: volume_spike | Change: 2.8% | Vol: $7.44M",
+    "payload": "[2026-04-06T12:56:35.404319+00:00] [Category: market]\nGEM DISCOVERED: WXT/USDT | Reason: volume_spike | Change: 2.8% | Vol: $7.44M\n\nMetadata: {\"symbol\": \"WXT/USDT\", \"type\": \"gem_discovery\", \"reason\": \"volume_spike\"}",
+    "metadata": {
+      "symbol": "WXT/USDT",
+      "type": "gem_discovery",
+      "reason": "volume_spike"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:36.853881+00:00",
+    "content": "GEM DISCOVERED: BULLA/USDT | Reason: top_gainer | Change: 40.72% | Vol: $3.85M",
+    "payload": "[2026-04-06T12:56:36.853881+00:00] [Category: market]\nGEM DISCOVERED: BULLA/USDT | Reason: top_gainer | Change: 40.72% | Vol: $3.85M\n\nMetadata: {\"symbol\": \"BULLA/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "BULLA/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:37.963698+00:00",
+    "content": "GEM DISCOVERED: SHIB/USDT | Reason: volume_spike | Change: 3.36% | Vol: $2.29M",
+    "payload": "[2026-04-06T12:56:37.963698+00:00] [Category: market]\nGEM DISCOVERED: SHIB/USDT | Reason: volume_spike | Change: 3.36% | Vol: $2.29M\n\nMetadata: {\"symbol\": \"SHIB/USDT\", \"type\": \"gem_discovery\", \"reason\": \"volume_spike\"}",
+    "metadata": {
+      "symbol": "SHIB/USDT",
+      "type": "gem_discovery",
+      "reason": "volume_spike"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:39.174838+00:00",
+    "content": "GEM DISCOVERED: BEL/USDT | Reason: top_gainer | Change: 34.49% | Vol: $2.05M",
+    "payload": "[2026-04-06T12:56:39.174838+00:00] [Category: market]\nGEM DISCOVERED: BEL/USDT | Reason: top_gainer | Change: 34.49% | Vol: $2.05M\n\nMetadata: {\"symbol\": \"BEL/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "BEL/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:40.243725+00:00",
+    "content": "GEM DISCOVERED: APR/USDT | Reason: top_gainer | Change: 38.02% | Vol: $0.70M",
+    "payload": "[2026-04-06T12:56:40.243725+00:00] [Category: market]\nGEM DISCOVERED: APR/USDT | Reason: top_gainer | Change: 38.02% | Vol: $0.70M\n\nMetadata: {\"symbol\": \"APR/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "APR/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:41.346526+00:00",
+    "content": "GEM DISCOVERED: SN3/USDT | Reason: top_gainer | Change: 55.5% | Vol: $0.18M",
+    "payload": "[2026-04-06T12:56:41.346526+00:00] [Category: market]\nGEM DISCOVERED: SN3/USDT | Reason: top_gainer | Change: 55.5% | Vol: $0.18M\n\nMetadata: {\"symbol\": \"SN3/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "SN3/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:56:42.725458+00:00",
+    "content": "GEM DISCOVERED: VRA/USDT | Reason: top_gainer | Change: 37.2% | Vol: $0.15M",
+    "payload": "[2026-04-06T12:56:42.725458+00:00] [Category: market]\nGEM DISCOVERED: VRA/USDT | Reason: top_gainer | Change: 37.2% | Vol: $0.15M\n\nMetadata: {\"symbol\": \"VRA/USDT\", \"type\": \"gem_discovery\", \"reason\": \"top_gainer\"}",
+    "metadata": {
+      "symbol": "VRA/USDT",
+      "type": "gem_discovery",
+      "reason": "top_gainer"
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:57:37.451926+00:00",
+    "content": "DOGE: Decision: hold (conf: 40%) — Oversold RSI suggests bounce, but MACD is bearish, signaling caution.",
+    "payload": "[2026-04-06T12:57:37.451926+00:00] [Category: market]\nDOGE: Decision: hold (conf: 40%) — Oversold RSI suggests bounce, but MACD is bearish, signaling caution.\n\nMetadata: {\"asset\": \"DOGE\", \"confidence\": 40}",
+    "metadata": {
+      "asset": "DOGE",
+      "confidence": 40
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:58:20.601407+00:00",
+    "content": "SHIB: Decision: hold (conf: 38%) — Mixed signals; await clearer direction on SHIB.",
+    "payload": "[2026-04-06T12:58:20.601407+00:00] [Category: market]\nSHIB: Decision: hold (conf: 38%) — Mixed signals; await clearer direction on SHIB.\n\nMetadata: {\"asset\": \"SHIB\", \"confidence\": 38}",
+    "metadata": {
+      "asset": "SHIB",
+      "confidence": 38
+    }
+  },
+  {
+    "category": "market",
+    "container": "tengu-market",
+    "timestamp": "2026-04-06T12:59:26.574711+00:00",
+    "content": "DOGE: Decision: hold (conf: 45%) — Oversold RSI suggests bounce, but MACD lacks confirmation.",
+    "payload": "[2026-04-06T12:59:26.574711+00:00] [Category: market]\nDOGE: Decision: hold (conf: 45%) — Oversold RSI suggests bounce, but MACD lacks confirmation.\n\nMetadata: {\"asset\": \"DOGE\", \"confidence\": 45}",
+    "metadata": {
+      "asset": "DOGE",
+      "confidence": 45
     }
   }
 ]

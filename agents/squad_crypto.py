@@ -294,18 +294,8 @@ def autonomous_step() -> None:
             logger.info(f"Max posizioni aperte ({max_open}) raggiunto. Skip scan.")
             break
         
-        # [V12-ACTIVITY] Segnala cosa sta facendo il bot sulla dashboard con dettagli tecnici REALI
-        try:
-            # Recuperiamo dati per il log vivace (Orologio Puntuale)
-            ohlcv = exchange.fetch_ohlcv(symbol, timeframe="5m", limit=30)
-            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-            analysis = TechnicalEngine.analyze_market(df)
-            rsi_val = round(analysis.get("rsi", 0), 1)
-            price_val = round(analysis.get("price", 0), 6)
-            repo.log_activity("squad_crypto", "SCANNING", f"Analisi {symbol} | Prezzo: {price_val} | RSI: {rsi_val}")
-        except Exception as e:
-            repo.log_activity("squad_crypto", "SCANNING", f"Analisi tecnica e scoring per {symbol}")
-        
+        # [V12-ACTIVITY] Segnala cosa sta facendo il bot sulla dashboard (Orologio Puntuale)
+        repo.log_activity("squad_crypto", "SCANNING", f"Analisi tecnica e scoring per {symbol}")
         _scan_symbol(symbol, min_conf)
 
 
@@ -356,17 +346,15 @@ def _scan_symbol(symbol: str, min_confidence: int) -> None:
             news_sentiment_score=0.0,
         )
 
-        decision = decision_engine.evaluate(intel, repo)
+        # [V12-CLOCKWORK] Segnala i dettagli tecnici REALI *prima* della decisione lenta del Brain
+        repo.log_activity("squad_crypto", "SCANNING", 
+            f"⚡ ANALISI {symbol} | Prezzo: {analysis['price']:.6f} | RSI: {analysis['rsi']:.1f} | Score: {score.total}/100"
+        )
+        
+        # [V12-SYNC] Avviso che il Cervello sta decidendo
+        repo.log_activity("squad_crypto", "THINKING", f"🧠 Gemma 4 sta elaborando la tesi per {symbol}...")
 
-        # [V12-3] Applica penalità confidence se HTF non allineato
-        htf_penalty = mtf_result.get("confidence_penalty", 0)
-        if htf_penalty > 0 and decision.decision == ai_types.Action.BUY:
-            original_conf = decision.confidence
-            decision.confidence = max(0, decision.confidence - htf_penalty)
-            logger.info(
-                f"[MTF PENALTY] {symbol}: Confidence {original_conf}% → {decision.confidence}% "
-                f"(HTF={mtf_result['htf_regime']}, aligned={mtf_result['htf_alignment']})"
-            )
+        decision = decision_engine.evaluate(intel, repo)
 
         logger.info(
             f"SCAN {symbol} | Score: {score.total}/100 ({score.action}) | "
