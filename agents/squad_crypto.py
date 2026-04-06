@@ -1,12 +1,12 @@
 """
-TENGU V11.5 — SQUAD CRYPTO (FIXED)
-====================================
-Fix applicati:
-  [FIX-1] Equity calcolata correttamente dopo chiusura posizione.
-  [FIX-2] campo pnl_pct unificato (era realized_pnl_pct in alcuni punti).
-  [FIX-3] Kelly Criterion legge Win Rate REALE dal Repository, non hardcoded.
-  [FIX-4] Rimozione import pandas dentro loop (spostato a top-level).
-  [FIX-5] Guard: dry_run non invia ordini reali, usa mock ccxt.
+TENGU V12 — SQUAD CRYPTO (UPGRADED)
+========================================
+Upgrade V12:
+  [V12-1] Token Scoring Engine — valuta ogni coin 0-100 prima dell'AI.
+  [V12-2] Gem Scanner — scopre automaticamente nuove gemme dall'exchange.
+  [V12-3] Multi-Timeframe Analysis — conferma segnali 5m con trend 1h.
+  [V12-4] Dynamic ATR Stop-Loss — SL/TP adattivi alla volatilità.
+Fix preservati: FIX-1 through FIX-5.
 """
 import sys
 import time
@@ -46,11 +46,22 @@ import ai.types as ai_types
 import ai.decision_engine as decision_engine
 from modules.notifications_hub import NotificationsHub
 from ai.technical_engine import TechnicalEngine
+from ai.token_scorer import TokenScorer
+from ai.gem_scanner import GemScanner
 
 settings = get_settings()
 notifier = NotificationsHub()
 
-CRYPTO_SYMBOLS = ["PEPE/USDT", "WIF/USDT", "BONK/USDT", "FLOKI/USDT", "BOME/USDT"]
+# Lista base (le gem scoperte si aggiungono dinamicamente)
+BASE_CRYPTO_SYMBOLS = ["PEPE/USDT", "WIF/USDT", "BONK/USDT", "FLOKI/USDT", "BOME/USDT"]
+
+# Simboli attivi (base + gem scoperte)
+active_symbols: list[str] = list(BASE_CRYPTO_SYMBOLS)
+
+# Istanze globali V12
+token_scorer = TokenScorer()
+GEM_SCAN_INTERVAL_CYCLES = 30  # Ogni 30 cicli (~15 min) scansiona nuove gem
+_cycle_counter = 0
 
 # ──────────────────────────────────────────────────────────────────
 # EXCHANGE FACTORY
@@ -186,20 +197,49 @@ wallet = ResilienceWallet(settings.trading.wallet_size, repo)
 
 
 def autonomous_step() -> None:
-    """Singolo ciclo di trading autonomo V11.5."""
+    """Singolo ciclo di trading autonomo V12."""
+    global _cycle_counter, active_symbols
+    
     if wallet.check_sleep_status():
         return
 
+    _cycle_counter += 1
+
     logger.info(
-        f"Ciclo V11.5 | Equity: {wallet.equity:.2f} USDT | "
-        f"Cash: {wallet.cash:.2f} | Posizioni: {len(wallet.positions)}"
+        f"Ciclo V12 #{_cycle_counter} | Equity: {wallet.equity:.2f} USDT | "
+        f"Cash: {wallet.cash:.2f} | Posizioni: {len(wallet.positions)} | "
+        f"Symbols attivi: {len(active_symbols)}"
     )
+
+    # [V12-2] GEM SCANNER — scopri nuove gemme periodicamente
+    if _cycle_counter % GEM_SCAN_INTERVAL_CYCLES == 1:
+        try:
+            scanner = GemScanner(exchange, existing_symbols=active_symbols)
+            gems = scanner.scan(strategy="all")
+            for gem in gems:
+                if gem.symbol not in active_symbols:
+                    active_symbols.append(gem.symbol)
+                    logger.info(f"[GEM] Nuova gem aggiunta: {gem.symbol} ({gem.discovery_reason}, +{gem.change_24h:.1f}%)")
+                    notifier.broadcast(
+                        f"💎 NUOVA GEM: {gem.symbol}\n"
+                        f"Change 24h: {gem.change_24h:+.1f}%\n"
+                        f"Volume: ${gem.volume_24h_usd/1e6:.2f}M\n"
+                        f"Motivo: {gem.discovery_reason}",
+                        level="INFO",
+                    )
+            # Mantieni max 15 simboli attivi (base + gem)
+            if len(active_symbols) > 15:
+                active_symbols = list(BASE_CRYPTO_SYMBOLS) + active_symbols[len(BASE_CRYPTO_SYMBOLS):][:10]
+        except Exception as e:
+            logger.error(f"[GEM_SCANNER] Errore: {e}")
 
     repo.update_service_heartbeat("squad_crypto", json.dumps({
         "status": "running",
         "equity": wallet.equity,
         "open_positions": list(wallet.positions.keys()),
         "session_pnl": wallet.session_pnl,
+        "active_symbols": active_symbols,
+        "cycle": _cycle_counter,
     }))
 
     _manage_existing_positions()
@@ -212,7 +252,7 @@ def autonomous_step() -> None:
     max_open = controls.get("max_open_trades", 2)
     min_conf = controls.get("min_confidence", 70)
 
-    for symbol in CRYPTO_SYMBOLS:
+    for symbol in active_symbols:
         if len(wallet.positions) >= max_open:
             logger.info(f"Max posizioni aperte ({max_open}) raggiunto. Skip scan.")
             break
@@ -221,32 +261,76 @@ def autonomous_step() -> None:
 
 def _scan_symbol(symbol: str, min_confidence: int) -> None:
     try:
-        ohlcv = exchange.fetch_ohlcv(symbol, timeframe="5m", limit=250)
-        if not ohlcv or len(ohlcv) < 50:
-            logger.warning(f"Dati OHLCV insufficienti per {symbol}.")
+        # Fetch 5m OHLCV
+        ohlcv_5m = exchange.fetch_ohlcv(symbol, timeframe="5m", limit=250)
+        if not ohlcv_5m or len(ohlcv_5m) < 50:
+            logger.warning(f"Dati OHLCV 5m insufficienti per {symbol}.")
             return
 
-        df = pd.DataFrame(ohlcv, columns=["timestamp", "open", "high", "low", "close", "volume"])
-        analysis = TechnicalEngine.analyze_market(df)
+        df_5m = pd.DataFrame(ohlcv_5m, columns=["timestamp", "open", "high", "low", "close", "volume"])
 
+        # [V12-1] TOKEN SCORING — valuta prima di chiamare l'AI
+        try:
+            ticker = exchange.fetch_ticker(symbol)
+        except Exception:
+            ticker = None
+
+        score = token_scorer.score(symbol, df_5m, ticker)
+        
+        if not score.is_tradeable:
+            logger.info(f"SKIP {symbol} | Score: {score.total}/100 ({score.action}) — sotto soglia 70")
+            return
+
+        # [V12-3] MULTI-TIMEFRAME — fetch 1h e analizza
+        try:
+            ohlcv_1h = exchange.fetch_ohlcv(symbol, timeframe="1h", limit=250)
+            df_1h = pd.DataFrame(ohlcv_1h, columns=["timestamp", "open", "high", "low", "close", "volume"])
+        except Exception:
+            df_1h = None
+
+        mtf_result = TechnicalEngine.analyze_multi_timeframe(df_5m, df_1h)
+        analysis = mtf_result.get("analysis_5m", {})
+        
+        if not analysis:
+            logger.warning(f"Analisi tecnica fallita per {symbol}")
+            return
+
+        # Costruisci MarketIntelligence arricchita
         intel = ai_types.MarketIntelligence(
             asset=symbol.split("/")[0],
             close_price=analysis["price"],
             rsi_5m=analysis["rsi"],
             macd_5m=analysis["macd"],
+            rsi_1h=mtf_result.get("htf_rsi", 50.0),
             market_regime=analysis["regime"],
             news_sentiment_score=0.0,
         )
 
         decision = decision_engine.evaluate(intel, repo)
 
+        # [V12-3] Applica penalità confidence se HTF non allineato
+        htf_penalty = mtf_result.get("confidence_penalty", 0)
+        if htf_penalty > 0 and decision.decision == ai_types.Action.BUY:
+            original_conf = decision.confidence
+            decision.confidence = max(0, decision.confidence - htf_penalty)
+            logger.info(
+                f"[MTF PENALTY] {symbol}: Confidence {original_conf}% → {decision.confidence}% "
+                f"(HTF={mtf_result['htf_regime']}, aligned={mtf_result['htf_alignment']})"
+            )
+
         logger.info(
-            f"SCAN {symbol} | Price: {analysis['price']:.6f} | "
-            f"RSI: {analysis['rsi']:.1f} | Regime: {analysis['regime']} | "
+            f"SCAN {symbol} | Score: {score.total}/100 ({score.action}) | "
+            f"Price: {analysis['price']:.6f} | RSI: {analysis['rsi']:.1f} | "
+            f"Regime: {analysis['regime']} | HTF: {mtf_result['htf_regime']} | "
             f"Decision: {decision.decision.value} ({decision.confidence}%)"
         )
 
         if decision.decision == ai_types.Action.BUY and decision.confidence >= min_confidence:
+            # Salva score nel contesto per audit
+            analysis["token_score"] = score.total
+            analysis["token_action"] = score.action
+            analysis["htf_regime"] = mtf_result.get("htf_regime", "UNKNOWN")
+            analysis["htf_aligned"] = mtf_result.get("htf_alignment", False)
             _execute_buy(symbol, analysis, decision)
 
     except Exception as e:
@@ -372,7 +456,9 @@ def _close_position(symbol: str, pos: dict, exit_price: float, reason: str) -> N
 
 
 def main() -> None:
-    logger.info("TENGU V11.5 SQUAD_CRYPTO Starting")
+    logger.info("TENGU V12 SQUAD_CRYPTO Starting — Token Scorer + Gem Scanner + Multi-TF")
+    logger.info(f"Base symbols: {BASE_CRYPTO_SYMBOLS}")
+    logger.info(f"Gem scan interval: every {GEM_SCAN_INTERVAL_CYCLES} cycles (~{GEM_SCAN_INTERVAL_CYCLES * 30 // 60} min)")
     schedule.every(30).seconds.do(autonomous_step)
     autonomous_step()
     while True:
