@@ -67,10 +67,7 @@ class MemoryManager:
             try:
                 # Dobbiamo combinare il tutto, supermemory accetta payload non strutturato
                 sm_payload = f"Category: {category}\nContext: {description}\n\n{content}"
-                if hasattr(self.sm, "memories") and hasattr(self.sm.memories, "add"):
-                    self.sm.memories.add(content=sm_payload)
-                elif hasattr(self.sm, "add"):
-                    self.sm.add(content=sm_payload) # Fallback SDK api
+                self.sm.add(content=sm_payload)
                 logger.info(f"Mappato ricordo nel Knowledge Graph: {name}")
             except Exception as e:
                 logger.error(f"Errore sincronizzazione Supermemory: {e}")
@@ -88,17 +85,18 @@ class MemoryManager:
         if self.sm:
             try:
                 # Usa query generiche per recuperare la sintesi globale
-                query = "Quali sono le tue regole operative, i tuoi insight e i tuoi feedback passati riguardo il mercato?"
-                res = []
-                if hasattr(self.sm, "search") and hasattr(self.sm.search, "execute"):
-                    res = self.sm.search.execute(query=query)
-                elif hasattr(self.sm, "profile"):
-                    res = self.sm.profile(container_tag="tengu-swarm", q=query)
-                elif hasattr(self.sm, "search_memories"):
-                    res = self.sm.search_memories(query=query)
+                query = f"Quali sono le tue regole operative, i tuoi insight e i tuoi feedback passati riguardo la categoria {category}?"
+                response = self.sm.search.documents(q=query)
+                texts = []
+                if hasattr(response, "results"):
+                    for r in response.results:
+                        if hasattr(r, "chunks") and r.chunks:
+                            for chunk in r.chunks:
+                                if hasattr(chunk, "content") and chunk.content:
+                                    texts.append(str(chunk.content)[:500])
                     
-                if res:
-                    return "--- SUPERMEMORY KNOWLEDGE GRAPH COMPENDIUM ---\n" + "\n- ".join([str(r) for r in res]) + "\n----------------------------------------\n"
+                if texts:
+                    return "--- SUPERMEMORY KNOWLEDGE GRAPH COMPENDIUM ---\n" + "\n- ".join(texts) + "\n----------------------------------------\n"
             except Exception as e:
                 # Silenzio l'errore per fallback tranquillo invece di spammare
                 pass

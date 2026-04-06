@@ -121,7 +121,8 @@ def get_positions_open():
                 "entry_price": entry,
                 "current_price": current,
                 "pnl_pct": pnl,
-                "size_pct": t.get("size_pct")
+                "size_pct": t.get("size_pct"),
+                "agent": t.get("agent_name", "Unknown")
             })
         return {"open_positions": active}
     except Exception:

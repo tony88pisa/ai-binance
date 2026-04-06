@@ -512,9 +512,11 @@ def get_supermemory_api():
         # Recupera le ultime strategie generate e il contesto di mercato recente come demo
         recent_strategies = brain.recall("strategy", category="strategies", limit=3)
         recent_feedbacks = brain.recall("error anomaly", category="feedback", limit=3)
+        recent_market = brain.recall("gem discovered market signal", category="market", limit=5)
         
         memories = [
             {"type": "strategies", "content": recent_strategies},
+            {"type": "market", "content": recent_market},
             {"type": "feedback", "content": recent_feedbacks}
         ]
         

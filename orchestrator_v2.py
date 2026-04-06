@@ -1,5 +1,5 @@
 """
-TENGU V10 — ORCHESTRATOR V3 (FULL BRAIN)
+TENGU V12 — ORCHESTRATOR V3 (FULL BRAIN)
 Avvia l'intero ecosistema Tengu in ordine cronologico.
 Tutti i moduli di intelligenza sono attivati.
 """
@@ -76,8 +76,8 @@ def start_service(name, cmd, wait_port=None, timeout=40):
 
 def main():
     print("============================================================")
-    print("   TENGU V11 — MICRO-CAPITAL SCALER ORCHESTRATOR")
-    print("   Tutti i moduli abilitati: Grid, Momentum, Tax-Aware 33%.")
+    print("   TENGU V12 — GEM HUNTER AI ORCHESTRATOR")
+    print("   Tutti i moduli abilitati: Scorer, Scanner, Multi-TF.")
     print("============================================================")
     
     os.chdir(PROJECT_ROOT)
@@ -109,9 +109,9 @@ def main():
     start_service("Dashboard", f'"{PYTHON_EXE}" -m dashboard.app', wait_port=8088)
 
     # ═══════════════════════════════════════════
-    # FASE 3: CERVELLO OPERATIVO E SICUREZZA (V11.5)
+    # FASE 3: CERVELLO OPERATIVO E SICUREZZA (V12)
     # ═══════════════════════════════════════════
-    print("\n[FASE 3] Boot Sequence V11.5...")
+    print("\n[FASE 3] Boot Sequence V12...")
     
     # 3.1 Risk Controller (Deve essere primo - imposta wallet)
     start_service("Agents_Risk", f'"{PYTHON_EXE}" -m agents.risk_controller')
@@ -129,9 +129,9 @@ def main():
     start_service("Agents_Squad", f'"{PYTHON_EXE}" -m agents.squad_crypto')
     time.sleep(2)
     
-    # 3.5 Binance Executor (Braccio armato per acquisto/vendita)
-    start_service("Agents_Executor", f'"{PYTHON_EXE}" -m agents.binance_executor')
-    time.sleep(2)
+    # 3.5 Binance Executor (Sospeso come richiesto - Simulation Mode)
+    # start_service("Agents_Executor", f'"{PYTHON_EXE}" -m agents.binance_executor')
+    # time.sleep(2)
 
     # ═══════════════════════════════════════════
     # FASE 4: SERVIZI SECONDARI

@@ -108,6 +108,36 @@ class NvidiaClient:
         """NOT IMPLEMENTED (Placeholder per Phase 2)."""
         return []
 
+    def ask(self, prompt: str) -> str:
+        """Invia un prompt semplice testuale e ritorna la risposta testuale."""
+        if not self.enabled or not self.api_key or self.api_key.lower() == "mock":
+            return "NVIDIA Teacher API Key non valida o in modalità MOCK."
+            
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        body = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.2,
+            "max_tokens": 1024,
+            "stream": False
+        }
+        
+        try:
+            response = requests.post(f"{self.base_url}/chat/completions", headers=headers, json=body, timeout=60)
+            if response.status_code == 200:
+                result = response.json()
+                return result['choices'][0]['message']['content']
+            else:
+                logger.error(f"Errore API NVIDIA ({response.status_code}): {response.text}")
+                return ""
+        except Exception as e:
+            logger.error(f"Eccezione durante chiamata NVIDIA ask: {e}")
+            return ""
+
 if __name__ == "__main__":
     # Test isolato (REAL)
     client = NvidiaClient()

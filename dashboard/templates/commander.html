@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tengu V11 Commander | Micro-Cap Scaler</title>
+    <title>Tengu V12 Commander | Gem Hunter AI</title>
     <!-- Premium Web Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* V11 Obsidian Neon Palette */
+            /* V12 Obsidian Neon Palette */
             --bg-obsidian: #09090b;
             --bg-glass: rgba(18, 20, 28, 0.65);
             --bg-glass-hover: rgba(28, 30, 42, 0.85);
@@ -142,6 +142,7 @@
             text-transform: uppercase;
             background: linear-gradient(90deg, #fff, var(--neon-cyan));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -157,7 +158,7 @@
             background: rgba(255, 184, 0, 0.05);
         }
 
-        /* V11 Core Metrics */
+        /* V12 Core Metrics */
         .core-metrics {
             display: flex;
             gap: 32px;
@@ -190,11 +191,20 @@
         .accent-cyan { color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0,240,255,0.4); }
         .accent-amber { color: var(--neon-amber); text-shadow: 0 0 15px rgba(255,184,0,0.4); }
 
-        /* Secondary Stats Flexbox */
-        .v11-stats-bar {
+        /* V12 STATS BAR */
+        .v12-stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
+        }
+
+        .pulse-green {
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
         }
 
         .glass-card {
@@ -361,7 +371,7 @@
         <div class="brand-cluster">
             <div class="ai-core-icon">💎</div>
             <div class="brand-text">
-                <h1>Tengu V11</h1>
+                <h1>Tengu V12</h1>
                 <small id="testnet-badge">⚠️ MEXC DRY-RUN (SIMULATORE)</small>
             </div>
         </div>
@@ -378,13 +388,13 @@
         </div>
     </div>
 
-    <!-- V11 STATS BAR -->
-    <div class="v11-stats-bar">
+    <!-- V12 STATS BAR -->
+    <div class="v12-stats-bar">
         <div class="glass-card">
             <div class="card-header">
-                Grid Engine Status <span class="chip chip-cyan" id="grid-status-badge">READY</span>
+                Gem Hunter Pulse <span class="chip chip-cyan pulse-green" id="gem-status-badge">SCANNING</span>
             </div>
-            <div class="card-value mono" id="grid-status-val">WAITING</div>
+            <div class="card-value mono" id="gem-count-val">0 GEMS</div>
         </div>
         
         <div class="glass-card tax-card">
@@ -465,7 +475,7 @@ async function fetchJSON(url) {
 
 let lastActivityId = 0;
 let feedLog = [
-    { type: 'type-info', time: new Date().toLocaleTimeString('it-IT'), msg: "Dashboard V11 caricata. Connessione all'Orchestratore completata." }
+    { type: 'type-info', time: new Date().toLocaleTimeString('it-IT'), msg: "Dashboard V12 caricata. Connessione all'Orchestratore completata." }
 ];
 
 function updateFeedUI() {
@@ -491,24 +501,21 @@ async function loop() {
         document.getElementById('decisions-val').textContent = state.total_decisions || 0;
     }
 
-    // 2. Fetch V11 Specifics (Tax, Grid, Kelly)
-    const v11 = await fetchJSON('/api/v11-status');
-    if (v11) {
-        document.getElementById('tax-reserve-val').textContent = `$${(v11.tax_reserve_33pct_usdt || 0).toFixed(2)}`;
-        
-        // Kelly
-        const kStr = v11.kelly_risk_pct ? `${v11.kelly_risk_pct.toFixed(2)}%` : '1-2%';
-        document.getElementById('kelly-size-val').textContent = kStr;
-        
-        // Grid Status
-        const gridState = v11.grid_engine?.engine || "IDLE";
-        document.getElementById('grid-status-val').textContent = gridState.toUpperCase();
-        if(gridState === "ready" || gridState === "active") {
-            document.getElementById('grid-status-badge').textContent = "ACTIVE";
-            document.getElementById('grid-status-badge').className = "chip chip-cyan";
-        } else {
-            document.getElementById('grid-status-badge').textContent = "WAIT";
-            document.getElementById('grid-status-badge').className = "chip chip-amber";
+    // 2. Fetch V12 Specifics (Gems, Tax, Kelly)
+    const cmdData = await fetchJSON('/api/commander/data');
+    if (cmdData) {
+        // Gem Metrics
+        if (cmdData.gem_stats) {
+            document.getElementById('gem-count-val').textContent = `${cmdData.gem_stats.count} GEMS`;
+            document.getElementById('gem-status-badge').textContent = cmdData.gem_stats.hunting ? "HUNTING" : "IDLE";
+        }
+
+        // We can still use v11 endpoint for legacy tax/kelly if they haven't moved
+        const v11 = await fetchJSON('/api/v11-status');
+        if (v11) {
+            document.getElementById('tax-reserve-val').textContent = `$${(v11.tax_reserve_33pct_usdt || 0).toFixed(2)}`;
+            const kStr = v11.kelly_risk_pct ? `${v11.kelly_risk_pct.toFixed(2)}%` : '1-2%';
+            document.getElementById('kelly-size-val').textContent = kStr;
         }
     }
 
@@ -556,7 +563,8 @@ async function loop() {
         if (newItems.length > 0) {
             lastActivityId = Math.max(...activities.map(a => a.id));
             for (const act of newItems.reverse()) {
-                const timeStr = act.timestamp.substring(11, 19);
+                const dateObj = new Date(act.timestamp);
+                const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
                 let typeClass = 'type-info';
                 let msgHtml = `<strong>[${act.agent}]</strong> ${act.detail || act.action}`;
                 
@@ -578,7 +586,7 @@ async function loop() {
 
 // Initial Call & Loops
 loop();
-setInterval(loop, 3000);
+setInterval(loop, 1000);
 
 </script>
 </body>

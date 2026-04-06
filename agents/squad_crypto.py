@@ -48,8 +48,10 @@ from modules.notifications_hub import NotificationsHub
 from ai.technical_engine import TechnicalEngine
 from ai.token_scorer import TokenScorer
 from ai.gem_scanner import GemScanner
+from storage.superbrain import get_superbrain
 
 settings = get_settings()
+brain = get_superbrain()
 notifier = NotificationsHub()
 
 # Lista base (le gem scoperte si aggiungono dinamicamente)
@@ -98,7 +100,7 @@ class ResilienceWallet:
     SLEEP_HOURS = 2
     KELLY_MIN_PCT = 0.01
     KELLY_MAX_PCT = 0.05
-    MIN_SIZE_USDT = 1.0
+    MIN_SIZE_USDT = 15.0
 
     def __init__(self, initial_capital: float, repo: Repository):
         self.initial_capital = initial_capital
@@ -109,6 +111,37 @@ class ResilienceWallet:
         self.sleep_until: datetime | None = None
         self.positions: dict = {}  # symbol -> position dict
         self.repo = repo
+        from pathlib import Path
+        import json
+        self.state_file = Path("user_cache/wallet_state.json")
+        self.load_state()
+
+    def load_state(self) -> None:
+        if self.state_file.exists():
+            try:
+                import json
+                with open(self.state_file, "r") as f:
+                    state = json.load(f)
+                self.equity = state.get("equity", self.initial_capital)
+                self.cash = state.get("cash", self.initial_capital)
+                self.positions = state.get("positions", {})
+                self.session_pnl = state.get("session_pnl", 0.0)
+            except Exception as e:
+                logger.error(f"Errore load wallet state: {e}")
+
+    def save_state(self) -> None:
+        try:
+            import json
+            self.state_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(self.state_file, "w") as f:
+                json.dump({
+                    "equity": self.equity,
+                    "cash": self.cash,
+                    "positions": self.positions,
+                    "session_pnl": self.session_pnl
+                }, f, indent=2)
+        except Exception as e:
+            logger.error(f"Errore save wallet state: {e}")
 
     # ── Sleep Logic ──────────────────────────────────────────────
 
@@ -186,6 +219,7 @@ class ResilienceWallet:
             except Exception:
                 open_value += pos["amount_usdt"]
         self.equity = round(self.cash + open_value, 4)
+        self.save_state()
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -227,6 +261,9 @@ def autonomous_step() -> None:
                         f"Motivo: {gem.discovery_reason}",
                         level="INFO",
                     )
+                    # [V12-SUPERMEMORY] Salva la scoperta nella memoria collettiva
+                    brain.remember_gem(gem.symbol, gem.discovery_reason, gem.change_24h, gem.volume_24h_usd)
+                    repo.log_activity("squad_crypto", "GEM_DISCOVERY", f"Nuova gemma rilevata: {gem.symbol} ({gem.discovery_reason})")
             # Mantieni max 15 simboli attivi (base + gem)
             if len(active_symbols) > 15:
                 active_symbols = list(BASE_CRYPTO_SYMBOLS) + active_symbols[len(BASE_CRYPTO_SYMBOLS):][:10]
@@ -256,6 +293,19 @@ def autonomous_step() -> None:
         if len(wallet.positions) >= max_open:
             logger.info(f"Max posizioni aperte ({max_open}) raggiunto. Skip scan.")
             break
+        
+        # [V12-ACTIVITY] Segnala cosa sta facendo il bot sulla dashboard con dettagli tecnici REALI
+        try:
+            # Recuperiamo dati per il log vivace (Orologio Puntuale)
+            ohlcv = exchange.fetch_ohlcv(symbol, timeframe="5m", limit=30)
+            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            analysis = TechnicalEngine.analyze_market(df)
+            rsi_val = round(analysis.get("rsi", 0), 1)
+            price_val = round(analysis.get("price", 0), 6)
+            repo.log_activity("squad_crypto", "SCANNING", f"Analisi {symbol} | Prezzo: {price_val} | RSI: {rsi_val}")
+        except Exception as e:
+            repo.log_activity("squad_crypto", "SCANNING", f"Analisi tecnica e scoring per {symbol}")
+        
         _scan_symbol(symbol, min_conf)
 
 
@@ -356,8 +406,9 @@ def _execute_buy(symbol: str, analysis: dict, decision: ai_types.TradeDecision) 
         f"SL: {levels['sl']:.6f} | TP: {levels['tp']:.6f}"
     )
 
+    decision_uuid = str(uuid.uuid4())[:8]
     pos = {
-        "id": str(uuid.uuid4())[:8],
+        "id": decision_uuid,
         "symbol": symbol,
         "entry_price": price,
         "amount_usdt": size_usdt,
@@ -372,6 +423,24 @@ def _execute_buy(symbol: str, analysis: dict, decision: ai_types.TradeDecision) 
     wallet.positions[symbol] = pos
     wallet.cash -= size_usdt
     wallet.recalculate_equity()
+    
+    # [V12-4] Fix Dashboard Visibility: save decision to repo
+    try:
+        repo.save_trade_decision({
+            "id": decision_uuid,
+            "asset": symbol.split("/")[0],
+            "action": decision.decision.value,
+            "confidence": decision.confidence,
+            "size_pct": size_usdt, # approx using absolute size for now
+            "thesis": decision.thesis,
+            "regime": analysis.get("regime", "UNKNOWN"),
+            "entry_price": price,
+            "atr_stop_distance": float(analysis.get("atr", 0.0)),
+            "status": "OPEN",
+            "agent_name": "squad_crypto",
+        })
+    except Exception as e:
+        logger.error(f"Errore save_trade_decision: {e}")
 
     notifier.broadcast(
         f"BUY {symbol}\nPrice: {price:.6f}\nSL: {levels['sl']:.6f} | TP: {levels['tp']:.6f}\n"
@@ -431,6 +500,7 @@ def _close_position(symbol: str, pos: dict, exit_price: float, reason: str) -> N
 
     # [FIX-2] Campo standardizzato: "pnl_pct"
     outcome = {
+        "decision_id": pos["id"],  # Connects outcome to the decision ID for SQL INNER JOIN
         "asset": symbol.split("/")[0],
         "symbol": symbol,
         "entry_price": pos["entry_price"],
@@ -444,6 +514,12 @@ def _close_position(symbol: str, pos: dict, exit_price: float, reason: str) -> N
         "closed_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
     }
     repo.save_trade_outcome(outcome)
+    
+    # Close decision in repo to remove from active display
+    try:
+        repo.update_decision_status(pos["id"], "CLOSED")
+    except Exception:
+        pass
 
     status = "WIN" if pnl_pct > 0 else "LOSS"
     notifier.broadcast(

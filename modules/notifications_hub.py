@@ -22,7 +22,7 @@ class NotificationsHub:
 
     def broadcast(self, message: str, level: str = "INFO"):
         """Invia un messaggio testuale a tutti i canali attivi"""
-        prefix = "🚨 [EMERGENCY]" if level == "ERROR" else "📊 [TENGU V10]"
+        prefix = "🚨 [EMERGENCY]" if level == "ERROR" else "📊 [TENGU V12]"
         full_msg = f"{prefix}\n{message}"
         
         success = False

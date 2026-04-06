@@ -94,3 +94,7 @@ class NvidiaTeacher:
             "max_drawdown": true_max_dd,
             "status": status
         }
+
+    def ask(self, prompt: str) -> str:
+        """Sends a raw prompt to NVIDIA LLM and returns the text response."""
+        return self.client.ask(prompt)

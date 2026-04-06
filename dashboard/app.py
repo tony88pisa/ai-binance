@@ -22,6 +22,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # Import locali del progetto
 from dashboard.routes_api import router as api_router, get_state, get_arena, get_logs
 from storage.repository import Repository
+from storage.superbrain import get_superbrain
 
 app = FastAPI(title="Antigravity Command Center V9.1")
 app.add_middleware(
@@ -86,6 +87,16 @@ def get_commander_data():
     learning_history = [{"date": v['created_at'], "val": 70 + (i * 2)} for i, v in enumerate(reversed(validations[:15]))]
     
     reasoning = []
+    
+    # [V12-SUPERMEMORY] Pull recent gem/market memories
+    try:
+        brain = get_superbrain()
+        memories = brain.recall("gem discovered market signal", category="market", limit=5)
+        for mem in memories:
+            reasoning.append(f"<b>[MEMORY]</b> {mem}")
+    except:
+        pass
+
     for d in recent_decisions:
         txt = d.get('inner_monologue') or d.get('thesis')
         if txt: reasoning.append(f"<b>[CRYPTO]</b> {txt}")
@@ -93,8 +104,25 @@ def get_commander_data():
     # --- 2. EVOLUTION STAGE ---
     evolve_state = repo.get_service_state("autoevolve")
     stage = evolve_state.get('status', 'ACTIVE')
+    
+    # --- 3. V12 GEM METRICS ---
+    sc_state = repo.get_service_state("squad_crypto")
+    gem_count = 0
+    try:
+        if sc_state and "state_json" in sc_state:
+            sc_sj = json.loads(sc_state["state_json"])
+            # Prova vari campi per robustezza
+            symbols = sc_sj.get("active_symbols") or sc_sj.get("gems") or []
+            gem_count = len(symbols)
+            # Log discreto se gem_count > 0
+            if gem_count > 0:
+                print(f"[V12-DASH] Syncing {gem_count} gems from squad_crypto")
+    except Exception as e:
+        print(f"[V12-DASH] Error syncing gems: {e}")
+        gem_count = 0
         
     return {
+        "version": "TENGU V12",
         "profit": {
             "total": state.get('pnl_eur', 0.0),
             "pct": state.get('pnl_pct', 0.0),
@@ -115,10 +143,14 @@ def get_commander_data():
             "stage": stage,
             "active_model": os.getenv("OLLAMA_MODEL", "gemma4:e4b")
         },
+        "gem_stats": {
+            "count": gem_count,
+            "hunting": True if gem_count > 0 else False
+        },
         "gpu_stats": gpu,
         "agents": arena,
-        "reasoning": reasoning if reasoning else ["Analyzing market patterns for Gemma 4..."],
-        "logs": get_logs(source="analyzer", lines=10).get('lines', [])
+        "reasoning": reasoning if reasoning else ["Searching for high-conviction Gems..."],
+        "logs": get_logs(source="squad_crypto", lines=10).get('lines', [])
     }
 
 # --- API Router ---

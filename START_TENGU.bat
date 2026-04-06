@@ -1,6 +1,6 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
-TITLE TENGU V11 - MICRO-CAPITAL SCALER
+TITLE TENGU V12 - AUTONOMOUS AI TRADING BOT
 
 :: 1. Forza la directory di lavoro sulla posizione dello script
 CD /D "%~dp0"
@@ -9,9 +9,8 @@ CD /D "%~dp0"
 SET "PATH=%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem;%SystemRoot%\System32\WindowsPowerShell\v1.0\;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Users\tony1\.npm-global"
 
 echo ============================================================
-echo   TENGU OS V11 - MICRO-CAPITAL SCALER AUTO-LAUNCHER
-echo   "Grid Trading" + "Sortino/Kelly Math" + 33%% Tax
-echo   8 Agenti + Swarm Consensus + SuperBrain (Aprile 2026)
+echo   TENGU OS V12 - AUTONOMOUS AI TRADING BOT
+echo   Token Scorer + Gem Scanner + Multi-Timeframe (Aprile 2026)
 echo ============================================================
 
 :: 3. Controllo Privilegi

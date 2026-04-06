@@ -80,7 +80,7 @@ class SuperBrain:
 
         if self.cloud_active:
             try:
-                self.client.add(content=payload, container_tags=[container])
+                self.client.add(content=payload)
                 logger.debug(f"Ricordo salvato cloud ({category}): {content[:80]}...")
             except Exception as e:
                 logger.error(f"SuperBrain.remember failed cloud ({container}): {e}")
@@ -119,21 +119,17 @@ class SuperBrain:
 
         # CLOUD RECALL
         try:
-            container = self.CONTAINERS.get(category, f"tengu-{category}") if category else None
-            if container:
-                response = self.client.search.documents(q=query, container_tags=[container])
-            else:
-                response = self.client.search.documents(q=query)
-                
+            response = self.client.search.documents(q=query)
+            
             memories = []
             if hasattr(response, "results"):
                 for r in response.results:
-                    if hasattr(r, "content"):
+                    if hasattr(r, "chunks") and r.chunks:
+                        for chunk in r.chunks:
+                            if hasattr(chunk, "content") and chunk.content:
+                                memories.append(str(chunk.content)[:500])
+                    elif hasattr(r, "content") and r.content:
                         memories.append(str(r.content)[:500])
-                    elif isinstance(r, dict):
-                        memories.append(str(r.get("content", r.get("memory", r)))[:500])
-                    else:
-                        memories.append(str(r)[:500])
                         
             return memories[:limit]
         except Exception as e:
@@ -168,6 +164,11 @@ class SuperBrain:
     def remember_market_signal(self, asset: str, signal: str, confidence: int = 0) -> bool:
         """Salva un segnale di mercato osservato."""
         return self.remember("market", f"{asset}: {signal}", {"asset": asset, "confidence": confidence})
+
+    def remember_gem(self, symbol: str, reason: str, change: float, volume: float) -> bool:
+        """Salva un ricordo specifico per una gemma scoperta dal Gem Scanner."""
+        content = f"GEM DISCOVERED: {symbol} | Reason: {reason} | Change: {change}% | Vol: ${volume/1e6:.2f}M"
+        return self.remember("market", content, {"symbol": symbol, "type": "gem_discovery", "reason": reason})
 
     def remember_report(self, report: str) -> bool:
         """Salva un report del Coordinator."""
